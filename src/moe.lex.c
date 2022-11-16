@@ -801,132 +801,132 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 10 "./generators/moe.l"
-{ return TK_SEMICOLON; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_SEMICOLON; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 11 "./generators/moe.l"
-{ return TK_LPAREN; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_LPAREN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 12 "./generators/moe.l"
-{ return TK_RPAREN; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_RPAREN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 13 "./generators/moe.l"
-{ return TK_LBRACE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_LBRACE; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 14 "./generators/moe.l"
-{ return TK_RBRACE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_RBRACE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 15 "./generators/moe.l"
-{ return TK_LESSER_EQUAL; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_LESSER_EQUAL; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 16 "./generators/moe.l"
-{ return TK_GREATER_EQUAL; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_GREATER_EQUAL; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 17 "./generators/moe.l"
-{ return TK_LESSER; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_LESSER; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 18 "./generators/moe.l"
-{ return TK_GREATER; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_GREATER; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 19 "./generators/moe.l"
-{ return TK_BANG_EQUAL; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_BANG_EQUAL; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 20 "./generators/moe.l"
-{ return TK_EQUAL_EQUAL; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_EQUAL_EQUAL; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 21 "./generators/moe.l"
-{ return TK_EQUAL; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_EQUAL; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 22 "./generators/moe.l"
-{ return TK_AND; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_AND; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 23 "./generators/moe.l"
-{ return TK_OR; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_OR; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 24 "./generators/moe.l"
-{ return TK_PLUS; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_PLUS; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 25 "./generators/moe.l"
-{ return TK_MINUS; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_MINUS; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 26 "./generators/moe.l"
-{ return TK_STAR; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_STAR; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 27 "./generators/moe.l"
-{ return TK_SLASH; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_SLASH; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 28 "./generators/moe.l"
-{ return TK_TRUE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_TRUE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 29 "./generators/moe.l"
-{ return TK_FALSE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_FALSE; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 30 "./generators/moe.l"
-{ return TK_PRINT; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_PRINT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 31 "./generators/moe.l"
-{ return TK_VAR; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_VAR; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 32 "./generators/moe.l"
-{ return TK_PROGRAM; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_PROGRAM; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 33 "./generators/moe.l"
-{ return TK_NUMBER; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_NUMBER; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 34 "./generators/moe.l"
-{ return TK_IDENTIFIER; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_IDENTIFIER; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 35 "./generators/moe.l"
-{ return TK_STRING; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TK_STRING; }
 	YY_BREAK
 case 27:
 /* rule 27 can match eol */
