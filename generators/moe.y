@@ -37,6 +37,11 @@
     extern int lineno;
 
     int sem_errors = 0;
+    char errors[10][100];
+
+    char reserved[10][3] = {
+        "var", "program", "print"
+    };
 
     void check_declaration(char *c);
 %}
@@ -108,7 +113,8 @@ statement           : expression TK_SEMICOLON                                   
 expression          : assignment                                                { $$.nd = mknode($1.nd, NULL, "expression"); }
                     ;
 
-assignment          : TK_IDENTIFIER TK_EQUAL assignment                         { $$.nd = mknode($1.nd, $3.nd, "assignment"); }
+assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL 
+                      assignment                                                { $$.nd = mknode($1.nd, $3.nd, "assignment"); }
                     | logic_or                                                  { $$.nd = mknode($1.nd, NULL, "assignment"); }
                     ;
 
@@ -179,6 +185,17 @@ int main() {
 
 	printf("\t\t\t\t\t\t PHASE 2: SYNTAX ANALYSIS \n\n");
 	print_tree(head); 
+	printf("\n\n");
+
+    printf("\t\t\t\t\t\t\t\t PHASE 3: SEMANTIC ANALYSIS \n\n");
+	if(sem_errors > 0) {
+		printf("Semantic analysis completed with %d errors\n", sem_errors);
+		for(int i=0; i<sem_errors; i++){
+			printf("\t - %s", errors[i]);
+		}
+	} else {
+		printf("Semantic analysis completed with no errors");
+	}
 	printf("\n\n");
 }
 
