@@ -48,7 +48,7 @@
     char reserved[10][18] = {
         "var", "program", "print", "if", "else", "int", "position", "string",
         "pos", "parameter", "param", "par", "open", "close", "jaw", "delay",
-        "global", "move", "await"
+        "global", "move", "await", "for", "between"
     };
 
     void check_declaration(char *c);
@@ -68,7 +68,7 @@
 %token <nd_obj> TK_STRING TK_INT TK_POSITION TK_PARAMETER
 %token <nd_obj> TK_TRUE TK_FALSE
 %token <nd_obj> TK_PRINT
-%token <nd_obj> TK_IF TK_ELSE
+%token <nd_obj> TK_IF TK_ELSE TK_FOR TK_BETWEEN
 %left <nd_obj> TK_AND TK_OR
 %left <nd_obj> TK_EQUAL TK_BANG_EQUAL TK_EQUAL_EQUAL
 %left <nd_obj> TK_LESSER_EQUAL TK_GREATER_EQUAL TK_LESSER TK_GREATER
@@ -81,9 +81,9 @@
 %type <nd_obj> program body declarations declaration var_declaration statement
 %type <nd_obj> print_statement if_statement else_statement open_statement
 %type <nd_obj> jaw_statement two_arguments close_statement optional_argument
-%type <nd_obj> delay_statement move_statement moved_statement expression 
-%type <nd_obj> assignment logic equality comparison term factor unary primary 
-%type <nd_obj> var_init access_modifier
+%type <nd_obj> delay_statement move_statement moved_statement loop_statement 
+%type <nd_obj> expression assignment logic equality comparison term factor unary  
+%type <nd_obj> primary var_init access_modifier
 
 %%
 
@@ -149,6 +149,13 @@ if_statement        : TK_IF { add_symbol('K'); } TK_LPAREN logic TK_RPAREN
                       TK_LBRACE declarations TK_RBRACE else_statement           { 
                                                                                     struct node *if_node = mknode($4.nd, $7.nd, "if");
                                                                                     $$.nd = mknode(if_node, $9.nd, "if-else"); 
+                                                                                }
+                    ;
+
+loop_statement      : TK_FOR { add_symbol('K'); } TK_LPAREN TK_IDENTIFIER 
+                      TK_BETWEEN { add_symbol('K'); } TK_NUMBER TK_COMMA 
+                      TK_NUMBER TK_RPAREN TK_LBRACE declarations TK_RBRACE      { 
+                                                                                    $$.nd = mknode($12.nd, NULL, "for-loop");
                                                                                 }
                     ;
 

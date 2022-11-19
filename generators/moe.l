@@ -39,6 +39,8 @@
 "program"                   { strcpy(yylval.nd_obj.name, (yytext)); return TK_PROGRAM; }
 "if"                        { strcpy(yylval.nd_obj.name, (yytext)); return TK_IF; }
 "else"                      { strcpy(yylval.nd_obj.name, (yytext)); return TK_ELSE; }
+"for"                       { strcpy(yylval.nd_obj.name, (yytext)); return TK_FOR; }
+"between"                   { strcpy(yylval.nd_obj.name, (yytext)); return TK_BETWEEN; }
 "open"                      { strcpy(yylval.nd_obj.name, (yytext)); return TK_OPEN; }
 "close"                     { strcpy(yylval.nd_obj.name, (yytext)); return TK_CLOSE; }
 "jaw"                       { strcpy(yylval.nd_obj.name, (yytext)); return TK_JAW; }
