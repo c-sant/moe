@@ -62,24 +62,26 @@ extern int yydebug;
     TK_TRUE = 263,                 /* TK_TRUE  */
     TK_FALSE = 264,                /* TK_FALSE  */
     TK_PRINT = 265,                /* TK_PRINT  */
-    TK_AND = 266,                  /* TK_AND  */
-    TK_OR = 267,                   /* TK_OR  */
-    TK_EQUAL = 268,                /* TK_EQUAL  */
-    TK_BANG_EQUAL = 269,           /* TK_BANG_EQUAL  */
-    TK_EQUAL_EQUAL = 270,          /* TK_EQUAL_EQUAL  */
-    TK_LESSER_EQUAL = 271,         /* TK_LESSER_EQUAL  */
-    TK_GREATER_EQUAL = 272,        /* TK_GREATER_EQUAL  */
-    TK_LESSER = 273,               /* TK_LESSER  */
-    TK_GREATER = 274,              /* TK_GREATER  */
-    TK_PLUS = 275,                 /* TK_PLUS  */
-    TK_MINUS = 276,                /* TK_MINUS  */
-    TK_STAR = 277,                 /* TK_STAR  */
-    TK_SLASH = 278,                /* TK_SLASH  */
-    TK_LPAREN = 279,               /* TK_LPAREN  */
-    TK_RPAREN = 280,               /* TK_RPAREN  */
-    TK_LBRACE = 281,               /* TK_LBRACE  */
-    TK_RBRACE = 282,               /* TK_RBRACE  */
-    TK_SEMICOLON = 283             /* TK_SEMICOLON  */
+    TK_IF = 266,                   /* TK_IF  */
+    TK_ELSE = 267,                 /* TK_ELSE  */
+    TK_AND = 268,                  /* TK_AND  */
+    TK_OR = 269,                   /* TK_OR  */
+    TK_EQUAL = 270,                /* TK_EQUAL  */
+    TK_BANG_EQUAL = 271,           /* TK_BANG_EQUAL  */
+    TK_EQUAL_EQUAL = 272,          /* TK_EQUAL_EQUAL  */
+    TK_LESSER_EQUAL = 273,         /* TK_LESSER_EQUAL  */
+    TK_GREATER_EQUAL = 274,        /* TK_GREATER_EQUAL  */
+    TK_LESSER = 275,               /* TK_LESSER  */
+    TK_GREATER = 276,              /* TK_GREATER  */
+    TK_PLUS = 277,                 /* TK_PLUS  */
+    TK_MINUS = 278,                /* TK_MINUS  */
+    TK_STAR = 279,                 /* TK_STAR  */
+    TK_SLASH = 280,                /* TK_SLASH  */
+    TK_LPAREN = 281,               /* TK_LPAREN  */
+    TK_RPAREN = 282,               /* TK_RPAREN  */
+    TK_LBRACE = 283,               /* TK_LBRACE  */
+    TK_RBRACE = 284,               /* TK_RBRACE  */
+    TK_SEMICOLON = 285             /* TK_SEMICOLON  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -95,7 +97,7 @@ union YYSTYPE
         struct node *nd;
     } nd_obj;
 
-#line 99 "./include/moe.tab.h"
+#line 101 "./include/moe.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

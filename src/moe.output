@@ -26,55 +26,69 @@ Gramática
    13         | TK_EQUAL statement
 
    14 statement: expression TK_SEMICOLON
+   15          | print_statement
+   16          | if_statement
 
-   15 $@5: ε
+   17 $@5: ε
 
-   16 $@6: ε
+   18 $@6: ε
 
-   17 statement: TK_PRINT $@5 TK_LPAREN TK_STRING $@6 TK_RPAREN TK_SEMICOLON
+   19 print_statement: TK_PRINT $@5 TK_LPAREN TK_STRING $@6 TK_RPAREN TK_SEMICOLON
 
-   18 expression: assignment
+   20 $@7: ε
 
-   19 $@7: ε
+   21 if_statement: TK_IF $@7 TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement
 
-   20 assignment: TK_IDENTIFIER $@7 TK_EQUAL assignment
-   21           | logic_or
+   22 else_statement: ε
 
-   22 logic_or: logic_and TK_OR logic_and
-   23         | logic_and
+   23 $@8: ε
 
-   24 logic_and: equality TK_AND equality
-   25          | equality
+   24 else_statement: TK_ELSE $@8 if_statement
 
-   26 equality: comparison TK_EQUAL_EQUAL comparison
-   27         | comparison TK_BANG_EQUAL comparison
-   28         | comparison
+   25 $@9: ε
 
-   29 comparison: term comparison_operator term
-   30           | term
+   26 else_statement: TK_ELSE $@9 TK_LBRACE declarations TK_RBRACE
 
-   31 term: factor TK_PLUS factor
-   32     | factor TK_MINUS factor
-   33     | factor
+   27 expression: assignment
 
-   34 factor: unary TK_STAR unary
-   35       | unary TK_SLASH unary
-   36       | unary
+   28 $@10: ε
 
-   37 unary: TK_MINUS primary
-   38      | primary
+   29 assignment: TK_IDENTIFIER $@10 TK_EQUAL assignment
+   30           | logic
 
-   39 primary: TK_TRUE
-   40        | TK_FALSE
-   41        | TK_NUMBER
-   42        | TK_STRING
-   43        | TK_IDENTIFIER
-   44        | TK_LPAREN expression TK_RPAREN
+   31 logic: logic TK_OR equality
+   32      | logic TK_AND equality
+   33      | equality
 
-   45 comparison_operator: TK_GREATER
-   46                    | TK_LESSER
-   47                    | TK_GREATER_EQUAL
-   48                    | TK_LESSER_EQUAL
+   34 equality: comparison TK_EQUAL_EQUAL comparison
+   35         | comparison TK_BANG_EQUAL comparison
+   36         | comparison
+
+   37 comparison: term comparison_operator term
+   38           | term
+
+   39 term: factor TK_PLUS factor
+   40     | factor TK_MINUS factor
+   41     | factor
+
+   42 factor: unary TK_STAR unary
+   43       | unary TK_SLASH unary
+   44       | unary
+
+   45 unary: TK_MINUS primary
+   46      | primary
+
+   47 primary: TK_TRUE
+   48        | TK_FALSE
+   49        | TK_NUMBER
+   50        | TK_STRING
+   51        | TK_IDENTIFIER
+   52        | TK_LPAREN expression TK_RPAREN
+
+   53 comparison_operator: TK_GREATER
+   54                    | TK_LESSER
+   55                    | TK_GREATER_EQUAL
+   56                    | TK_LESSER_EQUAL
 
 
 Terminais, com as regras onde eles aparecem
@@ -83,111 +97,128 @@ Terminais, com as regras onde eles aparecem
     error (256)
     TK_PROGRAM <nd_obj> (258) 3
     TK_VAR <nd_obj> (259) 11
-    TK_NUMBER <nd_obj> (260) 41
-    TK_IDENTIFIER <nd_obj> (261) 3 11 20 43
-    TK_STRING <nd_obj> (262) 17 42
-    TK_TRUE <nd_obj> (263) 39
-    TK_FALSE <nd_obj> (264) 40
-    TK_PRINT <nd_obj> (265) 17
-    TK_AND <nd_obj> (266) 24
-    TK_OR <nd_obj> (267) 22
-    TK_EQUAL <nd_obj> (268) 13 20
-    TK_BANG_EQUAL <nd_obj> (269) 27
-    TK_EQUAL_EQUAL <nd_obj> (270) 26
-    TK_LESSER_EQUAL <nd_obj> (271) 48
-    TK_GREATER_EQUAL <nd_obj> (272) 47
-    TK_LESSER <nd_obj> (273) 46
-    TK_GREATER <nd_obj> (274) 45
-    TK_PLUS <nd_obj> (275) 31
-    TK_MINUS <nd_obj> (276) 32 37
-    TK_STAR <nd_obj> (277) 34
-    TK_SLASH <nd_obj> (278) 35
-    TK_LPAREN <nd_obj> (279) 17 44
-    TK_RPAREN <nd_obj> (280) 17 44
-    TK_LBRACE <nd_obj> (281) 3
-    TK_RBRACE <nd_obj> (282) 3
-    TK_SEMICOLON <nd_obj> (283) 12 14 17
+    TK_NUMBER <nd_obj> (260) 49
+    TK_IDENTIFIER <nd_obj> (261) 3 11 29 51
+    TK_STRING <nd_obj> (262) 19 50
+    TK_TRUE <nd_obj> (263) 47
+    TK_FALSE <nd_obj> (264) 48
+    TK_PRINT <nd_obj> (265) 19
+    TK_IF <nd_obj> (266) 21
+    TK_ELSE <nd_obj> (267) 24 26
+    TK_AND <nd_obj> (268) 32
+    TK_OR <nd_obj> (269) 31
+    TK_EQUAL <nd_obj> (270) 13 29
+    TK_BANG_EQUAL <nd_obj> (271) 35
+    TK_EQUAL_EQUAL <nd_obj> (272) 34
+    TK_LESSER_EQUAL <nd_obj> (273) 56
+    TK_GREATER_EQUAL <nd_obj> (274) 55
+    TK_LESSER <nd_obj> (275) 54
+    TK_GREATER <nd_obj> (276) 53
+    TK_PLUS <nd_obj> (277) 39
+    TK_MINUS <nd_obj> (278) 40 45
+    TK_STAR <nd_obj> (279) 42
+    TK_SLASH <nd_obj> (280) 43
+    TK_LPAREN <nd_obj> (281) 19 21 52
+    TK_RPAREN <nd_obj> (282) 19 21 52
+    TK_LBRACE <nd_obj> (283) 3 21 26
+    TK_RBRACE <nd_obj> (284) 3 21 26
+    TK_SEMICOLON <nd_obj> (285) 12 14 19
 
 
 Não terminais com as regras onde eles aparecem
 
-    $accept (29)
+    $accept (31)
         à esquerda: 0
-    program <nd_obj> (30)
+    program <nd_obj> (32)
         à esquerda: 3
         à direita: 0
-    $@1 (31)
+    $@1 (33)
         à esquerda: 1
         à direita: 3
-    $@2 (32)
+    $@2 (34)
         à esquerda: 2
         à direita: 3
-    body <nd_obj> (33)
+    body <nd_obj> (35)
         à esquerda: 4
         à direita: 3
-    declarations <nd_obj> (34)
+    declarations <nd_obj> (36)
         à esquerda: 5 6
-        à direita: 4 6
-    declaration <nd_obj> (35)
+        à direita: 4 6 21 26
+    declaration <nd_obj> (37)
         à esquerda: 7 8
         à direita: 6
-    var_declaration <nd_obj> (36)
+    var_declaration <nd_obj> (38)
         à esquerda: 11
         à direita: 7
-    $@3 (37)
+    $@3 (39)
         à esquerda: 9
         à direita: 11
-    $@4 (38)
+    $@4 (40)
         à esquerda: 10
         à direita: 11
-    var_init <nd_obj> (39)
+    var_init <nd_obj> (41)
         à esquerda: 12 13
         à direita: 11
-    statement <nd_obj> (40)
-        à esquerda: 14 17
+    statement <nd_obj> (42)
+        à esquerda: 14 15 16
         à direita: 8 13
-    $@5 (41)
-        à esquerda: 15
-        à direita: 17
-    $@6 (42)
-        à esquerda: 16
-        à direita: 17
-    expression <nd_obj> (43)
-        à esquerda: 18
-        à direita: 14 44
-    assignment <nd_obj> (44)
-        à esquerda: 20 21
-        à direita: 18 20
-    $@7 (45)
+    print_statement <nd_obj> (43)
         à esquerda: 19
-        à direita: 20
-    logic_or <nd_obj> (46)
-        à esquerda: 22 23
+        à direita: 15
+    $@5 (44)
+        à esquerda: 17
+        à direita: 19
+    $@6 (45)
+        à esquerda: 18
+        à direita: 19
+    if_statement <nd_obj> (46)
+        à esquerda: 21
+        à direita: 16 24
+    $@7 (47)
+        à esquerda: 20
         à direita: 21
-    logic_and <nd_obj> (47)
-        à esquerda: 24 25
-        à direita: 22 23
-    equality <nd_obj> (48)
-        à esquerda: 26 27 28
-        à direita: 24 25
-    comparison <nd_obj> (49)
+    else_statement <nd_obj> (48)
+        à esquerda: 22 24 26
+        à direita: 21
+    $@8 (49)
+        à esquerda: 23
+        à direita: 24
+    $@9 (50)
+        à esquerda: 25
+        à direita: 26
+    expression <nd_obj> (51)
+        à esquerda: 27
+        à direita: 14 52
+    assignment <nd_obj> (52)
         à esquerda: 29 30
-        à direita: 26 27 28
-    term <nd_obj> (50)
+        à direita: 27 29
+    $@10 (53)
+        à esquerda: 28
+        à direita: 29
+    logic <nd_obj> (54)
         à esquerda: 31 32 33
-        à direita: 29 30
-    factor <nd_obj> (51)
+        à direita: 21 30 31 32
+    equality <nd_obj> (55)
         à esquerda: 34 35 36
         à direita: 31 32 33
-    unary <nd_obj> (52)
+    comparison <nd_obj> (56)
         à esquerda: 37 38
         à direita: 34 35 36
-    primary <nd_obj> (53)
-        à esquerda: 39 40 41 42 43 44
+    term <nd_obj> (57)
+        à esquerda: 39 40 41
         à direita: 37 38
-    comparison_operator (54)
-        à esquerda: 45 46 47 48
-        à direita: 29
+    factor <nd_obj> (58)
+        à esquerda: 42 43 44
+        à direita: 39 40 41
+    unary <nd_obj> (59)
+        à esquerda: 45 46
+        à direita: 42 43 44
+    primary <nd_obj> (60)
+        à esquerda: 47 48 49 50 51 52
+        à direita: 45 46
+    comparison_operator (61)
+        à esquerda: 53 54 55 56
+        à direita: 37
 
 
 Estado 0
@@ -274,24 +305,26 @@ Estado 9
     TK_TRUE        deslocar, e ir ao estado 15
     TK_FALSE       deslocar, e ir ao estado 16
     TK_PRINT       deslocar, e ir ao estado 17
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
+    TK_IF          deslocar, e ir ao estado 18
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
 
     $padrão  reduzir usando a regra 4 (body)
 
-    declaration      ir ao estado 20
-    var_declaration  ir ao estado 21
-    statement        ir ao estado 22
-    expression       ir ao estado 23
-    assignment       ir ao estado 24
-    logic_or         ir ao estado 25
-    logic_and        ir ao estado 26
-    equality         ir ao estado 27
-    comparison       ir ao estado 28
-    term             ir ao estado 29
-    factor           ir ao estado 30
-    unary            ir ao estado 31
-    primary          ir ao estado 32
+    declaration      ir ao estado 21
+    var_declaration  ir ao estado 22
+    statement        ir ao estado 23
+    print_statement  ir ao estado 24
+    if_statement     ir ao estado 25
+    expression       ir ao estado 26
+    assignment       ir ao estado 27
+    logic            ir ao estado 28
+    equality         ir ao estado 29
+    comparison       ir ao estado 30
+    term             ir ao estado 31
+    factor           ir ao estado 32
+    unary            ir ao estado 33
+    primary          ir ao estado 34
 
 
 Estado 10
@@ -307,591 +340,642 @@ Estado 11
 
     $padrão  reduzir usando a regra 9 ($@3)
 
-    $@3  ir ao estado 33
+    $@3  ir ao estado 35
 
 
 Estado 12
 
-   41 primary: TK_NUMBER •
+   49 primary: TK_NUMBER •
 
-    $padrão  reduzir usando a regra 41 (primary)
+    $padrão  reduzir usando a regra 49 (primary)
 
 
 Estado 13
 
-   20 assignment: TK_IDENTIFIER • $@7 TK_EQUAL assignment
-   43 primary: TK_IDENTIFIER •
+   29 assignment: TK_IDENTIFIER • $@10 TK_EQUAL assignment
+   51 primary: TK_IDENTIFIER •
 
-    TK_EQUAL  reduzir usando a regra 19 ($@7)
-    $padrão   reduzir usando a regra 43 (primary)
+    TK_EQUAL  reduzir usando a regra 28 ($@10)
+    $padrão   reduzir usando a regra 51 (primary)
 
-    $@7  ir ao estado 34
+    $@10  ir ao estado 36
 
 
 Estado 14
 
-   42 primary: TK_STRING •
+   50 primary: TK_STRING •
 
-    $padrão  reduzir usando a regra 42 (primary)
+    $padrão  reduzir usando a regra 50 (primary)
 
 
 Estado 15
 
-   39 primary: TK_TRUE •
+   47 primary: TK_TRUE •
 
-    $padrão  reduzir usando a regra 39 (primary)
+    $padrão  reduzir usando a regra 47 (primary)
 
 
 Estado 16
 
-   40 primary: TK_FALSE •
+   48 primary: TK_FALSE •
 
-    $padrão  reduzir usando a regra 40 (primary)
+    $padrão  reduzir usando a regra 48 (primary)
 
 
 Estado 17
 
-   17 statement: TK_PRINT • $@5 TK_LPAREN TK_STRING $@6 TK_RPAREN TK_SEMICOLON
+   19 print_statement: TK_PRINT • $@5 TK_LPAREN TK_STRING $@6 TK_RPAREN TK_SEMICOLON
 
-    $padrão  reduzir usando a regra 15 ($@5)
+    $padrão  reduzir usando a regra 17 ($@5)
 
-    $@5  ir ao estado 35
+    $@5  ir ao estado 37
 
 
 Estado 18
 
-   37 unary: TK_MINUS • primary
+   21 if_statement: TK_IF • $@7 TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement
 
-    TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
-    TK_STRING      deslocar, e ir ao estado 14
-    TK_TRUE        deslocar, e ir ao estado 15
-    TK_FALSE       deslocar, e ir ao estado 16
-    TK_LPAREN      deslocar, e ir ao estado 19
+    $padrão  reduzir usando a regra 20 ($@7)
 
-    primary  ir ao estado 37
+    $@7  ir ao estado 38
 
 
 Estado 19
 
-   44 primary: TK_LPAREN • expression TK_RPAREN
+   45 unary: TK_MINUS • primary
+
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_LPAREN      deslocar, e ir ao estado 20
+
+    primary  ir ao estado 40
+
+
+Estado 20
+
+   52 primary: TK_LPAREN • expression TK_RPAREN
 
     TK_NUMBER      deslocar, e ir ao estado 12
     TK_IDENTIFIER  deslocar, e ir ao estado 13
     TK_STRING      deslocar, e ir ao estado 14
     TK_TRUE        deslocar, e ir ao estado 15
     TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
 
-    expression  ir ao estado 38
-    assignment  ir ao estado 24
-    logic_or    ir ao estado 25
-    logic_and   ir ao estado 26
-    equality    ir ao estado 27
-    comparison  ir ao estado 28
-    term        ir ao estado 29
-    factor      ir ao estado 30
-    unary       ir ao estado 31
-    primary     ir ao estado 32
+    expression  ir ao estado 41
+    assignment  ir ao estado 27
+    logic       ir ao estado 28
+    equality    ir ao estado 29
+    comparison  ir ao estado 30
+    term        ir ao estado 31
+    factor      ir ao estado 32
+    unary       ir ao estado 33
+    primary     ir ao estado 34
 
 
-Estado 20
+Estado 21
 
     6 declarations: declarations declaration •
 
     $padrão  reduzir usando a regra 6 (declarations)
 
 
-Estado 21
+Estado 22
 
     7 declaration: var_declaration •
 
     $padrão  reduzir usando a regra 7 (declaration)
 
 
-Estado 22
+Estado 23
 
     8 declaration: statement •
 
     $padrão  reduzir usando a regra 8 (declaration)
 
 
-Estado 23
-
-   14 statement: expression • TK_SEMICOLON
-
-    TK_SEMICOLON  deslocar, e ir ao estado 39
-
-
 Estado 24
 
-   18 expression: assignment •
+   15 statement: print_statement •
 
-    $padrão  reduzir usando a regra 18 (expression)
+    $padrão  reduzir usando a regra 15 (statement)
 
 
 Estado 25
 
-   21 assignment: logic_or •
+   16 statement: if_statement •
 
-    $padrão  reduzir usando a regra 21 (assignment)
+    $padrão  reduzir usando a regra 16 (statement)
 
 
 Estado 26
 
-   22 logic_or: logic_and • TK_OR logic_and
-   23         | logic_and •
+   14 statement: expression • TK_SEMICOLON
 
-    TK_OR  deslocar, e ir ao estado 40
-
-    $padrão  reduzir usando a regra 23 (logic_or)
+    TK_SEMICOLON  deslocar, e ir ao estado 42
 
 
 Estado 27
 
-   24 logic_and: equality • TK_AND equality
-   25          | equality •
+   27 expression: assignment •
 
-    TK_AND  deslocar, e ir ao estado 41
-
-    $padrão  reduzir usando a regra 25 (logic_and)
+    $padrão  reduzir usando a regra 27 (expression)
 
 
 Estado 28
 
-   26 equality: comparison • TK_EQUAL_EQUAL comparison
-   27         | comparison • TK_BANG_EQUAL comparison
-   28         | comparison •
+   30 assignment: logic •
+   31 logic: logic • TK_OR equality
+   32      | logic • TK_AND equality
 
-    TK_BANG_EQUAL   deslocar, e ir ao estado 42
-    TK_EQUAL_EQUAL  deslocar, e ir ao estado 43
+    TK_AND  deslocar, e ir ao estado 43
+    TK_OR   deslocar, e ir ao estado 44
 
-    $padrão  reduzir usando a regra 28 (equality)
+    $padrão  reduzir usando a regra 30 (assignment)
 
 
 Estado 29
 
-   29 comparison: term • comparison_operator term
-   30           | term •
+   33 logic: equality •
 
-    TK_LESSER_EQUAL   deslocar, e ir ao estado 44
-    TK_GREATER_EQUAL  deslocar, e ir ao estado 45
-    TK_LESSER         deslocar, e ir ao estado 46
-    TK_GREATER        deslocar, e ir ao estado 47
-
-    $padrão  reduzir usando a regra 30 (comparison)
-
-    comparison_operator  ir ao estado 48
+    $padrão  reduzir usando a regra 33 (logic)
 
 
 Estado 30
 
-   31 term: factor • TK_PLUS factor
-   32     | factor • TK_MINUS factor
-   33     | factor •
+   34 equality: comparison • TK_EQUAL_EQUAL comparison
+   35         | comparison • TK_BANG_EQUAL comparison
+   36         | comparison •
 
-    TK_PLUS   deslocar, e ir ao estado 49
-    TK_MINUS  deslocar, e ir ao estado 50
+    TK_BANG_EQUAL   deslocar, e ir ao estado 45
+    TK_EQUAL_EQUAL  deslocar, e ir ao estado 46
 
-    $padrão  reduzir usando a regra 33 (term)
+    $padrão  reduzir usando a regra 36 (equality)
 
 
 Estado 31
 
-   34 factor: unary • TK_STAR unary
-   35       | unary • TK_SLASH unary
-   36       | unary •
+   37 comparison: term • comparison_operator term
+   38           | term •
 
-    TK_STAR   deslocar, e ir ao estado 51
-    TK_SLASH  deslocar, e ir ao estado 52
+    TK_LESSER_EQUAL   deslocar, e ir ao estado 47
+    TK_GREATER_EQUAL  deslocar, e ir ao estado 48
+    TK_LESSER         deslocar, e ir ao estado 49
+    TK_GREATER        deslocar, e ir ao estado 50
 
-    $padrão  reduzir usando a regra 36 (factor)
+    $padrão  reduzir usando a regra 38 (comparison)
+
+    comparison_operator  ir ao estado 51
 
 
 Estado 32
 
-   38 unary: primary •
+   39 term: factor • TK_PLUS factor
+   40     | factor • TK_MINUS factor
+   41     | factor •
 
-    $padrão  reduzir usando a regra 38 (unary)
+    TK_PLUS   deslocar, e ir ao estado 52
+    TK_MINUS  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 41 (term)
 
 
 Estado 33
 
-   11 var_declaration: TK_VAR $@3 • TK_IDENTIFIER $@4 var_init
+   42 factor: unary • TK_STAR unary
+   43       | unary • TK_SLASH unary
+   44       | unary •
 
-    TK_IDENTIFIER  deslocar, e ir ao estado 53
+    TK_STAR   deslocar, e ir ao estado 54
+    TK_SLASH  deslocar, e ir ao estado 55
+
+    $padrão  reduzir usando a regra 44 (factor)
 
 
 Estado 34
 
-   20 assignment: TK_IDENTIFIER $@7 • TK_EQUAL assignment
+   46 unary: primary •
 
-    TK_EQUAL  deslocar, e ir ao estado 54
+    $padrão  reduzir usando a regra 46 (unary)
 
 
 Estado 35
 
-   17 statement: TK_PRINT $@5 • TK_LPAREN TK_STRING $@6 TK_RPAREN TK_SEMICOLON
+   11 var_declaration: TK_VAR $@3 • TK_IDENTIFIER $@4 var_init
 
-    TK_LPAREN  deslocar, e ir ao estado 55
+    TK_IDENTIFIER  deslocar, e ir ao estado 56
 
 
 Estado 36
 
-   43 primary: TK_IDENTIFIER •
+   29 assignment: TK_IDENTIFIER $@10 • TK_EQUAL assignment
 
-    $padrão  reduzir usando a regra 43 (primary)
+    TK_EQUAL  deslocar, e ir ao estado 57
 
 
 Estado 37
 
-   37 unary: TK_MINUS primary •
+   19 print_statement: TK_PRINT $@5 • TK_LPAREN TK_STRING $@6 TK_RPAREN TK_SEMICOLON
 
-    $padrão  reduzir usando a regra 37 (unary)
+    TK_LPAREN  deslocar, e ir ao estado 58
 
 
 Estado 38
 
-   44 primary: TK_LPAREN expression • TK_RPAREN
+   21 if_statement: TK_IF $@7 • TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement
 
-    TK_RPAREN  deslocar, e ir ao estado 56
+    TK_LPAREN  deslocar, e ir ao estado 59
 
 
 Estado 39
+
+   51 primary: TK_IDENTIFIER •
+
+    $padrão  reduzir usando a regra 51 (primary)
+
+
+Estado 40
+
+   45 unary: TK_MINUS primary •
+
+    $padrão  reduzir usando a regra 45 (unary)
+
+
+Estado 41
+
+   52 primary: TK_LPAREN expression • TK_RPAREN
+
+    TK_RPAREN  deslocar, e ir ao estado 60
+
+
+Estado 42
 
    14 statement: expression TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 14 (statement)
 
 
-Estado 40
-
-   22 logic_or: logic_and TK_OR • logic_and
-
-    TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
-    TK_STRING      deslocar, e ir ao estado 14
-    TK_TRUE        deslocar, e ir ao estado 15
-    TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
-
-    logic_and   ir ao estado 57
-    equality    ir ao estado 27
-    comparison  ir ao estado 28
-    term        ir ao estado 29
-    factor      ir ao estado 30
-    unary       ir ao estado 31
-    primary     ir ao estado 32
-
-
-Estado 41
-
-   24 logic_and: equality TK_AND • equality
-
-    TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
-    TK_STRING      deslocar, e ir ao estado 14
-    TK_TRUE        deslocar, e ir ao estado 15
-    TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
-
-    equality    ir ao estado 58
-    comparison  ir ao estado 28
-    term        ir ao estado 29
-    factor      ir ao estado 30
-    unary       ir ao estado 31
-    primary     ir ao estado 32
-
-
-Estado 42
-
-   27 equality: comparison TK_BANG_EQUAL • comparison
-
-    TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
-    TK_STRING      deslocar, e ir ao estado 14
-    TK_TRUE        deslocar, e ir ao estado 15
-    TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
-
-    comparison  ir ao estado 59
-    term        ir ao estado 29
-    factor      ir ao estado 30
-    unary       ir ao estado 31
-    primary     ir ao estado 32
-
-
 Estado 43
 
-   26 equality: comparison TK_EQUAL_EQUAL • comparison
+   32 logic: logic TK_AND • equality
 
     TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
     TK_STRING      deslocar, e ir ao estado 14
     TK_TRUE        deslocar, e ir ao estado 15
     TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
 
-    comparison  ir ao estado 60
-    term        ir ao estado 29
-    factor      ir ao estado 30
-    unary       ir ao estado 31
-    primary     ir ao estado 32
+    equality    ir ao estado 61
+    comparison  ir ao estado 30
+    term        ir ao estado 31
+    factor      ir ao estado 32
+    unary       ir ao estado 33
+    primary     ir ao estado 34
 
 
 Estado 44
 
-   48 comparison_operator: TK_LESSER_EQUAL •
+   31 logic: logic TK_OR • equality
 
-    $padrão  reduzir usando a regra 48 (comparison_operator)
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+
+    equality    ir ao estado 62
+    comparison  ir ao estado 30
+    term        ir ao estado 31
+    factor      ir ao estado 32
+    unary       ir ao estado 33
+    primary     ir ao estado 34
 
 
 Estado 45
 
-   47 comparison_operator: TK_GREATER_EQUAL •
+   35 equality: comparison TK_BANG_EQUAL • comparison
 
-    $padrão  reduzir usando a regra 47 (comparison_operator)
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+
+    comparison  ir ao estado 63
+    term        ir ao estado 31
+    factor      ir ao estado 32
+    unary       ir ao estado 33
+    primary     ir ao estado 34
 
 
 Estado 46
 
-   46 comparison_operator: TK_LESSER •
+   34 equality: comparison TK_EQUAL_EQUAL • comparison
 
-    $padrão  reduzir usando a regra 46 (comparison_operator)
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+
+    comparison  ir ao estado 64
+    term        ir ao estado 31
+    factor      ir ao estado 32
+    unary       ir ao estado 33
+    primary     ir ao estado 34
 
 
 Estado 47
 
-   45 comparison_operator: TK_GREATER •
+   56 comparison_operator: TK_LESSER_EQUAL •
 
-    $padrão  reduzir usando a regra 45 (comparison_operator)
+    $padrão  reduzir usando a regra 56 (comparison_operator)
 
 
 Estado 48
 
-   29 comparison: term comparison_operator • term
+   55 comparison_operator: TK_GREATER_EQUAL •
 
-    TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
-    TK_STRING      deslocar, e ir ao estado 14
-    TK_TRUE        deslocar, e ir ao estado 15
-    TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
-
-    term     ir ao estado 61
-    factor   ir ao estado 30
-    unary    ir ao estado 31
-    primary  ir ao estado 32
+    $padrão  reduzir usando a regra 55 (comparison_operator)
 
 
 Estado 49
 
-   31 term: factor TK_PLUS • factor
+   54 comparison_operator: TK_LESSER •
 
-    TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
-    TK_STRING      deslocar, e ir ao estado 14
-    TK_TRUE        deslocar, e ir ao estado 15
-    TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
-
-    factor   ir ao estado 62
-    unary    ir ao estado 31
-    primary  ir ao estado 32
+    $padrão  reduzir usando a regra 54 (comparison_operator)
 
 
 Estado 50
 
-   32 term: factor TK_MINUS • factor
+   53 comparison_operator: TK_GREATER •
 
-    TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
-    TK_STRING      deslocar, e ir ao estado 14
-    TK_TRUE        deslocar, e ir ao estado 15
-    TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
-
-    factor   ir ao estado 63
-    unary    ir ao estado 31
-    primary  ir ao estado 32
+    $padrão  reduzir usando a regra 53 (comparison_operator)
 
 
 Estado 51
 
-   34 factor: unary TK_STAR • unary
+   37 comparison: term comparison_operator • term
 
     TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
     TK_STRING      deslocar, e ir ao estado 14
     TK_TRUE        deslocar, e ir ao estado 15
     TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
 
-    unary    ir ao estado 64
-    primary  ir ao estado 32
+    term     ir ao estado 65
+    factor   ir ao estado 32
+    unary    ir ao estado 33
+    primary  ir ao estado 34
 
 
 Estado 52
 
-   35 factor: unary TK_SLASH • unary
+   39 term: factor TK_PLUS • factor
 
     TK_NUMBER      deslocar, e ir ao estado 12
-    TK_IDENTIFIER  deslocar, e ir ao estado 36
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
     TK_STRING      deslocar, e ir ao estado 14
     TK_TRUE        deslocar, e ir ao estado 15
     TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
 
-    unary    ir ao estado 65
-    primary  ir ao estado 32
+    factor   ir ao estado 66
+    unary    ir ao estado 33
+    primary  ir ao estado 34
 
 
 Estado 53
+
+   40 term: factor TK_MINUS • factor
+
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+
+    factor   ir ao estado 67
+    unary    ir ao estado 33
+    primary  ir ao estado 34
+
+
+Estado 54
+
+   42 factor: unary TK_STAR • unary
+
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+
+    unary    ir ao estado 68
+    primary  ir ao estado 34
+
+
+Estado 55
+
+   43 factor: unary TK_SLASH • unary
+
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+
+    unary    ir ao estado 69
+    primary  ir ao estado 34
+
+
+Estado 56
 
    11 var_declaration: TK_VAR $@3 TK_IDENTIFIER • $@4 var_init
 
     $padrão  reduzir usando a regra 10 ($@4)
 
-    $@4  ir ao estado 66
+    $@4  ir ao estado 70
 
 
-Estado 54
+Estado 57
 
-   20 assignment: TK_IDENTIFIER $@7 TK_EQUAL • assignment
+   29 assignment: TK_IDENTIFIER $@10 TK_EQUAL • assignment
 
     TK_NUMBER      deslocar, e ir ao estado 12
     TK_IDENTIFIER  deslocar, e ir ao estado 13
     TK_STRING      deslocar, e ir ao estado 14
     TK_TRUE        deslocar, e ir ao estado 15
     TK_FALSE       deslocar, e ir ao estado 16
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
 
-    assignment  ir ao estado 67
-    logic_or    ir ao estado 25
-    logic_and   ir ao estado 26
-    equality    ir ao estado 27
-    comparison  ir ao estado 28
-    term        ir ao estado 29
-    factor      ir ao estado 30
-    unary       ir ao estado 31
-    primary     ir ao estado 32
-
-
-Estado 55
-
-   17 statement: TK_PRINT $@5 TK_LPAREN • TK_STRING $@6 TK_RPAREN TK_SEMICOLON
-
-    TK_STRING  deslocar, e ir ao estado 68
-
-
-Estado 56
-
-   44 primary: TK_LPAREN expression TK_RPAREN •
-
-    $padrão  reduzir usando a regra 44 (primary)
-
-
-Estado 57
-
-   22 logic_or: logic_and TK_OR logic_and •
-
-    $padrão  reduzir usando a regra 22 (logic_or)
+    assignment  ir ao estado 71
+    logic       ir ao estado 28
+    equality    ir ao estado 29
+    comparison  ir ao estado 30
+    term        ir ao estado 31
+    factor      ir ao estado 32
+    unary       ir ao estado 33
+    primary     ir ao estado 34
 
 
 Estado 58
 
-   24 logic_and: equality TK_AND equality •
+   19 print_statement: TK_PRINT $@5 TK_LPAREN • TK_STRING $@6 TK_RPAREN TK_SEMICOLON
 
-    $padrão  reduzir usando a regra 24 (logic_and)
+    TK_STRING  deslocar, e ir ao estado 72
 
 
 Estado 59
 
-   27 equality: comparison TK_BANG_EQUAL comparison •
+   21 if_statement: TK_IF $@7 TK_LPAREN • logic TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement
 
-    $padrão  reduzir usando a regra 27 (equality)
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 39
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+
+    logic       ir ao estado 73
+    equality    ir ao estado 29
+    comparison  ir ao estado 30
+    term        ir ao estado 31
+    factor      ir ao estado 32
+    unary       ir ao estado 33
+    primary     ir ao estado 34
 
 
 Estado 60
 
-   26 equality: comparison TK_EQUAL_EQUAL comparison •
+   52 primary: TK_LPAREN expression TK_RPAREN •
 
-    $padrão  reduzir usando a regra 26 (equality)
+    $padrão  reduzir usando a regra 52 (primary)
 
 
 Estado 61
 
-   29 comparison: term comparison_operator term •
+   32 logic: logic TK_AND equality •
 
-    $padrão  reduzir usando a regra 29 (comparison)
+    $padrão  reduzir usando a regra 32 (logic)
 
 
 Estado 62
 
-   31 term: factor TK_PLUS factor •
+   31 logic: logic TK_OR equality •
 
-    $padrão  reduzir usando a regra 31 (term)
+    $padrão  reduzir usando a regra 31 (logic)
 
 
 Estado 63
 
-   32 term: factor TK_MINUS factor •
+   35 equality: comparison TK_BANG_EQUAL comparison •
 
-    $padrão  reduzir usando a regra 32 (term)
+    $padrão  reduzir usando a regra 35 (equality)
 
 
 Estado 64
 
-   34 factor: unary TK_STAR unary •
+   34 equality: comparison TK_EQUAL_EQUAL comparison •
 
-    $padrão  reduzir usando a regra 34 (factor)
+    $padrão  reduzir usando a regra 34 (equality)
 
 
 Estado 65
 
-   35 factor: unary TK_SLASH unary •
+   37 comparison: term comparison_operator term •
 
-    $padrão  reduzir usando a regra 35 (factor)
+    $padrão  reduzir usando a regra 37 (comparison)
 
 
 Estado 66
 
-   11 var_declaration: TK_VAR $@3 TK_IDENTIFIER $@4 • var_init
+   39 term: factor TK_PLUS factor •
 
-    TK_EQUAL      deslocar, e ir ao estado 69
-    TK_SEMICOLON  deslocar, e ir ao estado 70
-
-    var_init  ir ao estado 71
+    $padrão  reduzir usando a regra 39 (term)
 
 
 Estado 67
 
-   20 assignment: TK_IDENTIFIER $@7 TK_EQUAL assignment •
+   40 term: factor TK_MINUS factor •
 
-    $padrão  reduzir usando a regra 20 (assignment)
+    $padrão  reduzir usando a regra 40 (term)
 
 
 Estado 68
 
-   17 statement: TK_PRINT $@5 TK_LPAREN TK_STRING • $@6 TK_RPAREN TK_SEMICOLON
+   42 factor: unary TK_STAR unary •
 
-    $padrão  reduzir usando a regra 16 ($@6)
-
-    $@6  ir ao estado 72
+    $padrão  reduzir usando a regra 42 (factor)
 
 
 Estado 69
+
+   43 factor: unary TK_SLASH unary •
+
+    $padrão  reduzir usando a regra 43 (factor)
+
+
+Estado 70
+
+   11 var_declaration: TK_VAR $@3 TK_IDENTIFIER $@4 • var_init
+
+    TK_EQUAL      deslocar, e ir ao estado 74
+    TK_SEMICOLON  deslocar, e ir ao estado 75
+
+    var_init  ir ao estado 76
+
+
+Estado 71
+
+   29 assignment: TK_IDENTIFIER $@10 TK_EQUAL assignment •
+
+    $padrão  reduzir usando a regra 29 (assignment)
+
+
+Estado 72
+
+   19 print_statement: TK_PRINT $@5 TK_LPAREN TK_STRING • $@6 TK_RPAREN TK_SEMICOLON
+
+    $padrão  reduzir usando a regra 18 ($@6)
+
+    $@6  ir ao estado 77
+
+
+Estado 73
+
+   21 if_statement: TK_IF $@7 TK_LPAREN logic • TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement
+   31 logic: logic • TK_OR equality
+   32      | logic • TK_AND equality
+
+    TK_AND     deslocar, e ir ao estado 43
+    TK_OR      deslocar, e ir ao estado 44
+    TK_RPAREN  deslocar, e ir ao estado 78
+
+
+Estado 74
 
    13 var_init: TK_EQUAL • statement
 
@@ -901,59 +985,212 @@ Estado 69
     TK_TRUE        deslocar, e ir ao estado 15
     TK_FALSE       deslocar, e ir ao estado 16
     TK_PRINT       deslocar, e ir ao estado 17
-    TK_MINUS       deslocar, e ir ao estado 18
-    TK_LPAREN      deslocar, e ir ao estado 19
+    TK_IF          deslocar, e ir ao estado 18
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
 
-    statement   ir ao estado 73
-    expression  ir ao estado 23
-    assignment  ir ao estado 24
-    logic_or    ir ao estado 25
-    logic_and   ir ao estado 26
-    equality    ir ao estado 27
-    comparison  ir ao estado 28
-    term        ir ao estado 29
-    factor      ir ao estado 30
-    unary       ir ao estado 31
-    primary     ir ao estado 32
+    statement        ir ao estado 79
+    print_statement  ir ao estado 24
+    if_statement     ir ao estado 25
+    expression       ir ao estado 26
+    assignment       ir ao estado 27
+    logic            ir ao estado 28
+    equality         ir ao estado 29
+    comparison       ir ao estado 30
+    term             ir ao estado 31
+    factor           ir ao estado 32
+    unary            ir ao estado 33
+    primary          ir ao estado 34
 
 
-Estado 70
+Estado 75
 
    12 var_init: TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 12 (var_init)
 
 
-Estado 71
+Estado 76
 
    11 var_declaration: TK_VAR $@3 TK_IDENTIFIER $@4 var_init •
 
     $padrão  reduzir usando a regra 11 (var_declaration)
 
 
-Estado 72
+Estado 77
 
-   17 statement: TK_PRINT $@5 TK_LPAREN TK_STRING $@6 • TK_RPAREN TK_SEMICOLON
+   19 print_statement: TK_PRINT $@5 TK_LPAREN TK_STRING $@6 • TK_RPAREN TK_SEMICOLON
 
-    TK_RPAREN  deslocar, e ir ao estado 74
+    TK_RPAREN  deslocar, e ir ao estado 80
 
 
-Estado 73
+Estado 78
+
+   21 if_statement: TK_IF $@7 TK_LPAREN logic TK_RPAREN • TK_LBRACE declarations TK_RBRACE else_statement
+
+    TK_LBRACE  deslocar, e ir ao estado 81
+
+
+Estado 79
 
    13 var_init: TK_EQUAL statement •
 
     $padrão  reduzir usando a regra 13 (var_init)
 
 
-Estado 74
+Estado 80
 
-   17 statement: TK_PRINT $@5 TK_LPAREN TK_STRING $@6 TK_RPAREN • TK_SEMICOLON
+   19 print_statement: TK_PRINT $@5 TK_LPAREN TK_STRING $@6 TK_RPAREN • TK_SEMICOLON
 
-    TK_SEMICOLON  deslocar, e ir ao estado 75
+    TK_SEMICOLON  deslocar, e ir ao estado 82
 
 
-Estado 75
+Estado 81
 
-   17 statement: TK_PRINT $@5 TK_LPAREN TK_STRING $@6 TK_RPAREN TK_SEMICOLON •
+   21 if_statement: TK_IF $@7 TK_LPAREN logic TK_RPAREN TK_LBRACE • declarations TK_RBRACE else_statement
 
-    $padrão  reduzir usando a regra 17 (statement)
+    $padrão  reduzir usando a regra 5 (declarations)
+
+    declarations  ir ao estado 83
+
+
+Estado 82
+
+   19 print_statement: TK_PRINT $@5 TK_LPAREN TK_STRING $@6 TK_RPAREN TK_SEMICOLON •
+
+    $padrão  reduzir usando a regra 19 (print_statement)
+
+
+Estado 83
+
+    6 declarations: declarations • declaration
+   21 if_statement: TK_IF $@7 TK_LPAREN logic TK_RPAREN TK_LBRACE declarations • TK_RBRACE else_statement
+
+    TK_VAR         deslocar, e ir ao estado 11
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 13
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_PRINT       deslocar, e ir ao estado 17
+    TK_IF          deslocar, e ir ao estado 18
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+    TK_RBRACE      deslocar, e ir ao estado 84
+
+    declaration      ir ao estado 21
+    var_declaration  ir ao estado 22
+    statement        ir ao estado 23
+    print_statement  ir ao estado 24
+    if_statement     ir ao estado 25
+    expression       ir ao estado 26
+    assignment       ir ao estado 27
+    logic            ir ao estado 28
+    equality         ir ao estado 29
+    comparison       ir ao estado 30
+    term             ir ao estado 31
+    factor           ir ao estado 32
+    unary            ir ao estado 33
+    primary          ir ao estado 34
+
+
+Estado 84
+
+   21 if_statement: TK_IF $@7 TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE • else_statement
+
+    TK_ELSE  deslocar, e ir ao estado 85
+
+    $padrão  reduzir usando a regra 22 (else_statement)
+
+    else_statement  ir ao estado 86
+
+
+Estado 85
+
+   24 else_statement: TK_ELSE • $@8 if_statement
+   26               | TK_ELSE • $@9 TK_LBRACE declarations TK_RBRACE
+
+    TK_LBRACE  reduzir usando a regra 25 ($@9)
+    $padrão    reduzir usando a regra 23 ($@8)
+
+    $@8  ir ao estado 87
+    $@9  ir ao estado 88
+
+
+Estado 86
+
+   21 if_statement: TK_IF $@7 TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement •
+
+    $padrão  reduzir usando a regra 21 (if_statement)
+
+
+Estado 87
+
+   24 else_statement: TK_ELSE $@8 • if_statement
+
+    TK_IF  deslocar, e ir ao estado 18
+
+    if_statement  ir ao estado 89
+
+
+Estado 88
+
+   26 else_statement: TK_ELSE $@9 • TK_LBRACE declarations TK_RBRACE
+
+    TK_LBRACE  deslocar, e ir ao estado 90
+
+
+Estado 89
+
+   24 else_statement: TK_ELSE $@8 if_statement •
+
+    $padrão  reduzir usando a regra 24 (else_statement)
+
+
+Estado 90
+
+   26 else_statement: TK_ELSE $@9 TK_LBRACE • declarations TK_RBRACE
+
+    $padrão  reduzir usando a regra 5 (declarations)
+
+    declarations  ir ao estado 91
+
+
+Estado 91
+
+    6 declarations: declarations • declaration
+   26 else_statement: TK_ELSE $@9 TK_LBRACE declarations • TK_RBRACE
+
+    TK_VAR         deslocar, e ir ao estado 11
+    TK_NUMBER      deslocar, e ir ao estado 12
+    TK_IDENTIFIER  deslocar, e ir ao estado 13
+    TK_STRING      deslocar, e ir ao estado 14
+    TK_TRUE        deslocar, e ir ao estado 15
+    TK_FALSE       deslocar, e ir ao estado 16
+    TK_PRINT       deslocar, e ir ao estado 17
+    TK_IF          deslocar, e ir ao estado 18
+    TK_MINUS       deslocar, e ir ao estado 19
+    TK_LPAREN      deslocar, e ir ao estado 20
+    TK_RBRACE      deslocar, e ir ao estado 92
+
+    declaration      ir ao estado 21
+    var_declaration  ir ao estado 22
+    statement        ir ao estado 23
+    print_statement  ir ao estado 24
+    if_statement     ir ao estado 25
+    expression       ir ao estado 26
+    assignment       ir ao estado 27
+    logic            ir ao estado 28
+    equality         ir ao estado 29
+    comparison       ir ao estado 30
+    term             ir ao estado 31
+    factor           ir ao estado 32
+    unary            ir ao estado 33
+    primary          ir ao estado 34
+
+
+Estado 92
+
+   26 else_statement: TK_ELSE $@9 TK_LBRACE declarations TK_RBRACE •
+
+    $padrão  reduzir usando a regra 26 (else_statement)

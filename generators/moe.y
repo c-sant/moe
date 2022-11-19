@@ -39,8 +39,8 @@
     int sem_errors = 0;
     char errors[10][100];
 
-    char reserved[10][3] = {
-        "var", "program", "print"
+    char reserved[10][8] = {
+        "var", "program", "print", "if", "else", "int", "position", "string"
     };
 
     void check_declaration(char *c);
@@ -54,9 +54,11 @@
 }
 %start program
 %token <nd_obj> TK_PROGRAM
-%token <nd_obj> TK_VAR TK_NUMBER TK_IDENTIFIER TK_STRING
+%token <nd_obj> TK_STRING_LITERAL TK_NUMBER TK_IDENTIFIER 
+%token <nd_obj> TK_STRING TK_INT TK_POSITION
 %token <nd_obj> TK_TRUE TK_FALSE
 %token <nd_obj> TK_PRINT
+%token <nd_obj> TK_IF TK_ELSE
 %left <nd_obj> TK_AND TK_OR
 %left <nd_obj> TK_EQUAL TK_BANG_EQUAL TK_EQUAL_EQUAL
 %left <nd_obj> TK_LESSER_EQUAL TK_GREATER_EQUAL TK_LESSER TK_GREATER
@@ -67,8 +69,8 @@
 %token <nd_obj> TK_SEMICOLON
 
 %type <nd_obj> program body declarations declaration var_declaration statement
-%type <nd_obj> expression assignment logic_or logic_and equality comparison term
-%type <nd_obj> factor unary primary var_init
+%type <nd_obj> print_statement if_statement else_statement expression assignment
+%type <nd_obj> logic equality comparison term factor unary primary var_init
 
 %%
 
@@ -82,7 +84,7 @@ program             : TK_PROGRAM { add_symbol('K'); } TK_IDENTIFIER
 body                : declarations                                              { $$.nd = mknode($1.nd, NULL, "body"); }
                     ;
 
-// statements
+// declarations
 
 declarations        :                                                           { $$.nd = NULL; }
                     | declarations declaration                                  { $$.nd = mknode($1.nd, $2.nd, "declarations"); }
@@ -92,7 +94,7 @@ declaration         : var_declaration                                           
                     | statement                                                 { $$.nd = mknode($1.nd, NULL, "declaration"); }
                     ;
 
-var_declaration     : TK_VAR { insert_type(); } TK_IDENTIFIER
+var_declaration     : data_type { insert_type(); } TK_IDENTIFIER
                       { add_symbol('V'); } var_init                             { 
                                                                                     $3.nd = mknode(NULL, NULL, $3.name); 
                                                                                     $$.nd = mknode($3.nd, $5.nd, "var_declaration");
@@ -103,9 +105,33 @@ var_init            : TK_SEMICOLON                                              
                     | TK_EQUAL statement                                        { $$.nd = mknode($2.nd, NULL, "var_init"); }
                     ;
 
+data_type           : TK_STRING
+                    | TK_INT
+                    | TK_POSITION
+                    ;
+
+// statements
+
 statement           : expression TK_SEMICOLON                                   { $$.nd = mknode($1.nd, NULL, "statement"); }
-                    | TK_PRINT { add_symbol('K'); } TK_LPAREN TK_STRING 
+                    | print_statement
+                    | if_statement
+                    ;
+
+print_statement     : TK_PRINT { add_symbol('K'); } TK_LPAREN TK_STRING 
                       { add_symbol('C'); } TK_RPAREN TK_SEMICOLON               { $$.nd = mknode(NULL, NULL, "print"); }
+                    ;
+
+if_statement        : TK_IF { add_symbol('K'); } TK_LPAREN logic TK_RPAREN 
+                      TK_LBRACE declarations TK_RBRACE else_statement           { 
+                                                                                    struct node *if_node = mknode($4.nd, $7.nd, "if");
+                                                                                    $$.nd = mknode(if_node, $9.nd, "if-else"); 
+                                                                                }
+                    ;
+
+else_statement      :                                                           { $$.nd = NULL; }
+                    | TK_ELSE { add_symbol('K'); } if_statement                 { $$.nd = mknode($3.nd, NULL, "else-if"); }
+                    | TK_ELSE { add_symbol('K'); } TK_LBRACE declarations 
+                      TK_RBRACE                                                 { $$.nd = mknode($4.nd, NULL, "else"); }
                     ;
 
 // expressions
@@ -115,16 +141,14 @@ expression          : assignment                                                
 
 assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL 
                       assignment                                                { $$.nd = mknode($1.nd, $3.nd, "assignment"); }
-                    | logic_or                                                  { $$.nd = mknode($1.nd, NULL, "assignment"); }
+                    | logic                                                     { $$.nd = mknode($1.nd, NULL, "assignment"); }
                     ;
 
-logic_or            : logic_and TK_OR logic_and                                 { $$.nd = mknode($1.nd, $3.nd, "logic_or"); }
-                    | logic_and                                                 { $$.nd = mknode($1.nd, NULL, "logic_or"); }
+logic               : logic TK_OR equality                                      { $$.nd = mknode($1.nd, $3.nd, "logic"); }
+                    | logic TK_AND equality                                     { $$.nd = mknode($1.nd, $3.nd, "logic"); }
+                    | equality                                                  { $$.nd = mknode($1.nd, NULL, "logic"); }
                     ;
 
-logic_and           : equality TK_AND equality                                  { $$.nd = mknode($1.nd, $3.nd, "logic_and"); }
-                    | equality                                                  { $$.nd = mknode($1.nd, NULL, "logic_and"); }
-                    ;
 
 equality            : comparison TK_EQUAL_EQUAL comparison                      { $$.nd = mknode($1.nd, $3.nd, "equality"); }
                     | comparison TK_BANG_EQUAL comparison                       { $$.nd = mknode($1.nd, $3.nd, "equality"); }
@@ -152,7 +176,7 @@ unary               : TK_MINUS primary                                          
 primary             : TK_TRUE                                                   { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_FALSE                                                  { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_NUMBER                                                 { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_STRING                                                 { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
+                    | TK_STRING_LITERAL                                         { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_IDENTIFIER                                             { $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_LPAREN expression TK_RPAREN
                     ;
