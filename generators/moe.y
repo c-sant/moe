@@ -3,6 +3,7 @@
     #include <string.h>
     #include <stdlib.h>
     #include <ctype.h>
+    #include <stdbool.h>
     #include "moe.lex.c"
     
     void yyerror(const char *s);
@@ -10,6 +11,9 @@
     int yywrap();
 
     void insert_type();
+    void set_global();
+    void unset_global();
+
     int search(char *type);
     void add_symbol(char c);
 
@@ -18,6 +22,7 @@
         char *data_type;
         char *type;
         int line_no;
+        bool is_global;
     } symbol_table[255];
 
     struct node {
@@ -34,13 +39,16 @@
     int count = 0;
     int q;
     char type[10];
+    bool is_global = false;
     extern int lineno;
 
     int sem_errors = 0;
     char errors[10][100];
 
-    char reserved[10][8] = {
-        "var", "program", "print", "if", "else", "int", "position", "string"
+    char reserved[10][18] = {
+        "var", "program", "print", "if", "else", "int", "position", "string",
+        "pos", "parameter", "param", "par", "open", "close", "jaw", "delay",
+        "global", "move", "await"
     };
 
     void check_declaration(char *c);
@@ -54,8 +62,10 @@
 }
 %start program
 %token <nd_obj> TK_PROGRAM
+%token <nd_obj> TK_OPEN TK_JAW TK_CLOSE TK_DELAY TK_GLOBAL
+%token <nd_obj> TK_MOVE TK_AWAIT
 %token <nd_obj> TK_STRING_LITERAL TK_NUMBER TK_IDENTIFIER 
-%token <nd_obj> TK_STRING TK_INT TK_POSITION
+%token <nd_obj> TK_STRING TK_INT TK_POSITION TK_PARAMETER
 %token <nd_obj> TK_TRUE TK_FALSE
 %token <nd_obj> TK_PRINT
 %token <nd_obj> TK_IF TK_ELSE
@@ -66,11 +76,14 @@
 %left <nd_obj> TK_STAR TK_SLASH
 %token <nd_obj> TK_LPAREN TK_RPAREN
 %token <nd_obj> TK_LBRACE TK_RBRACE
-%token <nd_obj> TK_SEMICOLON
+%token <nd_obj> TK_SEMICOLON TK_COMMA
 
 %type <nd_obj> program body declarations declaration var_declaration statement
-%type <nd_obj> print_statement if_statement else_statement expression assignment
-%type <nd_obj> logic equality comparison term factor unary primary var_init
+%type <nd_obj> print_statement if_statement else_statement open_statement
+%type <nd_obj> jaw_statement two_arguments close_statement optional_argument
+%type <nd_obj> delay_statement move_statement moved_statement expression 
+%type <nd_obj> assignment logic equality comparison term factor unary primary 
+%type <nd_obj> var_init access_modifier
 
 %%
 
@@ -94,10 +107,10 @@ declaration         : var_declaration                                           
                     | statement                                                 { $$.nd = mknode($1.nd, NULL, "declaration"); }
                     ;
 
-var_declaration     : data_type { insert_type(); } TK_IDENTIFIER
+var_declaration     : access_modifier data_type { insert_type(); } TK_IDENTIFIER
                       { add_symbol('V'); } var_init                             { 
-                                                                                    $3.nd = mknode(NULL, NULL, $3.name); 
-                                                                                    $$.nd = mknode($3.nd, $5.nd, "var_declaration");
+                                                                                    $4.nd = mknode(NULL, NULL, $4.name); 
+                                                                                    $$.nd = mknode($4.nd, $6.nd, "var_declaration");
                                                                                 }
                     ;
 
@@ -105,16 +118,27 @@ var_init            : TK_SEMICOLON                                              
                     | TK_EQUAL statement                                        { $$.nd = mknode($2.nd, NULL, "var_init"); }
                     ;
 
-data_type           : TK_STRING
-                    | TK_INT
-                    | TK_POSITION
+data_type           : TK_STRING                                                 { insert_type(); }
+                    | TK_INT                                                    { insert_type(); }
+                    | TK_POSITION                                               { insert_type(); }
+                    | TK_PARAMETER                                              { insert_type(); }
+                    ;
+
+access_modifier     : TK_GLOBAL { add_symbol('K'); }                            { set_global(); $$.nd = NULL; }
+                    |                                                           { unset_global(); $$.nd = NULL; }
                     ;
 
 // statements
 
 statement           : expression TK_SEMICOLON                                   { $$.nd = mknode($1.nd, NULL, "statement"); }
-                    | print_statement
-                    | if_statement
+                    | print_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    | if_statement                                              { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    | open_statement                                            { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    | jaw_statement                                             { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    | close_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    | delay_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    | move_statement                                            { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    | moved_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
                     ;
 
 print_statement     : TK_PRINT { add_symbol('K'); } TK_LPAREN TK_STRING 
@@ -132,6 +156,37 @@ else_statement      :                                                           
                     | TK_ELSE { add_symbol('K'); } if_statement                 { $$.nd = mknode($3.nd, NULL, "else-if"); }
                     | TK_ELSE { add_symbol('K'); } TK_LBRACE declarations 
                       TK_RBRACE                                                 { $$.nd = mknode($4.nd, NULL, "else"); }
+                    ;
+
+open_statement      : TK_OPEN { add_symbol('K'); } TK_LPAREN optional_argument 
+                      TK_RPAREN TK_SEMICOLON                                    { $$.nd = mknode($4.nd, NULL, "open"); }
+                    ;
+
+close_statement     : TK_CLOSE { add_symbol('K'); } TK_LPAREN optional_argument 
+                      TK_RPAREN TK_SEMICOLON                                    { $$.nd = mknode($4.nd, NULL, "close"); }
+                    ;
+
+optional_argument   :                                                           { $$.nd = NULL; }
+                    | term                                                      { $$.nd = $1.nd; }
+                    ;
+
+jaw_statement       : TK_JAW { add_symbol('K'); } TK_LPAREN two_arguments
+                      TK_RPAREN TK_SEMICOLON                                    { $$.nd = mknode($4.nd, NULL, "jaw"); }
+                    ;
+
+move_statement      : TK_MOVE { add_symbol('K'); } TK_LPAREN two_arguments
+                      TK_RPAREN TK_SEMICOLON                                    { $$.nd = mknode($4.nd, NULL, "move"); }
+                    ;
+
+moved_statement     : TK_AWAIT move_statement                                   { $$.nd = mknode($1.nd, NULL, "moved"); }
+                    ;
+
+two_arguments       : term                                                      { $$.nd = $1.nd; }                                          
+                    | term TK_COMMA term                                        { $$.nd = mknode($1.nd, $3.nd, "two_arguments"); }
+                    ;
+
+delay_statement     : TK_DELAY { add_symbol('K'); } TK_LPAREN term TK_RPAREN
+                      TK_SEMICOLON                                              { $$.nd = mknode($4.nd, NULL, "delay"); }
                     ;
 
 // expressions
@@ -199,7 +254,7 @@ int main() {
 	printf("_______________________________________\n\n");
 	int i=0;
 	for(i=0; i<count; i++) {
-		printf("%s\t%s\t%s\t%d\t\n", symbol_table[i].id_name, symbol_table[i].data_type, symbol_table[i].type, symbol_table[i].line_no);
+		printf("%s\t%s\t%s\t%d\t\n", symbol_table[i].id_name, symbol_table[i].data_type, symbol_table[i].type, symbol_table[i].line_no, symbol_table[i].is_global);
 	}
 	for(i=0;i<count;i++) {
 		free(symbol_table[i].id_name);
@@ -225,6 +280,14 @@ int main() {
 
 void insert_type() {
     strcpy(type, yytext);
+}
+
+void set_global() {
+    is_global = true;
+}
+
+void unset_global() {
+    is_global = false;
 }
 
 int search(char *type) {
@@ -258,6 +321,7 @@ void add_symbol(char c) {
             symbol_table[count].data_type = strdup("N/A");
             symbol_table[count].line_no = lineno;
             symbol_table[count].type = strdup("Keyword\t");
+            symbol_table[count].is_global = is_global;
             count++;
         }
         else if (c == 'V') {            
@@ -265,6 +329,7 @@ void add_symbol(char c) {
             symbol_table[count].data_type = strdup(type);
             symbol_table[count].line_no = lineno;
             symbol_table[count].type = strdup("Variable");
+            symbol_table[count].is_global = is_global;
             count++;
         }
         else if (c == 'C') {
@@ -272,6 +337,7 @@ void add_symbol(char c) {
             symbol_table[count].data_type = strdup("CONST");
             symbol_table[count].line_no = lineno;
             symbol_table[count].type = strdup("Constant");
+            symbol_table[count].is_global = is_global;
             count++;
         }
     }
