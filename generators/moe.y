@@ -45,10 +45,10 @@
     int sem_errors = 0;
     char errors[10][100];
 
-    char reserved[10][18] = {
+    char reserved[10][22] = {
         "var", "program", "print", "if", "else", "int", "position", "string",
         "pos", "parameter", "param", "par", "open", "close", "jaw", "delay",
-        "global", "move", "await", "for", "between"
+        "global", "move", "await", "for", "between", "bool"
     };
 
     void check_declaration(char *c);
@@ -64,9 +64,8 @@
 %token <nd_obj> TK_PROGRAM
 %token <nd_obj> TK_OPEN TK_JAW TK_CLOSE TK_DELAY TK_GLOBAL
 %token <nd_obj> TK_MOVE TK_AWAIT
-%token <nd_obj> TK_STRING_LITERAL TK_NUMBER TK_IDENTIFIER 
-%token <nd_obj> TK_STRING TK_INT TK_POSITION TK_PARAMETER
-%token <nd_obj> TK_TRUE TK_FALSE
+%token <nd_obj> TK_STRING_LITERAL TK_NUMBER TK_IDENTIFIER TK_TRUE TK_FALSE 
+%token <nd_obj> TK_STRING TK_INT TK_POSITION TK_PARAMETER TK_BOOL
 %token <nd_obj> TK_PRINT
 %token <nd_obj> TK_IF TK_ELSE TK_FOR TK_BETWEEN
 %left <nd_obj> TK_AND TK_OR
@@ -83,7 +82,7 @@
 %type <nd_obj> jaw_statement two_arguments close_statement optional_argument
 %type <nd_obj> delay_statement move_statement moved_statement loop_statement 
 %type <nd_obj> expression assignment logic equality comparison term factor unary  
-%type <nd_obj> primary var_init access_modifier
+%type <nd_obj> primary var_init access_modifier numeric_variable
 
 %%
 
@@ -107,10 +106,10 @@ declaration         : var_declaration                                           
                     | statement                                                 { $$.nd = mknode($1.nd, NULL, "declaration"); }
                     ;
 
-var_declaration     : access_modifier data_type { insert_type(); } TK_IDENTIFIER
+var_declaration     : access_modifier data_type TK_IDENTIFIER
                       { add_symbol('V'); } var_init                             { 
-                                                                                    $4.nd = mknode(NULL, NULL, $4.name); 
-                                                                                    $$.nd = mknode($4.nd, $6.nd, "var_declaration");
+                                                                                    $3.nd = mknode(NULL, NULL, $3.name); 
+                                                                                    $$.nd = mknode($3.nd, $5.nd, "var_declaration");
                                                                                 }
                     ;
 
@@ -120,6 +119,7 @@ var_init            : TK_SEMICOLON                                              
 
 data_type           : TK_STRING                                                 { insert_type(); }
                     | TK_INT                                                    { insert_type(); }
+                    | TK_BOOL                                                   { insert_type(); }
                     | TK_POSITION                                               { insert_type(); }
                     | TK_PARAMETER                                              { insert_type(); }
                     ;
@@ -133,6 +133,7 @@ access_modifier     : TK_GLOBAL { add_symbol('K'); }                            
 statement           : expression TK_SEMICOLON                                   { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | print_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | if_statement                                              { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    | loop_statement                                            { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | open_statement                                            { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | jaw_statement                                             { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | close_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
@@ -141,7 +142,7 @@ statement           : expression TK_SEMICOLON                                   
                     | moved_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
                     ;
 
-print_statement     : TK_PRINT { add_symbol('K'); } TK_LPAREN TK_STRING 
+print_statement     : TK_PRINT { add_symbol('K'); } TK_LPAREN TK_STRING_LITERAL 
                       { add_symbol('C'); } TK_RPAREN TK_SEMICOLON               { $$.nd = mknode(NULL, NULL, "print"); }
                     ;
 
@@ -152,10 +153,11 @@ if_statement        : TK_IF { add_symbol('K'); } TK_LPAREN logic TK_RPAREN
                                                                                 }
                     ;
 
-loop_statement      : TK_FOR { add_symbol('K'); } TK_LPAREN TK_IDENTIFIER 
-                      TK_BETWEEN { add_symbol('K'); } TK_NUMBER TK_COMMA 
-                      TK_NUMBER TK_RPAREN TK_LBRACE declarations TK_RBRACE      { 
-                                                                                    $$.nd = mknode($12.nd, NULL, "for-loop");
+loop_statement      : TK_FOR { add_symbol('K'); } TK_LPAREN TK_IDENTIFIER
+                      { add_symbol('V'); } TK_BETWEEN { add_symbol('K'); } 
+                      numeric_variable TK_COMMA numeric_variable TK_RPAREN
+                      TK_LBRACE declarations TK_RBRACE                          { 
+                                                                                    $$.nd = mknode($13.nd, NULL, "for-loop");
                                                                                 }
                     ;
 
@@ -239,9 +241,17 @@ primary             : TK_TRUE                                                   
                     | TK_FALSE                                                  { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_NUMBER                                                 { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_STRING_LITERAL                                         { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_IDENTIFIER                                             { $$.nd = mknode(NULL, NULL, $1.name); }
+                    | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_LPAREN expression TK_RPAREN
                     ;
+
+numeric_variable    : TK_NUMBER                                                 { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
+                    | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
+                    ;
+
+/* text_variable       : TK_STRING_LITERAL                                         { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
+                    | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
+                    ; */
 
 comparison_operator : TK_GREATER
                     | TK_LESSER

@@ -115,10 +115,10 @@
     int sem_errors = 0;
     char errors[10][100];
 
-    char reserved[10][18] = {
+    char reserved[10][22] = {
         "var", "program", "print", "if", "else", "int", "position", "string",
         "pos", "parameter", "param", "par", "open", "close", "jaw", "delay",
-        "global", "move", "await"
+        "global", "move", "await", "for", "between", "bool"
     };
 
     void check_declaration(char *c);
@@ -165,81 +165,90 @@ enum yysymbol_kind_t
   YYSYMBOL_TK_STRING_LITERAL = 11,         /* TK_STRING_LITERAL  */
   YYSYMBOL_TK_NUMBER = 12,                 /* TK_NUMBER  */
   YYSYMBOL_TK_IDENTIFIER = 13,             /* TK_IDENTIFIER  */
-  YYSYMBOL_TK_STRING = 14,                 /* TK_STRING  */
-  YYSYMBOL_TK_INT = 15,                    /* TK_INT  */
-  YYSYMBOL_TK_POSITION = 16,               /* TK_POSITION  */
-  YYSYMBOL_TK_PARAMETER = 17,              /* TK_PARAMETER  */
-  YYSYMBOL_TK_TRUE = 18,                   /* TK_TRUE  */
-  YYSYMBOL_TK_FALSE = 19,                  /* TK_FALSE  */
-  YYSYMBOL_TK_PRINT = 20,                  /* TK_PRINT  */
-  YYSYMBOL_TK_IF = 21,                     /* TK_IF  */
-  YYSYMBOL_TK_ELSE = 22,                   /* TK_ELSE  */
-  YYSYMBOL_TK_AND = 23,                    /* TK_AND  */
-  YYSYMBOL_TK_OR = 24,                     /* TK_OR  */
-  YYSYMBOL_TK_EQUAL = 25,                  /* TK_EQUAL  */
-  YYSYMBOL_TK_BANG_EQUAL = 26,             /* TK_BANG_EQUAL  */
-  YYSYMBOL_TK_EQUAL_EQUAL = 27,            /* TK_EQUAL_EQUAL  */
-  YYSYMBOL_TK_LESSER_EQUAL = 28,           /* TK_LESSER_EQUAL  */
-  YYSYMBOL_TK_GREATER_EQUAL = 29,          /* TK_GREATER_EQUAL  */
-  YYSYMBOL_TK_LESSER = 30,                 /* TK_LESSER  */
-  YYSYMBOL_TK_GREATER = 31,                /* TK_GREATER  */
-  YYSYMBOL_TK_PLUS = 32,                   /* TK_PLUS  */
-  YYSYMBOL_TK_MINUS = 33,                  /* TK_MINUS  */
-  YYSYMBOL_TK_STAR = 34,                   /* TK_STAR  */
-  YYSYMBOL_TK_SLASH = 35,                  /* TK_SLASH  */
-  YYSYMBOL_TK_LPAREN = 36,                 /* TK_LPAREN  */
-  YYSYMBOL_TK_RPAREN = 37,                 /* TK_RPAREN  */
-  YYSYMBOL_TK_LBRACE = 38,                 /* TK_LBRACE  */
-  YYSYMBOL_TK_RBRACE = 39,                 /* TK_RBRACE  */
-  YYSYMBOL_TK_SEMICOLON = 40,              /* TK_SEMICOLON  */
-  YYSYMBOL_TK_COMMA = 41,                  /* TK_COMMA  */
-  YYSYMBOL_YYACCEPT = 42,                  /* $accept  */
-  YYSYMBOL_program = 43,                   /* program  */
-  YYSYMBOL_44_1 = 44,                      /* $@1  */
-  YYSYMBOL_45_2 = 45,                      /* $@2  */
-  YYSYMBOL_body = 46,                      /* body  */
-  YYSYMBOL_declarations = 47,              /* declarations  */
-  YYSYMBOL_declaration = 48,               /* declaration  */
-  YYSYMBOL_var_declaration = 49,           /* var_declaration  */
-  YYSYMBOL_50_3 = 50,                      /* $@3  */
-  YYSYMBOL_51_4 = 51,                      /* $@4  */
-  YYSYMBOL_var_init = 52,                  /* var_init  */
-  YYSYMBOL_data_type = 53,                 /* data_type  */
-  YYSYMBOL_access_modifier = 54,           /* access_modifier  */
-  YYSYMBOL_55_5 = 55,                      /* $@5  */
-  YYSYMBOL_statement = 56,                 /* statement  */
-  YYSYMBOL_print_statement = 57,           /* print_statement  */
-  YYSYMBOL_58_6 = 58,                      /* $@6  */
-  YYSYMBOL_59_7 = 59,                      /* $@7  */
-  YYSYMBOL_if_statement = 60,              /* if_statement  */
-  YYSYMBOL_61_8 = 61,                      /* $@8  */
-  YYSYMBOL_else_statement = 62,            /* else_statement  */
-  YYSYMBOL_63_9 = 63,                      /* $@9  */
-  YYSYMBOL_64_10 = 64,                     /* $@10  */
-  YYSYMBOL_open_statement = 65,            /* open_statement  */
-  YYSYMBOL_66_11 = 66,                     /* $@11  */
-  YYSYMBOL_close_statement = 67,           /* close_statement  */
-  YYSYMBOL_68_12 = 68,                     /* $@12  */
-  YYSYMBOL_optional_argument = 69,         /* optional_argument  */
-  YYSYMBOL_jaw_statement = 70,             /* jaw_statement  */
-  YYSYMBOL_71_13 = 71,                     /* $@13  */
-  YYSYMBOL_move_statement = 72,            /* move_statement  */
-  YYSYMBOL_73_14 = 73,                     /* $@14  */
-  YYSYMBOL_moved_statement = 74,           /* moved_statement  */
-  YYSYMBOL_two_arguments = 75,             /* two_arguments  */
-  YYSYMBOL_delay_statement = 76,           /* delay_statement  */
+  YYSYMBOL_TK_TRUE = 14,                   /* TK_TRUE  */
+  YYSYMBOL_TK_FALSE = 15,                  /* TK_FALSE  */
+  YYSYMBOL_TK_STRING = 16,                 /* TK_STRING  */
+  YYSYMBOL_TK_INT = 17,                    /* TK_INT  */
+  YYSYMBOL_TK_POSITION = 18,               /* TK_POSITION  */
+  YYSYMBOL_TK_PARAMETER = 19,              /* TK_PARAMETER  */
+  YYSYMBOL_TK_BOOL = 20,                   /* TK_BOOL  */
+  YYSYMBOL_TK_PRINT = 21,                  /* TK_PRINT  */
+  YYSYMBOL_TK_IF = 22,                     /* TK_IF  */
+  YYSYMBOL_TK_ELSE = 23,                   /* TK_ELSE  */
+  YYSYMBOL_TK_FOR = 24,                    /* TK_FOR  */
+  YYSYMBOL_TK_BETWEEN = 25,                /* TK_BETWEEN  */
+  YYSYMBOL_TK_AND = 26,                    /* TK_AND  */
+  YYSYMBOL_TK_OR = 27,                     /* TK_OR  */
+  YYSYMBOL_TK_EQUAL = 28,                  /* TK_EQUAL  */
+  YYSYMBOL_TK_BANG_EQUAL = 29,             /* TK_BANG_EQUAL  */
+  YYSYMBOL_TK_EQUAL_EQUAL = 30,            /* TK_EQUAL_EQUAL  */
+  YYSYMBOL_TK_LESSER_EQUAL = 31,           /* TK_LESSER_EQUAL  */
+  YYSYMBOL_TK_GREATER_EQUAL = 32,          /* TK_GREATER_EQUAL  */
+  YYSYMBOL_TK_LESSER = 33,                 /* TK_LESSER  */
+  YYSYMBOL_TK_GREATER = 34,                /* TK_GREATER  */
+  YYSYMBOL_TK_PLUS = 35,                   /* TK_PLUS  */
+  YYSYMBOL_TK_MINUS = 36,                  /* TK_MINUS  */
+  YYSYMBOL_TK_STAR = 37,                   /* TK_STAR  */
+  YYSYMBOL_TK_SLASH = 38,                  /* TK_SLASH  */
+  YYSYMBOL_TK_LPAREN = 39,                 /* TK_LPAREN  */
+  YYSYMBOL_TK_RPAREN = 40,                 /* TK_RPAREN  */
+  YYSYMBOL_TK_LBRACE = 41,                 /* TK_LBRACE  */
+  YYSYMBOL_TK_RBRACE = 42,                 /* TK_RBRACE  */
+  YYSYMBOL_TK_SEMICOLON = 43,              /* TK_SEMICOLON  */
+  YYSYMBOL_TK_COMMA = 44,                  /* TK_COMMA  */
+  YYSYMBOL_YYACCEPT = 45,                  /* $accept  */
+  YYSYMBOL_program = 46,                   /* program  */
+  YYSYMBOL_47_1 = 47,                      /* $@1  */
+  YYSYMBOL_48_2 = 48,                      /* $@2  */
+  YYSYMBOL_body = 49,                      /* body  */
+  YYSYMBOL_declarations = 50,              /* declarations  */
+  YYSYMBOL_declaration = 51,               /* declaration  */
+  YYSYMBOL_var_declaration = 52,           /* var_declaration  */
+  YYSYMBOL_53_3 = 53,                      /* $@3  */
+  YYSYMBOL_var_init = 54,                  /* var_init  */
+  YYSYMBOL_data_type = 55,                 /* data_type  */
+  YYSYMBOL_access_modifier = 56,           /* access_modifier  */
+  YYSYMBOL_57_4 = 57,                      /* $@4  */
+  YYSYMBOL_statement = 58,                 /* statement  */
+  YYSYMBOL_print_statement = 59,           /* print_statement  */
+  YYSYMBOL_60_5 = 60,                      /* $@5  */
+  YYSYMBOL_61_6 = 61,                      /* $@6  */
+  YYSYMBOL_if_statement = 62,              /* if_statement  */
+  YYSYMBOL_63_7 = 63,                      /* $@7  */
+  YYSYMBOL_loop_statement = 64,            /* loop_statement  */
+  YYSYMBOL_65_8 = 65,                      /* $@8  */
+  YYSYMBOL_66_9 = 66,                      /* $@9  */
+  YYSYMBOL_67_10 = 67,                     /* $@10  */
+  YYSYMBOL_else_statement = 68,            /* else_statement  */
+  YYSYMBOL_69_11 = 69,                     /* $@11  */
+  YYSYMBOL_70_12 = 70,                     /* $@12  */
+  YYSYMBOL_open_statement = 71,            /* open_statement  */
+  YYSYMBOL_72_13 = 72,                     /* $@13  */
+  YYSYMBOL_close_statement = 73,           /* close_statement  */
+  YYSYMBOL_74_14 = 74,                     /* $@14  */
+  YYSYMBOL_optional_argument = 75,         /* optional_argument  */
+  YYSYMBOL_jaw_statement = 76,             /* jaw_statement  */
   YYSYMBOL_77_15 = 77,                     /* $@15  */
-  YYSYMBOL_expression = 78,                /* expression  */
-  YYSYMBOL_assignment = 79,                /* assignment  */
-  YYSYMBOL_80_16 = 80,                     /* $@16  */
-  YYSYMBOL_logic = 81,                     /* logic  */
-  YYSYMBOL_equality = 82,                  /* equality  */
-  YYSYMBOL_comparison = 83,                /* comparison  */
-  YYSYMBOL_term = 84,                      /* term  */
-  YYSYMBOL_factor = 85,                    /* factor  */
-  YYSYMBOL_unary = 86,                     /* unary  */
-  YYSYMBOL_primary = 87,                   /* primary  */
-  YYSYMBOL_comparison_operator = 88        /* comparison_operator  */
+  YYSYMBOL_move_statement = 78,            /* move_statement  */
+  YYSYMBOL_79_16 = 79,                     /* $@16  */
+  YYSYMBOL_moved_statement = 80,           /* moved_statement  */
+  YYSYMBOL_two_arguments = 81,             /* two_arguments  */
+  YYSYMBOL_delay_statement = 82,           /* delay_statement  */
+  YYSYMBOL_83_17 = 83,                     /* $@17  */
+  YYSYMBOL_expression = 84,                /* expression  */
+  YYSYMBOL_assignment = 85,                /* assignment  */
+  YYSYMBOL_86_18 = 86,                     /* $@18  */
+  YYSYMBOL_logic = 87,                     /* logic  */
+  YYSYMBOL_equality = 88,                  /* equality  */
+  YYSYMBOL_comparison = 89,                /* comparison  */
+  YYSYMBOL_term = 90,                      /* term  */
+  YYSYMBOL_factor = 91,                    /* factor  */
+  YYSYMBOL_unary = 92,                     /* unary  */
+  YYSYMBOL_primary = 93,                   /* primary  */
+  YYSYMBOL_94_19 = 94,                     /* $@19  */
+  YYSYMBOL_numeric_variable = 95,          /* numeric_variable  */
+  YYSYMBOL_96_20 = 96,                     /* $@20  */
+  YYSYMBOL_comparison_operator = 97        /* comparison_operator  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -567,19 +576,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   170
+#define YYLAST   202
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  42
+#define YYNTOKENS  45
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  47
+#define YYNNTS  53
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  85
+#define YYNRULES  94
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  142
+#define YYNSTATES  161
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   296
+#define YYMAXUTOK   299
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -622,22 +631,23 @@ static const yytype_int8 yytranslate[] =
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    36,    37,    38,    39,    40,    41
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,    90,    90,    91,    90,    97,   102,   103,   106,   107,
-     110,   111,   110,   117,   118,   121,   122,   123,   124,   127,
+       0,    89,    89,    90,    89,    96,   101,   102,   105,   106,
+     110,   109,   116,   117,   120,   121,   122,   123,   124,   127,
      127,   128,   133,   134,   135,   136,   137,   138,   139,   140,
-     141,   144,   145,   144,   148,   148,   155,   156,   156,   157,
-     157,   161,   161,   165,   165,   169,   170,   173,   173,   177,
-     177,   181,   184,   185,   188,   188,   194,   197,   197,   199,
-     202,   203,   204,   208,   209,   210,   213,   214,   217,   218,
-     219,   222,   223,   224,   227,   228,   231,   232,   233,   234,
-     235,   236,   239,   240,   241,   242
+     141,   142,   145,   146,   145,   149,   149,   156,   157,   157,
+     156,   164,   165,   165,   166,   166,   170,   170,   174,   174,
+     178,   179,   182,   182,   186,   186,   190,   193,   194,   197,
+     197,   203,   206,   206,   208,   211,   212,   213,   217,   218,
+     219,   222,   223,   226,   227,   228,   231,   232,   233,   236,
+     237,   240,   241,   242,   243,   244,   244,   245,   248,   249,
+     249,   256,   257,   258,   259
 };
 #endif
 
@@ -655,21 +665,23 @@ static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "TK_PROGRAM",
   "TK_OPEN", "TK_JAW", "TK_CLOSE", "TK_DELAY", "TK_GLOBAL", "TK_MOVE",
-  "TK_AWAIT", "TK_STRING_LITERAL", "TK_NUMBER", "TK_IDENTIFIER",
-  "TK_STRING", "TK_INT", "TK_POSITION", "TK_PARAMETER", "TK_TRUE",
-  "TK_FALSE", "TK_PRINT", "TK_IF", "TK_ELSE", "TK_AND", "TK_OR",
-  "TK_EQUAL", "TK_BANG_EQUAL", "TK_EQUAL_EQUAL", "TK_LESSER_EQUAL",
-  "TK_GREATER_EQUAL", "TK_LESSER", "TK_GREATER", "TK_PLUS", "TK_MINUS",
-  "TK_STAR", "TK_SLASH", "TK_LPAREN", "TK_RPAREN", "TK_LBRACE",
-  "TK_RBRACE", "TK_SEMICOLON", "TK_COMMA", "$accept", "program", "$@1",
-  "$@2", "body", "declarations", "declaration", "var_declaration", "$@3",
-  "$@4", "var_init", "data_type", "access_modifier", "$@5", "statement",
-  "print_statement", "$@6", "$@7", "if_statement", "$@8", "else_statement",
-  "$@9", "$@10", "open_statement", "$@11", "close_statement", "$@12",
-  "optional_argument", "jaw_statement", "$@13", "move_statement", "$@14",
-  "moved_statement", "two_arguments", "delay_statement", "$@15",
-  "expression", "assignment", "$@16", "logic", "equality", "comparison",
-  "term", "factor", "unary", "primary", "comparison_operator", YY_NULLPTR
+  "TK_AWAIT", "TK_STRING_LITERAL", "TK_NUMBER", "TK_IDENTIFIER", "TK_TRUE",
+  "TK_FALSE", "TK_STRING", "TK_INT", "TK_POSITION", "TK_PARAMETER",
+  "TK_BOOL", "TK_PRINT", "TK_IF", "TK_ELSE", "TK_FOR", "TK_BETWEEN",
+  "TK_AND", "TK_OR", "TK_EQUAL", "TK_BANG_EQUAL", "TK_EQUAL_EQUAL",
+  "TK_LESSER_EQUAL", "TK_GREATER_EQUAL", "TK_LESSER", "TK_GREATER",
+  "TK_PLUS", "TK_MINUS", "TK_STAR", "TK_SLASH", "TK_LPAREN", "TK_RPAREN",
+  "TK_LBRACE", "TK_RBRACE", "TK_SEMICOLON", "TK_COMMA", "$accept",
+  "program", "$@1", "$@2", "body", "declarations", "declaration",
+  "var_declaration", "$@3", "var_init", "data_type", "access_modifier",
+  "$@4", "statement", "print_statement", "$@5", "$@6", "if_statement",
+  "$@7", "loop_statement", "$@8", "$@9", "$@10", "else_statement", "$@11",
+  "$@12", "open_statement", "$@13", "close_statement", "$@14",
+  "optional_argument", "jaw_statement", "$@15", "move_statement", "$@16",
+  "moved_statement", "two_arguments", "delay_statement", "$@17",
+  "expression", "assignment", "$@18", "logic", "equality", "comparison",
+  "term", "factor", "unary", "primary", "$@19", "numeric_variable", "$@20",
+  "comparison_operator", YY_NULLPTR
 };
 
 static const char *
@@ -679,12 +691,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-84)
+#define YYPACT_NINF (-133)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-58)
+#define YYTABLE_NINF (-63)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -693,21 +705,23 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      17,   -84,    32,    25,   -84,   -84,    19,   -84,    20,     6,
-     -84,   -84,   -84,   -84,   -84,   -84,   -84,    59,   -84,   -84,
-      46,   -84,   -84,   -84,   -84,    22,   118,   -84,   -84,   -13,
-     -84,   -84,   -84,   -84,   -84,   -84,   -84,   -84,   -84,    34,
-     -84,    -1,   -84,     2,    36,    37,    38,   -84,    58,    64,
-      67,    68,   -84,    69,   -84,    70,    71,    72,   -84,   -84,
-      73,   -84,   -84,   -84,   -84,   -84,   -84,   127,   127,   127,
-     127,   -84,   -84,   -84,   -84,   127,   127,   127,   127,   127,
-     127,   127,   127,   127,   127,   118,    92,   127,   -84,    96,
-     -84,   -84,   -84,   -84,   -84,   -84,   -84,   -84,   -84,    75,
-     -84,    76,    74,    79,    85,    91,   -84,   -84,     7,   -84,
-     101,   102,   127,   103,   104,   108,   112,   115,    -4,   -84,
-     -84,   -84,   -84,   -84,   -84,   116,   -84,   114,   -84,   -84,
-     -84,    42,   -84,   130,   117,   -84,   136,   120,   -84,   -84,
-      78,   -84
+       0,  -133,    24,    13,  -133,  -133,   -12,  -133,    26,     6,
+    -133,  -133,  -133,  -133,  -133,  -133,  -133,    65,  -133,  -133,
+      52,  -133,  -133,  -133,  -133,  -133,    22,    64,  -133,  -133,
+      93,  -133,  -133,  -133,  -133,  -133,  -133,  -133,  -133,  -133,
+    -133,    42,  -133,   -25,  -133,     2,    31,     5,     9,  -133,
+      68,    80,    85,    86,  -133,   101,  -133,    76,  -133,   102,
+     104,   107,  -133,  -133,   108,  -133,  -133,  -133,  -133,  -133,
+     136,  -133,   103,   103,   103,   103,  -133,  -133,  -133,  -133,
+     103,   103,   103,   103,   103,   103,   103,   103,   103,   103,
+      64,   139,   103,   138,  -133,  -133,  -133,  -133,  -133,  -133,
+    -133,  -133,  -133,  -133,  -133,   112,  -133,   113,   110,   115,
+     116,   117,  -133,  -133,    46,  -133,    -5,   118,   120,   103,
+     121,   127,   135,   140,   119,   133,   162,  -133,  -133,  -133,
+    -133,  -133,  -133,  -133,  -133,   142,  -133,  -133,  -133,  -133,
+      45,    58,   156,  -133,  -133,   137,   141,  -133,  -133,    58,
+     165,   147,   149,  -133,  -133,   150,    84,  -133,  -133,   123,
+    -133
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -716,40 +730,44 @@ static const yytype_int16 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     2,     0,     0,     1,     3,     0,     6,     0,    21,
-       4,    41,    47,    43,    54,    19,    49,     0,    79,    78,
-      80,    76,    77,    31,    34,     0,     0,     7,     8,     0,
-       9,    23,    24,    25,    27,    26,    29,    30,    28,     0,
-      56,    59,    62,    65,    67,    70,    73,    75,     0,     0,
-       0,     0,    20,     0,    51,     0,     0,     0,    80,    74,
-       0,    15,    16,    17,    18,    10,    22,     0,     0,     0,
-       0,    85,    84,    83,    82,     0,     0,     0,     0,     0,
-      45,     0,    45,     0,     0,     0,     0,     0,    81,     0,
-      61,    60,    64,    63,    66,    68,    69,    71,    72,     0,
-      46,     0,    52,     0,     0,     0,    58,    32,     0,    11,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    42,
-      48,    53,    44,    55,    50,     0,     6,     0,    13,    12,
-      33,    21,    14,    36,    37,    35,     0,     0,    38,     6,
-      21,    40
+       4,    46,    52,    48,    59,    19,    54,     0,    84,    83,
+      85,    81,    82,    32,    35,    37,     0,     0,     7,     8,
+       0,     9,    23,    24,    25,    26,    28,    27,    30,    31,
+      29,     0,    61,    64,    67,    70,    72,    75,    78,    80,
+       0,     0,     0,     0,    20,     0,    56,     0,    86,     0,
+       0,     0,    85,    79,     0,    14,    15,    17,    18,    16,
+       0,    22,     0,     0,     0,     0,    94,    93,    92,    91,
+       0,     0,     0,     0,     0,    50,     0,    50,     0,     0,
+       0,     0,     0,     0,    87,    10,    66,    65,    69,    68,
+      71,    73,    74,    76,    77,     0,    51,     0,    57,     0,
+       0,     0,    63,    33,     0,    38,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,    12,    11,    47,
+      53,    58,    49,    60,    55,     0,     6,    39,    13,    34,
+      21,     0,    41,    88,    89,     0,    42,    36,    90,     0,
+       0,     0,     0,    43,     6,     0,    21,     6,    45,    21,
+      40
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-     -84,   -84,   -84,   -84,   -84,   -83,   -84,   -84,   -84,   -84,
-     -84,   -84,   -84,   -84,    35,   -84,   -84,   -84,    28,   -84,
-     -84,   -84,   -84,   -84,   -84,   -84,   -84,    77,   -84,   -84,
-     144,   -84,   -84,    81,   -84,   -84,   140,    82,   -84,    83,
-       9,    10,   -75,    16,    23,   143,   -84
+    -133,  -133,  -133,  -133,  -133,  -132,  -133,  -133,  -133,  -133,
+    -133,  -133,  -133,    66,  -133,  -133,  -133,    40,  -133,  -133,
+    -133,  -133,  -133,  -133,  -133,  -133,  -133,  -133,  -133,  -133,
+     106,  -133,  -133,   177,  -133,  -133,   111,  -133,  -133,   168,
+     109,  -133,   105,   -29,     8,   -80,    20,    38,   170,  -133,
+      53,  -133,  -133
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_uint8 yydefgoto[] =
 {
-       0,     2,     3,     6,     8,     9,    27,    28,    89,   118,
-     129,    65,    29,    52,    30,    31,    56,   116,    32,    57,
-     135,   136,   137,    33,    48,    34,    50,    99,    35,    49,
-      36,    53,    37,   101,    38,    51,    39,    40,    55,    41,
-      42,    43,    44,    45,    46,    47,    75
+       0,     2,     3,     6,     8,     9,    28,    29,   116,   128,
+      70,    30,    54,    31,    32,    59,   123,    33,    60,    34,
+      61,   125,   141,   147,   150,   151,    35,    50,    36,    52,
+     105,    37,    51,    38,    55,    39,   107,    40,    53,    41,
+      42,    57,    43,    44,    45,    46,    47,    48,    49,    58,
+     145,   148,    80
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -757,95 +775,105 @@ static const yytype_uint8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      94,    61,    62,    63,    64,   100,   102,   100,   104,   102,
+     100,    72,    73,     1,   140,   106,   108,   106,   110,   108,
       11,    12,    13,    14,    15,    16,    17,    18,    19,    20,
-       1,   127,    67,    68,    21,    22,    23,    24,    69,    70,
-      67,    68,     4,    18,    19,    58,   128,   121,     5,    25,
-      21,    22,    26,   131,   117,    -5,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,   140,     7,    26,    10,
-      21,    22,    23,    24,    71,    72,    73,    74,    16,    76,
-      77,   -57,    78,    79,    66,    25,    90,    91,    26,    92,
-      93,   133,    11,    12,    13,    14,    15,    16,    17,    18,
-      19,    20,    95,    96,    80,    85,    21,    22,    23,    24,
-      81,    97,    98,    82,    83,    84,   107,    86,    87,   109,
-      88,    25,   110,   111,    26,   112,   113,   141,    11,    12,
-      13,    14,   114,    16,    17,    18,    19,    20,   115,    18,
-      19,    20,    21,    22,    23,    24,    21,    22,    18,    19,
-      58,   119,   120,   122,   123,    21,    22,    25,   124,   125,
-      26,    25,   134,   126,    26,   -39,   130,    24,   139,   103,
-      25,    54,   132,    26,   138,   105,    60,   106,    59,     0,
-     108
+      21,    22,   156,   126,     4,   159,     5,    23,    24,     7,
+      25,    74,    75,    18,    19,    62,    21,    22,   127,   131,
+      81,    82,    26,    96,    97,    27,    83,    84,    -5,    11,
+      12,    13,    14,    15,    16,    17,    18,    19,    20,    21,
+      22,    27,    76,    77,    78,    79,    23,    24,    10,    25,
+     143,   144,    72,    73,    16,    18,    19,    20,    21,    22,
+     -62,    26,    98,    99,    27,    71,   124,   142,    11,    12,
+      13,    14,    15,    16,    17,    18,    19,    20,    21,    22,
+      26,   101,   102,    27,    90,    23,    24,    85,    25,    65,
+      66,    67,    68,    69,    18,    19,    62,    21,    22,    86,
+      26,   103,   104,    27,    87,    88,   158,    11,    12,    13,
+      14,    15,    16,    17,    18,    19,    20,    21,    22,    26,
+      89,    91,    27,    92,    23,    24,    93,    25,    94,    95,
+     113,   115,   117,   118,   119,   120,   121,   122,   137,    26,
+     136,   129,    27,   130,   132,   160,    11,    12,    13,    14,
+     133,    16,    17,    18,    19,    20,    21,    22,   134,   146,
+     135,   149,   -44,    23,    24,   139,    25,    24,   154,   155,
+     153,   157,   138,   109,    56,    64,    63,   114,    26,   112,
+     111,    27,   152
 };
 
-static const yytype_int16 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-      75,    14,    15,    16,    17,    80,    81,    82,    83,    84,
+      80,    26,    27,     3,   136,    85,    86,    87,    88,    89,
        4,     5,     6,     7,     8,     9,    10,    11,    12,    13,
-       3,    25,    23,    24,    18,    19,    20,    21,    26,    27,
-      23,    24,     0,    11,    12,    13,    40,   112,    13,    33,
-      18,    19,    36,   126,    37,    39,     4,     5,     6,     7,
-       8,     9,    10,    11,    12,    13,   139,    38,    36,    39,
-      18,    19,    20,    21,    28,    29,    30,    31,     9,    32,
-      33,    25,    34,    35,    40,    33,    67,    68,    36,    69,
-      70,    39,     4,     5,     6,     7,     8,     9,    10,    11,
-      12,    13,    76,    77,    36,    25,    18,    19,    20,    21,
-      36,    78,    79,    36,    36,    36,    14,    36,    36,    13,
-      37,    33,    37,    37,    36,    41,    37,    39,     4,     5,
-       6,     7,    37,     9,    10,    11,    12,    13,    37,    11,
-      12,    13,    18,    19,    20,    21,    18,    19,    11,    12,
-      13,    40,    40,    40,    40,    18,    19,    33,    40,    37,
-      36,    33,    22,    38,    36,    38,    40,    21,    38,    82,
-      33,    17,   127,    36,   136,    84,    26,    85,    25,    -1,
-      87
+      14,    15,   154,    28,     0,   157,    13,    21,    22,    41,
+      24,    29,    30,    11,    12,    13,    14,    15,    43,   119,
+      35,    36,    36,    72,    73,    39,    37,    38,    42,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    39,    31,    32,    33,    34,    21,    22,    42,    24,
+      12,    13,    26,    27,     9,    11,    12,    13,    14,    15,
+      28,    36,    74,    75,    39,    43,    40,    42,     4,     5,
+       6,     7,     8,     9,    10,    11,    12,    13,    14,    15,
+      36,    81,    82,    39,    28,    21,    22,    39,    24,    16,
+      17,    18,    19,    20,    11,    12,    13,    14,    15,    39,
+      36,    83,    84,    39,    39,    39,    42,     4,     5,     6,
+       7,     8,     9,    10,    11,    12,    13,    14,    15,    36,
+      39,    39,    39,    39,    21,    22,    39,    24,    40,    13,
+      11,    13,    40,    40,    44,    40,    40,    40,    25,    36,
+      41,    43,    39,    43,    43,    42,     4,     5,     6,     7,
+      43,     9,    10,    11,    12,    13,    14,    15,    43,    23,
+      40,    44,    41,    21,    22,    43,    24,    22,    41,    40,
+     150,    41,   126,    87,    17,    27,    26,    92,    36,    90,
+      89,    39,   149
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    43,    44,     0,    13,    45,    38,    46,    47,
-      39,     4,     5,     6,     7,     8,     9,    10,    11,    12,
-      13,    18,    19,    20,    21,    33,    36,    48,    49,    54,
-      56,    57,    60,    65,    67,    70,    72,    74,    76,    78,
-      79,    81,    82,    83,    84,    85,    86,    87,    66,    71,
-      68,    77,    55,    73,    72,    80,    58,    61,    13,    87,
-      78,    14,    15,    16,    17,    53,    40,    23,    24,    26,
-      27,    28,    29,    30,    31,    88,    32,    33,    34,    35,
-      36,    36,    36,    36,    36,    25,    36,    36,    37,    50,
-      82,    82,    83,    83,    84,    85,    85,    86,    86,    69,
-      84,    75,    84,    69,    84,    75,    79,    14,    81,    13,
-      37,    37,    41,    37,    37,    37,    59,    37,    51,    40,
-      40,    84,    40,    40,    40,    37,    38,    25,    40,    52,
-      40,    47,    56,    39,    22,    62,    63,    64,    60,    38,
-      47,    39
+       0,     3,    46,    47,     0,    13,    48,    41,    49,    50,
+      42,     4,     5,     6,     7,     8,     9,    10,    11,    12,
+      13,    14,    15,    21,    22,    24,    36,    39,    51,    52,
+      56,    58,    59,    62,    64,    71,    73,    76,    78,    80,
+      82,    84,    85,    87,    88,    89,    90,    91,    92,    93,
+      72,    77,    74,    83,    57,    79,    78,    86,    94,    60,
+      63,    65,    13,    93,    84,    16,    17,    18,    19,    20,
+      55,    43,    26,    27,    29,    30,    31,    32,    33,    34,
+      97,    35,    36,    37,    38,    39,    39,    39,    39,    39,
+      28,    39,    39,    39,    40,    13,    88,    88,    89,    89,
+      90,    91,    91,    92,    92,    75,    90,    81,    90,    75,
+      90,    81,    85,    11,    87,    13,    53,    40,    40,    44,
+      40,    40,    40,    61,    40,    66,    28,    43,    54,    43,
+      43,    90,    43,    43,    43,    40,    41,    25,    58,    43,
+      50,    67,    42,    12,    13,    95,    23,    68,    96,    44,
+      69,    70,    95,    62,    41,    40,    50,    41,    42,    50,
+      42
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    42,    44,    45,    43,    46,    47,    47,    48,    48,
-      50,    51,    49,    52,    52,    53,    53,    53,    53,    55,
-      54,    54,    56,    56,    56,    56,    56,    56,    56,    56,
-      56,    58,    59,    57,    61,    60,    62,    63,    62,    64,
-      62,    66,    65,    68,    67,    69,    69,    71,    70,    73,
-      72,    74,    75,    75,    77,    76,    78,    80,    79,    79,
-      81,    81,    81,    82,    82,    82,    83,    83,    84,    84,
-      84,    85,    85,    85,    86,    86,    87,    87,    87,    87,
-      87,    87,    88,    88,    88,    88
+       0,    45,    47,    48,    46,    49,    50,    50,    51,    51,
+      53,    52,    54,    54,    55,    55,    55,    55,    55,    57,
+      56,    56,    58,    58,    58,    58,    58,    58,    58,    58,
+      58,    58,    60,    61,    59,    63,    62,    65,    66,    67,
+      64,    68,    69,    68,    70,    68,    72,    71,    74,    73,
+      75,    75,    77,    76,    79,    78,    80,    81,    81,    83,
+      82,    84,    86,    85,    85,    87,    87,    87,    88,    88,
+      88,    89,    89,    90,    90,    90,    91,    91,    91,    92,
+      92,    93,    93,    93,    93,    94,    93,    93,    95,    96,
+      95,    97,    97,    97,    97
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     0,     0,     7,     1,     0,     2,     1,     1,
-       0,     0,     6,     1,     2,     1,     1,     1,     1,     0,
+       0,     5,     1,     2,     1,     1,     1,     1,     1,     0,
        2,     0,     2,     1,     1,     1,     1,     1,     1,     1,
-       1,     0,     0,     7,     0,     9,     0,     0,     3,     0,
-       5,     0,     6,     0,     6,     0,     1,     0,     6,     0,
-       6,     2,     1,     3,     0,     6,     1,     0,     4,     1,
-       3,     3,     1,     3,     3,     1,     3,     1,     3,     3,
-       1,     3,     3,     1,     2,     1,     1,     1,     1,     1,
-       1,     3,     1,     1,     1,     1
+       1,     1,     0,     0,     7,     0,     9,     0,     0,     0,
+      14,     0,     0,     3,     0,     5,     0,     6,     0,     6,
+       0,     1,     0,     6,     0,     6,     2,     1,     3,     0,
+       6,     1,     0,     4,     1,     3,     3,     1,     3,     3,
+       1,     3,     1,     3,     3,     1,     3,     3,     1,     2,
+       1,     1,     1,     1,     1,     0,     2,     3,     1,     0,
+       2,     1,     1,     1,     1
 };
 
 
@@ -1309,490 +1337,546 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* $@1: %empty  */
-#line 90 "./generators/moe.y"
+#line 89 "./generators/moe.y"
                                  { add_symbol('K'); }
-#line 1315 "./src/moe.tab.c"
+#line 1343 "./src/moe.tab.c"
     break;
 
   case 3: /* $@2: %empty  */
-#line 91 "./generators/moe.y"
+#line 90 "./generators/moe.y"
                       { add_symbol('V'); }
-#line 1321 "./src/moe.tab.c"
+#line 1349 "./src/moe.tab.c"
     break;
 
   case 4: /* program: TK_PROGRAM $@1 TK_IDENTIFIER $@2 TK_LBRACE body TK_RBRACE  */
-#line 91 "./generators/moe.y"
+#line 90 "./generators/moe.y"
                                                                                 { 
                                                                                     (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, NULL, "program");
                                                                                     head = (yyval.nd_obj).nd;
                                                                                 }
-#line 1330 "./src/moe.tab.c"
+#line 1358 "./src/moe.tab.c"
     break;
 
   case 5: /* body: declarations  */
-#line 97 "./generators/moe.y"
+#line 96 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "body"); }
-#line 1336 "./src/moe.tab.c"
+#line 1364 "./src/moe.tab.c"
     break;
 
   case 6: /* declarations: %empty  */
-#line 102 "./generators/moe.y"
+#line 101 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = NULL; }
-#line 1342 "./src/moe.tab.c"
+#line 1370 "./src/moe.tab.c"
     break;
 
   case 7: /* declarations: declarations declaration  */
-#line 103 "./generators/moe.y"
+#line 102 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, (yyvsp[0].nd_obj).nd, "declarations"); }
-#line 1348 "./src/moe.tab.c"
+#line 1376 "./src/moe.tab.c"
     break;
 
   case 8: /* declaration: var_declaration  */
-#line 106 "./generators/moe.y"
+#line 105 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "declaration"); }
-#line 1354 "./src/moe.tab.c"
+#line 1382 "./src/moe.tab.c"
     break;
 
   case 9: /* declaration: statement  */
-#line 107 "./generators/moe.y"
+#line 106 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "declaration"); }
-#line 1360 "./src/moe.tab.c"
+#line 1388 "./src/moe.tab.c"
     break;
 
   case 10: /* $@3: %empty  */
 #line 110 "./generators/moe.y"
-                                                { insert_type(); }
-#line 1366 "./src/moe.tab.c"
-    break;
-
-  case 11: /* $@4: %empty  */
-#line 111 "./generators/moe.y"
                       { add_symbol('V'); }
-#line 1372 "./src/moe.tab.c"
+#line 1394 "./src/moe.tab.c"
     break;
 
-  case 12: /* var_declaration: access_modifier data_type $@3 TK_IDENTIFIER $@4 var_init  */
-#line 111 "./generators/moe.y"
+  case 11: /* var_declaration: access_modifier data_type TK_IDENTIFIER $@3 var_init  */
+#line 110 "./generators/moe.y"
                                                                                 { 
                                                                                     (yyvsp[-2].nd_obj).nd = mknode(NULL, NULL, (yyvsp[-2].nd_obj).name); 
                                                                                     (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "var_declaration");
                                                                                 }
-#line 1381 "./src/moe.tab.c"
+#line 1403 "./src/moe.tab.c"
     break;
 
-  case 13: /* var_init: TK_SEMICOLON  */
-#line 117 "./generators/moe.y"
+  case 12: /* var_init: TK_SEMICOLON  */
+#line 116 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode(NULL, NULL, "var_init"); }
-#line 1387 "./src/moe.tab.c"
+#line 1409 "./src/moe.tab.c"
     break;
 
-  case 14: /* var_init: TK_EQUAL statement  */
-#line 118 "./generators/moe.y"
+  case 13: /* var_init: TK_EQUAL statement  */
+#line 117 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "var_init"); }
-#line 1393 "./src/moe.tab.c"
+#line 1415 "./src/moe.tab.c"
     break;
 
-  case 15: /* data_type: TK_STRING  */
+  case 14: /* data_type: TK_STRING  */
+#line 120 "./generators/moe.y"
+                                                                                { insert_type(); }
+#line 1421 "./src/moe.tab.c"
+    break;
+
+  case 15: /* data_type: TK_INT  */
 #line 121 "./generators/moe.y"
                                                                                 { insert_type(); }
-#line 1399 "./src/moe.tab.c"
+#line 1427 "./src/moe.tab.c"
     break;
 
-  case 16: /* data_type: TK_INT  */
+  case 16: /* data_type: TK_BOOL  */
 #line 122 "./generators/moe.y"
                                                                                 { insert_type(); }
-#line 1405 "./src/moe.tab.c"
+#line 1433 "./src/moe.tab.c"
     break;
 
   case 17: /* data_type: TK_POSITION  */
 #line 123 "./generators/moe.y"
                                                                                 { insert_type(); }
-#line 1411 "./src/moe.tab.c"
+#line 1439 "./src/moe.tab.c"
     break;
 
   case 18: /* data_type: TK_PARAMETER  */
 #line 124 "./generators/moe.y"
                                                                                 { insert_type(); }
-#line 1417 "./src/moe.tab.c"
+#line 1445 "./src/moe.tab.c"
     break;
 
-  case 19: /* $@5: %empty  */
+  case 19: /* $@4: %empty  */
 #line 127 "./generators/moe.y"
                                 { add_symbol('K'); }
-#line 1423 "./src/moe.tab.c"
+#line 1451 "./src/moe.tab.c"
     break;
 
-  case 20: /* access_modifier: TK_GLOBAL $@5  */
+  case 20: /* access_modifier: TK_GLOBAL $@4  */
 #line 127 "./generators/moe.y"
                                                                                 { set_global(); (yyval.nd_obj).nd = NULL; }
-#line 1429 "./src/moe.tab.c"
+#line 1457 "./src/moe.tab.c"
     break;
 
   case 21: /* access_modifier: %empty  */
 #line 128 "./generators/moe.y"
                                                                                 { unset_global(); (yyval.nd_obj).nd = NULL; }
-#line 1435 "./src/moe.tab.c"
+#line 1463 "./src/moe.tab.c"
     break;
 
   case 22: /* statement: expression TK_SEMICOLON  */
 #line 133 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, NULL, "statement"); }
-#line 1441 "./src/moe.tab.c"
+#line 1469 "./src/moe.tab.c"
     break;
 
   case 23: /* statement: print_statement  */
 #line 134 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
-#line 1447 "./src/moe.tab.c"
+#line 1475 "./src/moe.tab.c"
     break;
 
   case 24: /* statement: if_statement  */
 #line 135 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
-#line 1453 "./src/moe.tab.c"
+#line 1481 "./src/moe.tab.c"
     break;
 
-  case 25: /* statement: open_statement  */
+  case 25: /* statement: loop_statement  */
 #line 136 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
-#line 1459 "./src/moe.tab.c"
+#line 1487 "./src/moe.tab.c"
     break;
 
-  case 26: /* statement: jaw_statement  */
+  case 26: /* statement: open_statement  */
 #line 137 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
-#line 1465 "./src/moe.tab.c"
+#line 1493 "./src/moe.tab.c"
     break;
 
-  case 27: /* statement: close_statement  */
+  case 27: /* statement: jaw_statement  */
 #line 138 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
-#line 1471 "./src/moe.tab.c"
+#line 1499 "./src/moe.tab.c"
     break;
 
-  case 28: /* statement: delay_statement  */
+  case 28: /* statement: close_statement  */
 #line 139 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
-#line 1477 "./src/moe.tab.c"
+#line 1505 "./src/moe.tab.c"
     break;
 
-  case 29: /* statement: move_statement  */
+  case 29: /* statement: delay_statement  */
 #line 140 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
-#line 1483 "./src/moe.tab.c"
+#line 1511 "./src/moe.tab.c"
     break;
 
-  case 30: /* statement: moved_statement  */
+  case 30: /* statement: move_statement  */
 #line 141 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
-#line 1489 "./src/moe.tab.c"
+#line 1517 "./src/moe.tab.c"
     break;
 
-  case 31: /* $@6: %empty  */
-#line 144 "./generators/moe.y"
+  case 31: /* statement: moved_statement  */
+#line 142 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "statement"); }
+#line 1523 "./src/moe.tab.c"
+    break;
+
+  case 32: /* $@5: %empty  */
+#line 145 "./generators/moe.y"
                                { add_symbol('K'); }
-#line 1495 "./src/moe.tab.c"
+#line 1529 "./src/moe.tab.c"
     break;
 
-  case 32: /* $@7: %empty  */
-#line 145 "./generators/moe.y"
+  case 33: /* $@6: %empty  */
+#line 146 "./generators/moe.y"
                       { add_symbol('C'); }
-#line 1501 "./src/moe.tab.c"
+#line 1535 "./src/moe.tab.c"
     break;
 
-  case 33: /* print_statement: TK_PRINT $@6 TK_LPAREN TK_STRING $@7 TK_RPAREN TK_SEMICOLON  */
-#line 145 "./generators/moe.y"
+  case 34: /* print_statement: TK_PRINT $@5 TK_LPAREN TK_STRING_LITERAL $@6 TK_RPAREN TK_SEMICOLON  */
+#line 146 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode(NULL, NULL, "print"); }
-#line 1507 "./src/moe.tab.c"
+#line 1541 "./src/moe.tab.c"
     break;
 
-  case 34: /* $@8: %empty  */
-#line 148 "./generators/moe.y"
-                            { add_symbol('K'); }
-#line 1513 "./src/moe.tab.c"
-    break;
-
-  case 35: /* if_statement: TK_IF $@8 TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement  */
+  case 35: /* $@7: %empty  */
 #line 149 "./generators/moe.y"
+                            { add_symbol('K'); }
+#line 1547 "./src/moe.tab.c"
+    break;
+
+  case 36: /* if_statement: TK_IF $@7 TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement  */
+#line 150 "./generators/moe.y"
                                                                                 { 
                                                                                     struct node *if_node = mknode((yyvsp[-5].nd_obj).nd, (yyvsp[-2].nd_obj).nd, "if");
                                                                                     (yyval.nd_obj).nd = mknode(if_node, (yyvsp[0].nd_obj).nd, "if-else"); 
                                                                                 }
-#line 1522 "./src/moe.tab.c"
+#line 1556 "./src/moe.tab.c"
     break;
 
-  case 36: /* else_statement: %empty  */
-#line 155 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = NULL; }
-#line 1528 "./src/moe.tab.c"
-    break;
-
-  case 37: /* $@9: %empty  */
+  case 37: /* $@8: %empty  */
 #line 156 "./generators/moe.y"
-                              { add_symbol('K'); }
-#line 1534 "./src/moe.tab.c"
+                             { add_symbol('K'); }
+#line 1562 "./src/moe.tab.c"
     break;
 
-  case 38: /* else_statement: TK_ELSE $@9 if_statement  */
-#line 156 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "else-if"); }
-#line 1540 "./src/moe.tab.c"
+  case 38: /* $@9: %empty  */
+#line 157 "./generators/moe.y"
+                      { add_symbol('V'); }
+#line 1568 "./src/moe.tab.c"
     break;
 
   case 39: /* $@10: %empty  */
 #line 157 "./generators/moe.y"
-                              { add_symbol('K'); }
-#line 1546 "./src/moe.tab.c"
+                                                      { add_symbol('K'); }
+#line 1574 "./src/moe.tab.c"
     break;
 
-  case 40: /* else_statement: TK_ELSE $@10 TK_LBRACE declarations TK_RBRACE  */
-#line 158 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, NULL, "else"); }
-#line 1552 "./src/moe.tab.c"
-    break;
-
-  case 41: /* $@11: %empty  */
-#line 161 "./generators/moe.y"
-                              { add_symbol('K'); }
-#line 1558 "./src/moe.tab.c"
-    break;
-
-  case 42: /* open_statement: TK_OPEN $@11 TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON  */
-#line 162 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "open"); }
-#line 1564 "./src/moe.tab.c"
-    break;
-
-  case 43: /* $@12: %empty  */
-#line 165 "./generators/moe.y"
-                               { add_symbol('K'); }
-#line 1570 "./src/moe.tab.c"
-    break;
-
-  case 44: /* close_statement: TK_CLOSE $@12 TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON  */
-#line 166 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "close"); }
-#line 1576 "./src/moe.tab.c"
-    break;
-
-  case 45: /* optional_argument: %empty  */
-#line 169 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = NULL; }
+  case 40: /* loop_statement: TK_FOR $@8 TK_LPAREN TK_IDENTIFIER $@9 TK_BETWEEN $@10 numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE  */
+#line 159 "./generators/moe.y"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, NULL, "for-loop");
+                                                                                }
 #line 1582 "./src/moe.tab.c"
     break;
 
-  case 46: /* optional_argument: term  */
-#line 170 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = (yyvsp[0].nd_obj).nd; }
+  case 41: /* else_statement: %empty  */
+#line 164 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = NULL; }
 #line 1588 "./src/moe.tab.c"
     break;
 
-  case 47: /* $@13: %empty  */
-#line 173 "./generators/moe.y"
-                             { add_symbol('K'); }
+  case 42: /* $@11: %empty  */
+#line 165 "./generators/moe.y"
+                              { add_symbol('K'); }
 #line 1594 "./src/moe.tab.c"
     break;
 
-  case 48: /* jaw_statement: TK_JAW $@13 TK_LPAREN two_arguments TK_RPAREN TK_SEMICOLON  */
-#line 174 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "jaw"); }
+  case 43: /* else_statement: TK_ELSE $@11 if_statement  */
+#line 165 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "else-if"); }
 #line 1600 "./src/moe.tab.c"
     break;
 
-  case 49: /* $@14: %empty  */
-#line 177 "./generators/moe.y"
+  case 44: /* $@12: %empty  */
+#line 166 "./generators/moe.y"
                               { add_symbol('K'); }
 #line 1606 "./src/moe.tab.c"
     break;
 
-  case 50: /* move_statement: TK_MOVE $@14 TK_LPAREN two_arguments TK_RPAREN TK_SEMICOLON  */
-#line 178 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "move"); }
+  case 45: /* else_statement: TK_ELSE $@12 TK_LBRACE declarations TK_RBRACE  */
+#line 167 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, NULL, "else"); }
 #line 1612 "./src/moe.tab.c"
     break;
 
-  case 51: /* moved_statement: TK_AWAIT move_statement  */
-#line 181 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, NULL, "moved"); }
+  case 46: /* $@13: %empty  */
+#line 170 "./generators/moe.y"
+                              { add_symbol('K'); }
 #line 1618 "./src/moe.tab.c"
     break;
 
-  case 52: /* two_arguments: term  */
-#line 184 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = (yyvsp[0].nd_obj).nd; }
+  case 47: /* open_statement: TK_OPEN $@13 TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON  */
+#line 171 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "open"); }
 #line 1624 "./src/moe.tab.c"
     break;
 
-  case 53: /* two_arguments: term TK_COMMA term  */
-#line 185 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "two_arguments"); }
+  case 48: /* $@14: %empty  */
+#line 174 "./generators/moe.y"
+                               { add_symbol('K'); }
 #line 1630 "./src/moe.tab.c"
     break;
 
-  case 54: /* $@15: %empty  */
-#line 188 "./generators/moe.y"
-                               { add_symbol('K'); }
+  case 49: /* close_statement: TK_CLOSE $@14 TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON  */
+#line 175 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "close"); }
 #line 1636 "./src/moe.tab.c"
     break;
 
-  case 55: /* delay_statement: TK_DELAY $@15 TK_LPAREN term TK_RPAREN TK_SEMICOLON  */
-#line 189 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "delay"); }
+  case 50: /* optional_argument: %empty  */
+#line 178 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = NULL; }
 #line 1642 "./src/moe.tab.c"
     break;
 
-  case 56: /* expression: assignment  */
-#line 194 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "expression"); }
+  case 51: /* optional_argument: term  */
+#line 179 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = (yyvsp[0].nd_obj).nd; }
 #line 1648 "./src/moe.tab.c"
     break;
 
-  case 57: /* $@16: %empty  */
-#line 197 "./generators/moe.y"
-                                    { check_declaration((yyvsp[0].nd_obj).name); }
+  case 52: /* $@15: %empty  */
+#line 182 "./generators/moe.y"
+                             { add_symbol('K'); }
 #line 1654 "./src/moe.tab.c"
     break;
 
-  case 58: /* assignment: TK_IDENTIFIER $@16 TK_EQUAL assignment  */
-#line 198 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-3].nd_obj).nd, (yyvsp[-1].nd_obj).nd, "assignment"); }
+  case 53: /* jaw_statement: TK_JAW $@15 TK_LPAREN two_arguments TK_RPAREN TK_SEMICOLON  */
+#line 183 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "jaw"); }
 #line 1660 "./src/moe.tab.c"
     break;
 
-  case 59: /* assignment: logic  */
-#line 199 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "assignment"); }
+  case 54: /* $@16: %empty  */
+#line 186 "./generators/moe.y"
+                              { add_symbol('K'); }
 #line 1666 "./src/moe.tab.c"
     break;
 
-  case 60: /* logic: logic TK_OR equality  */
-#line 202 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "logic"); }
+  case 55: /* move_statement: TK_MOVE $@16 TK_LPAREN two_arguments TK_RPAREN TK_SEMICOLON  */
+#line 187 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "move"); }
 #line 1672 "./src/moe.tab.c"
     break;
 
-  case 61: /* logic: logic TK_AND equality  */
-#line 203 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "logic"); }
+  case 56: /* moved_statement: TK_AWAIT move_statement  */
+#line 190 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, NULL, "moved"); }
 #line 1678 "./src/moe.tab.c"
     break;
 
-  case 62: /* logic: equality  */
-#line 204 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "logic"); }
+  case 57: /* two_arguments: term  */
+#line 193 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = (yyvsp[0].nd_obj).nd; }
 #line 1684 "./src/moe.tab.c"
     break;
 
-  case 63: /* equality: comparison TK_EQUAL_EQUAL comparison  */
-#line 208 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "equality"); }
+  case 58: /* two_arguments: term TK_COMMA term  */
+#line 194 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "two_arguments"); }
 #line 1690 "./src/moe.tab.c"
     break;
 
-  case 64: /* equality: comparison TK_BANG_EQUAL comparison  */
-#line 209 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "equality"); }
+  case 59: /* $@17: %empty  */
+#line 197 "./generators/moe.y"
+                               { add_symbol('K'); }
 #line 1696 "./src/moe.tab.c"
     break;
 
-  case 65: /* equality: comparison  */
-#line 210 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "equality"); }
+  case 60: /* delay_statement: TK_DELAY $@17 TK_LPAREN term TK_RPAREN TK_SEMICOLON  */
+#line 198 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, NULL, "delay"); }
 #line 1702 "./src/moe.tab.c"
     break;
 
-  case 66: /* comparison: term comparison_operator term  */
-#line 213 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "comparison"); }
+  case 61: /* expression: assignment  */
+#line 203 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "expression"); }
 #line 1708 "./src/moe.tab.c"
     break;
 
-  case 67: /* comparison: term  */
-#line 214 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "comparison"); }
+  case 62: /* $@18: %empty  */
+#line 206 "./generators/moe.y"
+                                    { check_declaration((yyvsp[0].nd_obj).name); }
 #line 1714 "./src/moe.tab.c"
     break;
 
-  case 68: /* term: factor TK_PLUS factor  */
-#line 217 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "term"); }
+  case 63: /* assignment: TK_IDENTIFIER $@18 TK_EQUAL assignment  */
+#line 207 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-3].nd_obj).nd, (yyvsp[-1].nd_obj).nd, "assignment"); }
 #line 1720 "./src/moe.tab.c"
     break;
 
-  case 69: /* term: factor TK_MINUS factor  */
-#line 218 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "term"); }
+  case 64: /* assignment: logic  */
+#line 208 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "assignment"); }
 #line 1726 "./src/moe.tab.c"
     break;
 
-  case 70: /* term: factor  */
-#line 219 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "term"); }
+  case 65: /* logic: logic TK_OR equality  */
+#line 211 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "logic"); }
 #line 1732 "./src/moe.tab.c"
     break;
 
-  case 71: /* factor: unary TK_STAR unary  */
-#line 222 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "factor"); }
+  case 66: /* logic: logic TK_AND equality  */
+#line 212 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "logic"); }
 #line 1738 "./src/moe.tab.c"
     break;
 
-  case 72: /* factor: unary TK_SLASH unary  */
-#line 223 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "factor"); }
+  case 67: /* logic: equality  */
+#line 213 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "logic"); }
 #line 1744 "./src/moe.tab.c"
     break;
 
-  case 73: /* factor: unary  */
-#line 224 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "factor"); }
+  case 68: /* equality: comparison TK_EQUAL_EQUAL comparison  */
+#line 217 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "equality"); }
 #line 1750 "./src/moe.tab.c"
     break;
 
-  case 74: /* unary: TK_MINUS primary  */
-#line 227 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "unary"); }
+  case 69: /* equality: comparison TK_BANG_EQUAL comparison  */
+#line 218 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "equality"); }
 #line 1756 "./src/moe.tab.c"
     break;
 
-  case 75: /* unary: primary  */
-#line 228 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "unary"); }
+  case 70: /* equality: comparison  */
+#line 219 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "equality"); }
 #line 1762 "./src/moe.tab.c"
     break;
 
-  case 76: /* primary: TK_TRUE  */
-#line 231 "./generators/moe.y"
-                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+  case 71: /* comparison: term comparison_operator term  */
+#line 222 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "comparison"); }
 #line 1768 "./src/moe.tab.c"
     break;
 
-  case 77: /* primary: TK_FALSE  */
-#line 232 "./generators/moe.y"
-                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+  case 72: /* comparison: term  */
+#line 223 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "comparison"); }
 #line 1774 "./src/moe.tab.c"
     break;
 
-  case 78: /* primary: TK_NUMBER  */
-#line 233 "./generators/moe.y"
-                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+  case 73: /* term: factor TK_PLUS factor  */
+#line 226 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "term"); }
 #line 1780 "./src/moe.tab.c"
     break;
 
-  case 79: /* primary: TK_STRING_LITERAL  */
-#line 234 "./generators/moe.y"
-                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+  case 74: /* term: factor TK_MINUS factor  */
+#line 227 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "term"); }
 #line 1786 "./src/moe.tab.c"
     break;
 
-  case 80: /* primary: TK_IDENTIFIER  */
-#line 235 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+  case 75: /* term: factor  */
+#line 228 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "term"); }
 #line 1792 "./src/moe.tab.c"
     break;
 
+  case 76: /* factor: unary TK_STAR unary  */
+#line 231 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "factor"); }
+#line 1798 "./src/moe.tab.c"
+    break;
 
-#line 1796 "./src/moe.tab.c"
+  case 77: /* factor: unary TK_SLASH unary  */
+#line 232 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "factor"); }
+#line 1804 "./src/moe.tab.c"
+    break;
+
+  case 78: /* factor: unary  */
+#line 233 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "factor"); }
+#line 1810 "./src/moe.tab.c"
+    break;
+
+  case 79: /* unary: TK_MINUS primary  */
+#line 236 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "unary"); }
+#line 1816 "./src/moe.tab.c"
+    break;
+
+  case 80: /* unary: primary  */
+#line 237 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "unary"); }
+#line 1822 "./src/moe.tab.c"
+    break;
+
+  case 81: /* primary: TK_TRUE  */
+#line 240 "./generators/moe.y"
+                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+#line 1828 "./src/moe.tab.c"
+    break;
+
+  case 82: /* primary: TK_FALSE  */
+#line 241 "./generators/moe.y"
+                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+#line 1834 "./src/moe.tab.c"
+    break;
+
+  case 83: /* primary: TK_NUMBER  */
+#line 242 "./generators/moe.y"
+                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+#line 1840 "./src/moe.tab.c"
+    break;
+
+  case 84: /* primary: TK_STRING_LITERAL  */
+#line 243 "./generators/moe.y"
+                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+#line 1846 "./src/moe.tab.c"
+    break;
+
+  case 85: /* $@19: %empty  */
+#line 244 "./generators/moe.y"
+                                    { check_declaration((yyvsp[0].nd_obj).name); }
+#line 1852 "./src/moe.tab.c"
+    break;
+
+  case 86: /* primary: TK_IDENTIFIER $@19  */
+#line 244 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[-1].nd_obj).name); }
+#line 1858 "./src/moe.tab.c"
+    break;
+
+  case 88: /* numeric_variable: TK_NUMBER  */
+#line 248 "./generators/moe.y"
+                                                                                { add_symbol('C'); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
+#line 1864 "./src/moe.tab.c"
+    break;
+
+  case 89: /* $@20: %empty  */
+#line 249 "./generators/moe.y"
+                                    { check_declaration((yyvsp[0].nd_obj).name); }
+#line 1870 "./src/moe.tab.c"
+    break;
+
+  case 90: /* numeric_variable: TK_IDENTIFIER $@20  */
+#line 249 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[-1].nd_obj).name); }
+#line 1876 "./src/moe.tab.c"
+    break;
+
+
+#line 1880 "./src/moe.tab.c"
 
       default: break;
     }
@@ -1985,7 +2069,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 245 "./generators/moe.y"
+#line 262 "./generators/moe.y"
 
 
 int main() {
