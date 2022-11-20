@@ -45,7 +45,7 @@
     int sem_errors = 0;
     char errors[10][100];
 
-    char reserved[10][22] = {
+    char reserved[22][10] = {
         "var", "program", "print", "if", "else", "int", "position", "string",
         "pos", "parameter", "param", "par", "open", "close", "jaw", "delay",
         "global", "move", "await", "for", "between", "bool"
