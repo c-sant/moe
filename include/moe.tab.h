@@ -104,7 +104,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 60 "./generators/moe.y"
+#line 61 "./generators/moe.y"
 
     struct var_name {
         char name[100];

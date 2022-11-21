@@ -54,7 +54,8 @@
     };
 
     void check_declaration(char *c);
-    int check_types(char *type1, char *type2);
+    void validate_types(char *type1, char *type2, char *msg);
+    char *get_type(char *id_name);
 %}
 
 %union {
@@ -85,7 +86,8 @@
 %type <nd_obj> jaw_statement two_arguments close_statement optional_argument
 %type <nd_obj> delay_statement move_statement moved_statement loop_statement 
 %type <nd_obj> expression assignment logic equality comparison term factor unary  
-%type <nd_obj> primary var_init access_modifier numeric_variable
+%type <nd_obj> primary var_init access_modifier numeric_variable 
+%type <nd_obj> expression_statement
 
 %%
 
@@ -110,14 +112,19 @@ declaration         : var_declaration                                           
                     ;
 
 var_declaration     : access_modifier data_type TK_IDENTIFIER
-                      { add_symbol('V', type); } var_init                       { 
+                      { add_symbol('V', type); } var_init                       {
+                                                                                    validate_types(
+                                                                                        get_type($3.name),
+                                                                                        get_type($5.name),
+                                                                                        "Line %d: Incorrectly initialized value (expected %s, got %s).\n"
+                                                                                    );
                                                                                     $3.nd = mknode(NULL, NULL, $3.name); 
                                                                                     $$.nd = mknode($3.nd, $5.nd, "var_declaration");
                                                                                 }
                     ;
 
 var_init            : TK_SEMICOLON                                              { $$.nd = mknode(NULL, NULL, "var_init"); }
-                    | TK_EQUAL statement                                        { $$.nd = mknode($2.nd, NULL, "var_init"); }
+                    | TK_EQUAL statement                                        { strcpy($$.name, $2.name); $$.nd = mknode($2.nd, NULL, "var_init"); }
                     ;
 
 data_type           : TK_STRING                                                 { insert_type(); }
@@ -133,7 +140,7 @@ access_modifier     : TK_GLOBAL                                                 
 
 // statements
 
-statement           : expression TK_SEMICOLON                                   { $$.nd = mknode($1.nd, NULL, "statement"); }
+statement           : expression_statement                                      { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | print_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | if_statement                                              { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | loop_statement                                            { $$.nd = mknode($1.nd, NULL, "statement"); }
@@ -143,6 +150,9 @@ statement           : expression TK_SEMICOLON                                   
                     | delay_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | move_statement                                            { $$.nd = mknode($1.nd, NULL, "statement"); }
                     | moved_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
+                    ;
+
+expression_statement: expression TK_SEMICOLON                                   { $$.nd = mknode($1.nd, NULL, $1.name); }
                     ;
 
 print_statement     : TK_PRINT TK_LPAREN TK_STRING_LITERAL 
@@ -164,7 +174,17 @@ else_statement      :                                                           
 loop_statement      : TK_FOR TK_LPAREN TK_IDENTIFIER 
                       { add_symbol('V', "int"); } TK_BETWEEN numeric_variable 
                       TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations 
-                      TK_RBRACE                                                 { 
+                      TK_RBRACE                                                 {
+                                                                                    validate_types(
+                                                                                        "int",
+                                                                                        get_type($6.name),
+                                                                                        "Line %d: lower bound of loop must be %s (got %s)."
+                                                                                    ); 
+                                                                                    validate_types(
+                                                                                        "int",
+                                                                                        get_type($8.name),
+                                                                                        "Line %d: upper bound of loop must be %s (got %s)."
+                                                                                    ); 
                                                                                     $$.nd = mknode($11.nd, NULL, "for-loop");
                                                                                 }
                     ;
@@ -202,7 +222,14 @@ expression          : assignment                                                
                     ;
 
 assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL 
-                      assignment                                                { $$.nd = mknode($1.nd, $3.nd, "assignment"); }
+                      assignment                                                { 
+                                                                                    validate_types(
+                                                                                        get_type($1.name), 
+                                                                                        get_type($4.name), 
+                                                                                        "Line %d: Incorrectly assigned value (expected %s, got %s).\n"
+                                                                                    ); 
+                                                                                    $$.nd = mknode($1.nd, $3.nd, "assignment"); 
+                                                                                }
                     | logic                                                     { $$.nd = mknode($1.nd, NULL, "assignment"); }
                     ;
 
@@ -396,14 +423,21 @@ void check_declaration(char *c) {
     }
 }
 
-int validate_type(char *type1, char *type2) {
-    
+void validate_types(char *type1, char *type2, char *msg)
+{
+  // type1 must match type2
+
+  if (strcmp(type1, type2))
+  {
+    sprintf(errors[sem_errors], msg, lineno + 1, type1, type2);
+    sem_errors++;
+  }
 }
 
-char *get_type(char *var) {
+char *get_type(char *id_name) {
     for (int i = 0; i < count; i++)
     {
-        if(!strcmp(symbol_table[i].id_name, var)) {
+        if(!strcmp(symbol_table[i].id_name, id_name)) {
             return symbol_table[i].data_type;
         }
     }
