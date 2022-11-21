@@ -1,0 +1,58 @@
+program MyProgram 
+{
+
+    int x = 0;
+    global int y;
+
+    x = 1;
+    y = 2;
+
+    string s = "abc";
+
+    if (x == 0 && y == 0) 
+    {
+        print("x and y are both zero");
+    }
+    else if (x == 0 || y == 0) 
+    {
+        print("either x or y is not zero");
+    }
+    else if (x != 0 && y != 0) 
+    {
+        print("neither x nor y are zero");
+    }
+    else 
+    {
+        print("it will never fall here");
+    }
+
+    int z = 10 * (-1);
+
+    for (i between x, 20) 
+    {
+        y = y + 1;
+        move(30);
+    }
+
+    x = 15;
+
+    delay(20);
+
+    moved(50);
+
+    open()
+    close(10);
+
+    jaw();
+
+    if (false)
+    {
+        print("this will never be printed");
+    }
+
+    if(true) 
+    {
+        print("this will always be printed");
+    }
+
+}

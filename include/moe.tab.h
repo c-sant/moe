@@ -104,14 +104,20 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 61 "./generators/moe.y"
+#line 66 "./generators/moe.y"
 
+    // name: name of the symbol
+    // node: node structure of the symbol (links to other symbols)
+    // presolved: the result of solving this symbol
+    // symbol_type: 'C' for constant; 'E' for expression
     struct var_name {
         char name[100];
         struct node *nd;
+        int presolved;
+        int is_presolved;
     } nd_obj;
 
-#line 115 "./include/moe.tab.h"
+#line 121 "./include/moe.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

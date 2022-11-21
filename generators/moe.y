@@ -7,6 +7,7 @@
     #include "moe.lex.c"
     
     #define TOTAL_KEYWORDS 22
+    #define OUTPUT_FILE_PATH "a.txt"
 
     void yyerror(const char *s);
     int yylex();
@@ -56,12 +57,22 @@
     void check_declaration(char *c);
     void validate_types(char *type1, char *type2, char *msg);
     char *get_type(char *id_name);
+
+    FILE *output_file;
+
+    int cstep;
 %}
 
 %union {
+    // name: name of the symbol
+    // node: node structure of the symbol (links to other symbols)
+    // presolved: the result of solving this symbol
+    // symbol_type: 'C' for constant; 'E' for expression
     struct var_name {
         char name[100];
         struct node *nd;
+        int presolved;
+        int is_presolved;
     } nd_obj;
 }
 %start program
@@ -83,7 +94,7 @@
 
 %type <nd_obj> program body declarations declaration var_declaration statement
 %type <nd_obj> print_statement if_statement else_statement open_statement
-%type <nd_obj> jaw_statement two_arguments close_statement optional_argument
+%type <nd_obj> jaw_statement two_numbers close_statement optional_argument
 %type <nd_obj> delay_statement move_statement moved_statement loop_statement 
 %type <nd_obj> expression assignment logic equality comparison term factor unary  
 %type <nd_obj> primary var_init access_modifier numeric_variable 
@@ -95,6 +106,9 @@ program             : TK_PROGRAM TK_IDENTIFIER { add_symbol('V', "string"); }
                       TK_LBRACE body TK_RBRACE                                  { 
                                                                                     $$.nd = mknode($5.nd, NULL, "program");
                                                                                     head = $$.nd;
+
+
+                                                                                    printf("%d: consumed program %s\n", ++cstep, $2.name);
                                                                                 }
                     ;
                         
@@ -113,17 +127,31 @@ declaration         : var_declaration                                           
 
 var_declaration     : access_modifier data_type TK_IDENTIFIER
                       { add_symbol('V', type); } var_init                       {
-                                                                                    validate_types(
-                                                                                        get_type($3.name),
-                                                                                        get_type($5.name),
-                                                                                        "Line %d: Incorrectly initialized value (expected %s, got %s).\n"
-                                                                                    );
+                                                                                    if (is_global)
+                                                                                    {
+                                                                                        printf("%d: GLOBAL %s\n", ++cstep, $3.name);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        printf("%d: DEFINE %s\n", ++cstep, $3.name);
+                                                                                    }
+                                                                                    if ($5.nd != NULL)
+                                                                                    {
+                                                                                        validate_types(
+                                                                                            get_type($3.name),
+                                                                                            get_type($5.name),
+                                                                                            "Line %d: Incorrectly initialized value (expected %s, got %s).\n"
+                                                                                        );
+
+                                                                                        printf("%d: SET %s = %s\n", ++cstep, $3.name, $5.name);
+                                                                                    }
+
                                                                                     $3.nd = mknode(NULL, NULL, $3.name); 
                                                                                     $$.nd = mknode($3.nd, $5.nd, "var_declaration");
                                                                                 }
                     ;
 
-var_init            : TK_SEMICOLON                                              { $$.nd = mknode(NULL, NULL, "var_init"); }
+var_init            : TK_SEMICOLON                                              { $$.nd = NULL; }
                     | TK_EQUAL statement                                        { strcpy($$.name, $2.name); $$.nd = mknode($2.nd, NULL, "var_init"); }
                     ;
 
@@ -200,17 +228,17 @@ optional_argument   :                                                           
                     | term                                                      { $$.nd = $1.nd; }
                     ;
 
-jaw_statement       : TK_JAW TK_LPAREN two_arguments TK_RPAREN TK_SEMICOLON     { $$.nd = mknode($4.nd, NULL, "jaw"); }
+jaw_statement       : TK_JAW TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON       { $$.nd = mknode($4.nd, NULL, "jaw"); }
                     ;
 
-move_statement      : TK_MOVE TK_LPAREN two_arguments TK_RPAREN TK_SEMICOLON    { $$.nd = mknode($4.nd, NULL, "move"); }
+move_statement      : TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON      { $$.nd = mknode($4.nd, NULL, "move"); }
                     ;
 
 moved_statement     : TK_AWAIT move_statement                                   { $$.nd = mknode($1.nd, NULL, "moved"); }
                     ;
 
-two_arguments       : term                                                      { $$.nd = $1.nd; }                                          
-                    | term TK_COMMA term                                        { $$.nd = mknode($1.nd, $3.nd, "two_arguments"); }
+two_numbers         : numeric_variable                                                      { $$.nd = $1.nd; }                                          
+                    | numeric_variable TK_COMMA numeric_variable                                        { $$.nd = mknode($1.nd, $3.nd, "two_numbers"); }
                     ;
 
 delay_statement     : TK_DELAY TK_LPAREN term TK_RPAREN TK_SEMICOLON            { $$.nd = mknode($4.nd, NULL, "delay"); }
@@ -218,7 +246,7 @@ delay_statement     : TK_DELAY TK_LPAREN term TK_RPAREN TK_SEMICOLON            
 
 // expressions
 
-expression          : assignment                                                { $$.nd = mknode($1.nd, NULL, "expression"); }
+expression          : assignment                                                { $$.nd = mknode($1.nd, NULL, "expression"); printf("%d: consumed expression %s\n", ++cstep, $1.name); }
                     ;
 
 assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL 
@@ -229,45 +257,134 @@ assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL
                                                                                         "Line %d: Incorrectly assigned value (expected %s, got %s).\n"
                                                                                     ); 
                                                                                     $$.nd = mknode($1.nd, $3.nd, "assignment"); 
+                                                                                    printf("%d: consumed assignment (%s into %s) %s\n", ++cstep, $4.name, $1.name);
                                                                                 }
-                    | logic                                                     { $$.nd = mknode($1.nd, NULL, "assignment"); }
+                    | logic                                                     { 
+                                                                                    $$.nd = mknode($1.nd, NULL, "assignment"); 
+                                                                                    
+                                                                                    if ($1.is_presolved)
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved;
+                                                                                        $$.is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed assignment %s\n", ++cstep, $1.name); 
+                                                                                }
                     ;
 
-logic               : logic TK_OR equality                                      { $$.nd = mknode($1.nd, $3.nd, "logic"); }
-                    | logic TK_AND equality                                     { $$.nd = mknode($1.nd, $3.nd, "logic"); }
-                    | equality                                                  { $$.nd = mknode($1.nd, NULL, "logic"); }
+logic               : logic TK_OR equality                                      { $$.nd = mknode($1.nd, $3.nd, "logic"); printf("%d: consumed logic (OR between %s and %s)\n", ++cstep, $1.name, $3.name); }
+                    | logic TK_AND equality                                     { $$.nd = mknode($1.nd, $3.nd, "logic"); printf("%d: consumed logic (AND between %s and %s)\n", ++cstep, $1.name, $3.name); }
+                    | equality                                                  { 
+                                                                                    $$.nd = mknode($1.nd, NULL, "logic"); 
+                                                                                    
+                                                                                    if ($1.is_presolved)
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved;
+                                                                                        $$.is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed logic %s\n", ++cstep, $1.name); 
+                                                                                }
                     ;
 
 
-equality            : comparison TK_EQUAL_EQUAL comparison                      { $$.nd = mknode($1.nd, $3.nd, "equality"); }
-                    | comparison TK_BANG_EQUAL comparison                       { $$.nd = mknode($1.nd, $3.nd, "equality"); }
-                    | comparison                                                { $$.nd = mknode($1.nd, NULL, "equality"); }
+equality            : comparison TK_EQUAL_EQUAL comparison                      { $$.nd = mknode($1.nd, $3.nd, "equality"); printf("%d: consumed equality (%s and %s)\n", ++cstep, $1.name, $3.name); }
+                    | comparison TK_BANG_EQUAL comparison                       { $$.nd = mknode($1.nd, $3.nd, "equality"); printf("%d: consumed inequality (%s and %s)\n", ++cstep, $1.name, $3.name); }
+                    | comparison                                                { 
+                                                                                    $$.nd = mknode($1.nd, NULL, "equality"); 
+                                                                                    
+                                                                                    if ($1.is_presolved)
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved;
+                                                                                        $$.is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed equality %s\n", ++cstep, $1.name); 
+                                                                                }
                     ;
 
-comparison          : term comparison_operator term                             { $$.nd = mknode($1.nd, $3.nd, "comparison"); }
-                    | term                                                      { $$.nd = mknode($1.nd, NULL, "comparison"); }
+comparison          : term comparison_operator term                             { $$.nd = mknode($1.nd, $3.nd, "comparison"); printf("%d: consumed comparison (%s and %s)\n", ++cstep, $1.name, $3.name); }
+                    | term                                                      { 
+                                                                                    $$.nd = mknode($1.nd, NULL, "comparison"); 
+                                                                                    
+                                                                                    if ($1.is_presolved)
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved;
+                                                                                        $$.is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed comparison %s\n", ++cstep, $1.name); 
+                                                                                }
                     ;
 
-term                : factor TK_PLUS factor                                     { $$.nd = mknode($1.nd, $3.nd, "term"); }
-                    | factor TK_MINUS factor                                    { $$.nd = mknode($1.nd, $3.nd, "term"); }
-                    | factor                                                    { $$.nd = mknode($1.nd, NULL, "term"); }
+term                : factor TK_PLUS factor                                     { $$.nd = mknode($1.nd, $3.nd, "term"); printf("%d: consumed term (%s + %s)\n", ++cstep, $1.name, $3.name); }
+                    | factor TK_MINUS factor                                    { $$.nd = mknode($1.nd, $3.nd, "term"); printf("%d: consumed term (%s - %s)\n", ++cstep, $1.name, $3.name); }
+                    | factor                                                    { 
+                                                                                    $$.nd = mknode($1.nd, NULL, "term"); 
+                                                                                    
+                                                                                    if ($1.is_presolved)
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved;
+                                                                                        $$.is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed term %s\n", ++cstep, $1.name); 
+                                                                                }
                     ;
 
-factor              : unary TK_STAR unary                                       { $$.nd = mknode($1.nd, $3.nd, "factor"); }
-                    | unary TK_SLASH unary                                      { $$.nd = mknode($1.nd, $3.nd, "factor"); }
-                    | unary                                                     { $$.nd = mknode($1.nd, NULL, "factor"); }
+factor              : unary TK_STAR unary                                       { $$.nd = mknode($1.nd, $3.nd, "factor"); printf("%d: consumed factor (%s * %s)\n", ++cstep, $1.name, $3.name); }
+                    | unary TK_SLASH unary                                      { $$.nd = mknode($1.nd, $3.nd, "factor"); printf("%d: consumed factor (%s / %s)\n", ++cstep, $1.name, $3.name); }
+                    | unary                                                     { 
+                                                                                    $$.nd = mknode($1.nd, NULL, "factor");
+
+                                                                                    if ($1.is_presolved)
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved;
+                                                                                        $$.is_presolved = 1;
+                                                                                    }
+
+                                                                                    printf("%d: consumed factor %s\n", ++cstep, $1.name); 
+                                                                                }
                     ;
 
-unary               : TK_MINUS primary                                          { $$.nd = mknode($2.nd, NULL, "unary"); }
-                    | primary                                                   { $$.nd = mknode($1.nd, NULL, "unary"); }
+unary               : TK_MINUS primary                                          {
+                                                                                    $$.nd = mknode($2.nd, $1.nd, "unary"); 
+                                                                                    
+                                                                                    if ($2.is_presolved)
+                                                                                    {
+                                                                                        $$.presolved = $2.presolved;
+
+                                                                                        if (!strcmp($1.name, "-")) 
+                                                                                            $$.presolved = -$$.presolved;
+
+                                                                                        $$.is_presolved = 1;
+                                                                                    }
+                                                                                    printf("%d: consumed unary (%s and %s)\n", ++cstep, $1.name, $2.name); }
+                    | primary                                                   { 
+                                                                                    $$.nd = mknode($1.nd, NULL, "unary"); 
+
+                                                                                    if ($1.is_presolved) 
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved;
+                                                                                        $$.is_presolved = 1;
+                                                                                    }
+
+                                                                                    printf("%d: consumed unary %s\n", ++cstep, $1.name); 
+                                                                                }
                     ;
 
-primary             : TK_TRUE                                                   { add_symbol('C', "bool"); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_FALSE                                                  { add_symbol('C', "bool"); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_NUMBER                                                 { add_symbol('C', "int"); $$.nd = mknode(NULL, NULL, $1.name); }
+primary             : TK_TRUE                                                   { add_symbol('C', "bool"); $$.nd = mknode(NULL, NULL, $1.name); printf("%d: consumed primary %s\n", ++cstep, $1.name); }
+                    | TK_FALSE                                                  { add_symbol('C', "bool"); $$.nd = mknode(NULL, NULL, $1.name); printf("%d: consumed primary %s\n", ++cstep, $1.name); }
+                    | TK_NUMBER                                                 { 
+                                                                                    add_symbol('C', "int"); 
+                                                                                    $$.nd = mknode(NULL, NULL, $1.name); 
+                                                                                    $$.presolved = atoi($1.name);
+                                                                                    $$.is_presolved = 1;
+                                                                                    printf("%d: consumed primary %d\n", ++cstep, $$.presolved); 
+                                                                                }
                     | TK_STRING_LITERAL                                         { add_symbol('C', "string"); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_LPAREN expression TK_RPAREN
+                    | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); printf("%d: consumed primary %s\n", ++cstep, $1.name); }
+                    | TK_LPAREN expression TK_RPAREN                            { printf("%d: consumed primary %s\n", ++cstep, $2.name); }
                     ;
 
 numeric_variable    : TK_NUMBER                                                 { add_symbol('C', "int"); $$.nd = mknode(NULL, NULL, $1.name); }
@@ -286,8 +403,12 @@ comparison_operator : TK_GREATER
 
 %%
 
-int main(int argc, char **argv) {
+int main() {
     yydebug = 0;
+    cstep = 0;
+
+    /* output_file = fopen(OUTPUT_FILE_PATH, "w"); */
+
     yyparse();
 
     printf("\n\n");
