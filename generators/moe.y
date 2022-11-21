@@ -6,6 +6,8 @@
     #include <stdbool.h>
     #include "moe.lex.c"
     
+    #define TOTAL_KEYWORDS 22
+
     void yyerror(const char *s);
     int yylex();
     int yywrap();
@@ -15,12 +17,12 @@
     void unset_global();
 
     int search(char *type);
-    void add_symbol(char c);
+    void add_symbol(char symbol_type, char *data_type);
 
-    struct datatype {
+    struct symbol {
         char *id_name;
         char *data_type;
-        char *type;
+        char *symbol_type;
         int line_no;
         bool is_global;
     } symbol_table[255];
@@ -45,13 +47,14 @@
     int sem_errors = 0;
     char errors[10][100];
 
-    char reserved[22][10] = {
+    char reserved[TOTAL_KEYWORDS][10] = {
         "var", "program", "print", "if", "else", "int", "position", "string",
         "pos", "parameter", "param", "par", "open", "close", "jaw", "delay",
         "global", "move", "await", "for", "between", "bool"
     };
 
     void check_declaration(char *c);
+    int check_types(char *type1, char *type2);
 %}
 
 %union {
@@ -86,9 +89,9 @@
 
 %%
 
-program             : TK_PROGRAM { add_symbol('K'); } TK_IDENTIFIER 
-                      { add_symbol('V'); } TK_LBRACE body TK_RBRACE             { 
-                                                                                    $$.nd = mknode($6.nd, NULL, "program");
+program             : TK_PROGRAM TK_IDENTIFIER { add_symbol('V', "string"); } 
+                      TK_LBRACE body TK_RBRACE                                  { 
+                                                                                    $$.nd = mknode($5.nd, NULL, "program");
                                                                                     head = $$.nd;
                                                                                 }
                     ;
@@ -107,7 +110,7 @@ declaration         : var_declaration                                           
                     ;
 
 var_declaration     : access_modifier data_type TK_IDENTIFIER
-                      { add_symbol('V'); } var_init                             { 
+                      { add_symbol('V', type); } var_init                       { 
                                                                                     $3.nd = mknode(NULL, NULL, $3.name); 
                                                                                     $$.nd = mknode($3.nd, $5.nd, "var_declaration");
                                                                                 }
@@ -124,7 +127,7 @@ data_type           : TK_STRING                                                 
                     | TK_PARAMETER                                              { insert_type(); }
                     ;
 
-access_modifier     : TK_GLOBAL { add_symbol('K'); }                            { set_global(); $$.nd = NULL; }
+access_modifier     : TK_GLOBAL                                                 { set_global(); $$.nd = NULL; }
                     |                                                           { unset_global(); $$.nd = NULL; }
                     ;
 
@@ -142,49 +145,45 @@ statement           : expression TK_SEMICOLON                                   
                     | moved_statement                                           { $$.nd = mknode($1.nd, NULL, "statement"); }
                     ;
 
-print_statement     : TK_PRINT { add_symbol('K'); } TK_LPAREN TK_STRING_LITERAL 
-                      { add_symbol('C'); } TK_RPAREN TK_SEMICOLON               { $$.nd = mknode(NULL, NULL, "print"); }
+print_statement     : TK_PRINT TK_LPAREN TK_STRING_LITERAL 
+                      { add_symbol('C', "string"); } TK_RPAREN TK_SEMICOLON     { $$.nd = mknode(NULL, NULL, "print"); }
                     ;
 
-if_statement        : TK_IF { add_symbol('K'); } TK_LPAREN logic TK_RPAREN 
-                      TK_LBRACE declarations TK_RBRACE else_statement           { 
-                                                                                    struct node *if_node = mknode($4.nd, $7.nd, "if");
-                                                                                    $$.nd = mknode(if_node, $9.nd, "if-else"); 
-                                                                                }
-                    ;
-
-loop_statement      : TK_FOR { add_symbol('K'); } TK_LPAREN TK_IDENTIFIER
-                      { add_symbol('V'); } TK_BETWEEN { add_symbol('K'); } 
-                      numeric_variable TK_COMMA numeric_variable TK_RPAREN
-                      TK_LBRACE declarations TK_RBRACE                          { 
-                                                                                    $$.nd = mknode($13.nd, NULL, "for-loop");
+if_statement        : TK_IF TK_LPAREN logic TK_RPAREN TK_LBRACE declarations 
+                      TK_RBRACE else_statement                                  { 
+                                                                                    struct node *if_node = mknode($3.nd, $6.nd, "if");
+                                                                                    $$.nd = mknode(if_node, $8.nd, "if-else"); 
                                                                                 }
                     ;
 
 else_statement      :                                                           { $$.nd = NULL; }
-                    | TK_ELSE { add_symbol('K'); } if_statement                 { $$.nd = mknode($3.nd, NULL, "else-if"); }
-                    | TK_ELSE { add_symbol('K'); } TK_LBRACE declarations 
-                      TK_RBRACE                                                 { $$.nd = mknode($4.nd, NULL, "else"); }
+                    | TK_ELSE if_statement                                      { $$.nd = mknode($2.nd, NULL, "else-if"); }
+                    | TK_ELSE TK_LBRACE declarations TK_RBRACE                  { $$.nd = mknode($3.nd, NULL, "else"); }
                     ;
 
-open_statement      : TK_OPEN { add_symbol('K'); } TK_LPAREN optional_argument 
-                      TK_RPAREN TK_SEMICOLON                                    { $$.nd = mknode($4.nd, NULL, "open"); }
+loop_statement      : TK_FOR TK_LPAREN TK_IDENTIFIER 
+                      { add_symbol('V', "int"); } TK_BETWEEN numeric_variable 
+                      TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations 
+                      TK_RBRACE                                                 { 
+                                                                                    $$.nd = mknode($11.nd, NULL, "for-loop");
+                                                                                }
                     ;
 
-close_statement     : TK_CLOSE { add_symbol('K'); } TK_LPAREN optional_argument 
-                      TK_RPAREN TK_SEMICOLON                                    { $$.nd = mknode($4.nd, NULL, "close"); }
+open_statement      : TK_OPEN TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON{ $$.nd = mknode($4.nd, NULL, "open"); }
+                    ;
+
+close_statement     : TK_CLOSE TK_LPAREN optional_argument TK_RPAREN 
+                      TK_SEMICOLON                                              { $$.nd = mknode($4.nd, NULL, "close"); }
                     ;
 
 optional_argument   :                                                           { $$.nd = NULL; }
                     | term                                                      { $$.nd = $1.nd; }
                     ;
 
-jaw_statement       : TK_JAW { add_symbol('K'); } TK_LPAREN two_arguments
-                      TK_RPAREN TK_SEMICOLON                                    { $$.nd = mknode($4.nd, NULL, "jaw"); }
+jaw_statement       : TK_JAW TK_LPAREN two_arguments TK_RPAREN TK_SEMICOLON     { $$.nd = mknode($4.nd, NULL, "jaw"); }
                     ;
 
-move_statement      : TK_MOVE { add_symbol('K'); } TK_LPAREN two_arguments
-                      TK_RPAREN TK_SEMICOLON                                    { $$.nd = mknode($4.nd, NULL, "move"); }
+move_statement      : TK_MOVE TK_LPAREN two_arguments TK_RPAREN TK_SEMICOLON    { $$.nd = mknode($4.nd, NULL, "move"); }
                     ;
 
 moved_statement     : TK_AWAIT move_statement                                   { $$.nd = mknode($1.nd, NULL, "moved"); }
@@ -194,8 +193,7 @@ two_arguments       : term                                                      
                     | term TK_COMMA term                                        { $$.nd = mknode($1.nd, $3.nd, "two_arguments"); }
                     ;
 
-delay_statement     : TK_DELAY { add_symbol('K'); } TK_LPAREN term TK_RPAREN
-                      TK_SEMICOLON                                              { $$.nd = mknode($4.nd, NULL, "delay"); }
+delay_statement     : TK_DELAY TK_LPAREN term TK_RPAREN TK_SEMICOLON            { $$.nd = mknode($4.nd, NULL, "delay"); }
                     ;
 
 // expressions
@@ -237,15 +235,15 @@ unary               : TK_MINUS primary                                          
                     | primary                                                   { $$.nd = mknode($1.nd, NULL, "unary"); }
                     ;
 
-primary             : TK_TRUE                                                   { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_FALSE                                                  { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_NUMBER                                                 { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_STRING_LITERAL                                         { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
+primary             : TK_TRUE                                                   { add_symbol('C', "bool"); $$.nd = mknode(NULL, NULL, $1.name); }
+                    | TK_FALSE                                                  { add_symbol('C', "bool"); $$.nd = mknode(NULL, NULL, $1.name); }
+                    | TK_NUMBER                                                 { add_symbol('C', "int"); $$.nd = mknode(NULL, NULL, $1.name); }
+                    | TK_STRING_LITERAL                                         { add_symbol('C', "string"); $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_LPAREN expression TK_RPAREN
                     ;
 
-numeric_variable    : TK_NUMBER                                                 { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
+numeric_variable    : TK_NUMBER                                                 { add_symbol('C', "int"); $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
                     ;
 
@@ -261,21 +259,27 @@ comparison_operator : TK_GREATER
 
 %%
 
-int main() {
+int main(int argc, char **argv) {
     yydebug = 0;
     yyparse();
 
     printf("\n\n");
 	printf("\t\t\t\t\t\t PHASE 1: LEXICAL ANALYSIS \n\n");
-	printf("\nSYMBOL   DATATYPE   TYPE   LINE NUMBER \n");
+	printf("\nSYMBOL   DATATYPE   TYPE   LINE NUMBER    GLOBAL \n");
 	printf("_______________________________________\n\n");
 	int i=0;
 	for(i=0; i<count; i++) {
-		printf("%s\t%s\t%s\t%d\t\n", symbol_table[i].id_name, symbol_table[i].data_type, symbol_table[i].type, symbol_table[i].line_no, symbol_table[i].is_global);
+		printf("%s\t%s\t%s\t%d\t%d\n", 
+                symbol_table[i].id_name, 
+                symbol_table[i].data_type, 
+                symbol_table[i].symbol_type, 
+                symbol_table[i].line_no, 
+                symbol_table[i].is_global
+        );
 	}
 	for(i=0;i<count;i++) {
 		free(symbol_table[i].id_name);
-		free(symbol_table[i].type);
+		free(symbol_table[i].data_type);
 	}
 	printf("\n\n");
 
@@ -307,10 +311,10 @@ void unset_global() {
     is_global = false;
 }
 
-int search(char *type) {
+int search(char *id_name) {
     int i;
     for (i = count - 1; i >= 0; i--) {
-        if (strcmp(symbol_table[i].id_name, type) == 0) {
+        if (strcmp(symbol_table[i].id_name, id_name) == 0) {
             return -1;
             break;
         }
@@ -319,13 +323,16 @@ int search(char *type) {
     return 0;
 }
 
-void add_symbol(char c) {
+void add_symbol(char symbol_type, char *data_type) {
+    // symbol type can be either V for variables or C for constants
     q = search(yytext);
 
-    if (c == 'V') {
-        for (int i = 0; i < 10; i++) {
+    if (symbol_type == 'V') {
+        // checks if variable name is equals to keyword
+
+        for (int i = 0; i < TOTAL_KEYWORDS; i++) {
             if (!strcmp(reserved[i], strdup(yytext))) {
-                sprintf(errors[sem_errors], "Line %d: Variable name \"%s\" is a reserved keyword.\n", lineno + 1, yytext);
+                sprintf(errors[sem_errors], "Line %d: \"%s\" is a reserved keyword name and can't be used as variable.\n", lineno + 1, yytext);
                 sem_errors++;
                 return;
             }
@@ -333,32 +340,21 @@ void add_symbol(char c) {
     }
 
     if(!q) {
-        if (c == 'K') {
-            symbol_table[count].id_name = strdup(yytext);
-            symbol_table[count].data_type = strdup("N/A");
-            symbol_table[count].line_no = lineno;
-            symbol_table[count].type = strdup("Keyword\t");
-            symbol_table[count].is_global = is_global;
-            count++;
+        symbol_table[count].id_name = strdup(yytext);
+        symbol_table[count].data_type = strdup(data_type);
+        symbol_table[count].line_no = lineno;
+        symbol_table[count].is_global = is_global;
+
+        if (symbol_type == 'V') {
+            symbol_table[count].symbol_type = "Variable";
         }
-        else if (c == 'V') {            
-            symbol_table[count].id_name = strdup(yytext);
-            symbol_table[count].data_type = strdup(type);
-            symbol_table[count].line_no = lineno;
-            symbol_table[count].type = strdup("Variable");
-            symbol_table[count].is_global = is_global;
-            count++;
+        else if (symbol_type == 'C') {
+            symbol_table[count].symbol_type = "Constant";
         }
-        else if (c == 'C') {
-            symbol_table[count].id_name = strdup(yytext);
-            symbol_table[count].data_type = strdup("CONST");
-            symbol_table[count].line_no = lineno;
-            symbol_table[count].type = strdup("Constant");
-            symbol_table[count].is_global = is_global;
-            count++;
-        }
+
+        count++;
     }
-    else if (c == 'V') {
+    else if (symbol_type == 'V') {
         sprintf(errors[sem_errors], "Line %d: Multiple declarations of \"%s\" not allowed.\n", lineno + 1, yytext);
         sem_errors++;
     }
@@ -397,6 +393,19 @@ void check_declaration(char *c) {
     if(!q) {
         sprintf(errors[sem_errors], "Line %d: Undeclared variable \"%s\".\n", lineno + 1, c);
         sem_errors++;
+    }
+}
+
+int validate_type(char *type1, char *type2) {
+    
+}
+
+char *get_type(char *var) {
+    for (int i = 0; i < count; i++)
+    {
+        if(!strcmp(symbol_table[i].id_name, var)) {
+            return symbol_table[i].data_type;
+        }
     }
 }
 
