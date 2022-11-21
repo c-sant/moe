@@ -640,10 +640,10 @@ static const yytype_int16 yyrline[] =
      171,   172,   173,   174,   175,   176,   177,   178,   179,   180,
      183,   187,   186,   190,   197,   198,   199,   203,   202,   220,
      223,   227,   228,   231,   234,   237,   240,   241,   244,   249,
-     252,   252,   262,   265,   266,   267,   271,   272,   273,   276,
-     277,   280,   281,   282,   285,   286,   287,   290,   304,   310,
-     311,   312,   319,   320,   320,   321,   324,   325,   325,   332,
-     333,   334,   335
+     252,   252,   262,   275,   276,   277,   291,   292,   293,   306,
+     307,   320,   321,   322,   335,   347,   360,   375,   390,   405,
+     406,   407,   414,   415,   415,   416,   419,   420,   420,   427,
+     428,   429,   430
 };
 #endif
 
@@ -1676,96 +1676,181 @@ yyreduce:
 
   case 52: /* assignment: logic  */
 #line 262 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "assignment"); printf("%d: consumed assignment %s\n", ++cstep, (yyvsp[0].nd_obj).name); }
-#line 1681 "./src/moe.tab.c"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "assignment"); 
+                                                                                    
+                                                                                    if ((yyvsp[0].nd_obj).is_presolved)
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed assignment %s\n", ++cstep, (yyvsp[0].nd_obj).name); 
+                                                                                }
+#line 1691 "./src/moe.tab.c"
     break;
 
   case 53: /* logic: logic TK_OR equality  */
-#line 265 "./generators/moe.y"
+#line 275 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "logic"); printf("%d: consumed logic (OR between %s and %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1687 "./src/moe.tab.c"
+#line 1697 "./src/moe.tab.c"
     break;
 
   case 54: /* logic: logic TK_AND equality  */
-#line 266 "./generators/moe.y"
+#line 276 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "logic"); printf("%d: consumed logic (AND between %s and %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1693 "./src/moe.tab.c"
+#line 1703 "./src/moe.tab.c"
     break;
 
   case 55: /* logic: equality  */
-#line 267 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "logic"); printf("%d: consumed logic %s\n", ++cstep, (yyvsp[0].nd_obj).name); }
-#line 1699 "./src/moe.tab.c"
+#line 277 "./generators/moe.y"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "logic"); 
+                                                                                    
+                                                                                    if ((yyvsp[0].nd_obj).is_presolved)
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed logic %s\n", ++cstep, (yyvsp[0].nd_obj).name); 
+                                                                                }
+#line 1719 "./src/moe.tab.c"
     break;
 
   case 56: /* equality: comparison TK_EQUAL_EQUAL comparison  */
-#line 271 "./generators/moe.y"
+#line 291 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "equality"); printf("%d: consumed equality (%s and %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1705 "./src/moe.tab.c"
+#line 1725 "./src/moe.tab.c"
     break;
 
   case 57: /* equality: comparison TK_BANG_EQUAL comparison  */
-#line 272 "./generators/moe.y"
+#line 292 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "equality"); printf("%d: consumed inequality (%s and %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1711 "./src/moe.tab.c"
+#line 1731 "./src/moe.tab.c"
     break;
 
   case 58: /* equality: comparison  */
-#line 273 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "equality"); printf("%d: consumed equality %s\n", ++cstep, (yyvsp[0].nd_obj).name); }
-#line 1717 "./src/moe.tab.c"
-    break;
-
-  case 59: /* comparison: term comparison_operator term  */
-#line 276 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "comparison"); printf("%d: consumed comparison (%s and %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1723 "./src/moe.tab.c"
-    break;
-
-  case 60: /* comparison: term  */
-#line 277 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "comparison"); printf("%d: consumed comparison %s\n", ++cstep, (yyvsp[0].nd_obj).name); }
-#line 1729 "./src/moe.tab.c"
-    break;
-
-  case 61: /* term: factor TK_PLUS factor  */
-#line 280 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "term"); printf("%d: consumed term (%s + %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1735 "./src/moe.tab.c"
-    break;
-
-  case 62: /* term: factor TK_MINUS factor  */
-#line 281 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "term"); printf("%d: consumed term (%s - %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1741 "./src/moe.tab.c"
-    break;
-
-  case 63: /* term: factor  */
-#line 282 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "term"); printf("%d: consumed term %s\n", ++cstep, (yyvsp[0].nd_obj).name); }
+#line 293 "./generators/moe.y"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "equality"); 
+                                                                                    
+                                                                                    if ((yyvsp[0].nd_obj).is_presolved)
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed equality %s\n", ++cstep, (yyvsp[0].nd_obj).name); 
+                                                                                }
 #line 1747 "./src/moe.tab.c"
     break;
 
-  case 64: /* factor: unary TK_STAR unary  */
-#line 285 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "factor"); printf("%d: consumed factor (%s * %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
+  case 59: /* comparison: term comparison_operator term  */
+#line 306 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "comparison"); printf("%d: consumed comparison (%s and %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
 #line 1753 "./src/moe.tab.c"
     break;
 
+  case 60: /* comparison: term  */
+#line 307 "./generators/moe.y"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "comparison"); 
+                                                                                    
+                                                                                    if ((yyvsp[0].nd_obj).is_presolved)
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed comparison %s\n", ++cstep, (yyvsp[0].nd_obj).name); 
+                                                                                }
+#line 1769 "./src/moe.tab.c"
+    break;
+
+  case 61: /* term: factor TK_PLUS factor  */
+#line 320 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "term"); printf("%d: consumed term (%s + %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
+#line 1775 "./src/moe.tab.c"
+    break;
+
+  case 62: /* term: factor TK_MINUS factor  */
+#line 321 "./generators/moe.y"
+                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "term"); printf("%d: consumed term (%s - %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
+#line 1781 "./src/moe.tab.c"
+    break;
+
+  case 63: /* term: factor  */
+#line 322 "./generators/moe.y"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "term"); 
+                                                                                    
+                                                                                    if ((yyvsp[0].nd_obj).is_presolved)
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed term %s\n", ++cstep, (yyvsp[0].nd_obj).name); 
+                                                                                }
+#line 1797 "./src/moe.tab.c"
+    break;
+
+  case 64: /* factor: unary TK_STAR unary  */
+#line 335 "./generators/moe.y"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "factor"); 
+                                                                                    
+                                                                                    if ((yyvsp[-2].nd_obj).is_presolved && (yyvsp[0].nd_obj).is_presolved) 
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[-2].nd_obj).presolved * (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+
+                                                                                        printf("%d: solved factor: %d\n", ++cstep, (yyval.nd_obj).presolved);
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed factor (%s * %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
+#line 1814 "./src/moe.tab.c"
+    break;
+
   case 65: /* factor: unary TK_SLASH unary  */
-#line 286 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "factor"); printf("%d: consumed factor (%s / %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1759 "./src/moe.tab.c"
+#line 347 "./generators/moe.y"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "factor"); 
+                                                                                
+                                                                                    if ((yyvsp[-2].nd_obj).is_presolved && (yyvsp[0].nd_obj).is_presolved) 
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[-2].nd_obj).presolved / (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+
+                                                                                        printf("%d: solved factor: %d\n", ++cstep, (yyval.nd_obj).presolved);
+                                                                                    }
+                                                                                
+                                                                                    printf("%d: consumed factor (%s / %s)\n", ++cstep, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj).name); 
+                                                                                }
+#line 1832 "./src/moe.tab.c"
     break;
 
   case 66: /* factor: unary  */
-#line 287 "./generators/moe.y"
-                                                                                { (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "factor"); printf("%d: consumed factor %s\n", ++cstep, (yyvsp[0].nd_obj).name); }
-#line 1765 "./src/moe.tab.c"
+#line 360 "./generators/moe.y"
+                                                                                { 
+                                                                                    (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "factor");
+
+                                                                                    if ((yyvsp[0].nd_obj).is_presolved)
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+
+                                                                                        printf("%d: solved factor: %d\n", ++cstep, (yyval.nd_obj).presolved);
+                                                                                    }
+
+                                                                                    printf("%d: consumed factor %s\n", ++cstep, (yyvsp[0].nd_obj).name); 
+                                                                                }
+#line 1850 "./src/moe.tab.c"
     break;
 
   case 67: /* unary: TK_MINUS primary  */
-#line 290 "./generators/moe.y"
+#line 375 "./generators/moe.y"
                                                                                 {
                                                                                     (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, (yyvsp[-1].nd_obj).nd, "unary"); 
                                                                                     
@@ -1775,37 +1860,47 @@ yyreduce:
 
                                                                                         if (!strcmp((yyvsp[-1].nd_obj).name, "-")) 
                                                                                             (yyval.nd_obj).presolved = -(yyval.nd_obj).presolved;
-                                                                                            
+
                                                                                         (yyval.nd_obj).is_presolved = 1;
-                                                                                        printf("UNARY PRESOLVED: %d\n", (yyval.nd_obj).presolved);
+
+                                                                                        printf("%d: solved unary: %d\n", ++cstep, (yyval.nd_obj).presolved);
                                                                                     }
                                                                                     printf("%d: consumed unary (%s and %s)\n", ++cstep, (yyvsp[-1].nd_obj).name, (yyvsp[0].nd_obj).name); }
-#line 1784 "./src/moe.tab.c"
+#line 1870 "./src/moe.tab.c"
     break;
 
   case 68: /* unary: primary  */
-#line 304 "./generators/moe.y"
+#line 390 "./generators/moe.y"
                                                                                 { 
                                                                                     (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, "unary"); 
+
+                                                                                    if ((yyvsp[0].nd_obj).is_presolved) 
+                                                                                    {
+                                                                                        (yyval.nd_obj).presolved = (yyvsp[0].nd_obj).presolved;
+                                                                                        (yyval.nd_obj).is_presolved = 1;
+
+                                                                                        printf("%d: solved unary: %d\n", ++cstep, (yyval.nd_obj).presolved);
+                                                                                    }
+
                                                                                     printf("%d: consumed unary %s\n", ++cstep, (yyvsp[0].nd_obj).name); 
                                                                                 }
-#line 1793 "./src/moe.tab.c"
+#line 1888 "./src/moe.tab.c"
     break;
 
   case 69: /* primary: TK_TRUE  */
-#line 310 "./generators/moe.y"
+#line 405 "./generators/moe.y"
                                                                                 { add_symbol('C', "bool"); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); printf("%d: consumed primary %s\n", ++cstep, (yyvsp[0].nd_obj).name); }
-#line 1799 "./src/moe.tab.c"
+#line 1894 "./src/moe.tab.c"
     break;
 
   case 70: /* primary: TK_FALSE  */
-#line 311 "./generators/moe.y"
+#line 406 "./generators/moe.y"
                                                                                 { add_symbol('C', "bool"); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); printf("%d: consumed primary %s\n", ++cstep, (yyvsp[0].nd_obj).name); }
-#line 1805 "./src/moe.tab.c"
+#line 1900 "./src/moe.tab.c"
     break;
 
   case 71: /* primary: TK_NUMBER  */
-#line 312 "./generators/moe.y"
+#line 407 "./generators/moe.y"
                                                                                 { 
                                                                                     add_symbol('C', "int"); 
                                                                                     (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); 
@@ -1813,53 +1908,53 @@ yyreduce:
                                                                                     (yyval.nd_obj).is_presolved = 1;
                                                                                     printf("%d: consumed primary %d\n", ++cstep, (yyval.nd_obj).presolved); 
                                                                                 }
-#line 1817 "./src/moe.tab.c"
+#line 1912 "./src/moe.tab.c"
     break;
 
   case 72: /* primary: TK_STRING_LITERAL  */
-#line 319 "./generators/moe.y"
+#line 414 "./generators/moe.y"
                                                                                 { add_symbol('C', "string"); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
-#line 1823 "./src/moe.tab.c"
+#line 1918 "./src/moe.tab.c"
     break;
 
   case 73: /* $@6: %empty  */
-#line 320 "./generators/moe.y"
+#line 415 "./generators/moe.y"
                                     { check_declaration((yyvsp[0].nd_obj).name); }
-#line 1829 "./src/moe.tab.c"
+#line 1924 "./src/moe.tab.c"
     break;
 
   case 74: /* primary: TK_IDENTIFIER $@6  */
-#line 320 "./generators/moe.y"
+#line 415 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[-1].nd_obj).name); printf("%d: consumed primary %s\n", ++cstep, (yyvsp[-1].nd_obj).name); }
-#line 1835 "./src/moe.tab.c"
+#line 1930 "./src/moe.tab.c"
     break;
 
   case 75: /* primary: TK_LPAREN expression TK_RPAREN  */
-#line 321 "./generators/moe.y"
+#line 416 "./generators/moe.y"
                                                                                 { printf("%d: consumed primary %s\n", ++cstep, (yyvsp[-1].nd_obj).name); }
-#line 1841 "./src/moe.tab.c"
+#line 1936 "./src/moe.tab.c"
     break;
 
   case 76: /* numeric_variable: TK_NUMBER  */
-#line 324 "./generators/moe.y"
+#line 419 "./generators/moe.y"
                                                                                 { add_symbol('C', "int"); (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
-#line 1847 "./src/moe.tab.c"
+#line 1942 "./src/moe.tab.c"
     break;
 
   case 77: /* $@7: %empty  */
-#line 325 "./generators/moe.y"
+#line 420 "./generators/moe.y"
                                     { check_declaration((yyvsp[0].nd_obj).name); }
-#line 1853 "./src/moe.tab.c"
+#line 1948 "./src/moe.tab.c"
     break;
 
   case 78: /* numeric_variable: TK_IDENTIFIER $@7  */
-#line 325 "./generators/moe.y"
+#line 420 "./generators/moe.y"
                                                                                 { (yyval.nd_obj).nd = mknode(NULL, NULL, (yyvsp[-1].nd_obj).name); }
-#line 1859 "./src/moe.tab.c"
+#line 1954 "./src/moe.tab.c"
     break;
 
 
-#line 1863 "./src/moe.tab.c"
+#line 1958 "./src/moe.tab.c"
 
       default: break;
     }
@@ -2052,7 +2147,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 338 "./generators/moe.y"
+#line 433 "./generators/moe.y"
 
 
 int main() {

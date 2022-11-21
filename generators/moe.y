@@ -332,8 +332,31 @@ term                : factor TK_PLUS factor                                     
                                                                                 }
                     ;
 
-factor              : unary TK_STAR unary                                       { $$.nd = mknode($1.nd, $3.nd, "factor"); printf("%d: consumed factor (%s * %s)\n", ++cstep, $1.name, $3.name); }
-                    | unary TK_SLASH unary                                      { $$.nd = mknode($1.nd, $3.nd, "factor"); printf("%d: consumed factor (%s / %s)\n", ++cstep, $1.name, $3.name); }
+factor              : unary TK_STAR unary                                       { 
+                                                                                    $$.nd = mknode($1.nd, $3.nd, "factor"); 
+                                                                                    
+                                                                                    if ($1.is_presolved && $3.is_presolved) 
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved * $3.presolved;
+                                                                                        $$.is_presolved = 1;
+
+                                                                                        printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
+                                                                                    }
+                                                                                    
+                                                                                    printf("%d: consumed factor (%s * %s)\n", ++cstep, $1.name, $3.name); }
+                    | unary TK_SLASH unary                                      { 
+                                                                                    $$.nd = mknode($1.nd, $3.nd, "factor"); 
+                                                                                
+                                                                                    if ($1.is_presolved && $3.is_presolved) 
+                                                                                    {
+                                                                                        $$.presolved = $1.presolved / $3.presolved;
+                                                                                        $$.is_presolved = 1;
+
+                                                                                        printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
+                                                                                    }
+                                                                                
+                                                                                    printf("%d: consumed factor (%s / %s)\n", ++cstep, $1.name, $3.name); 
+                                                                                }
                     | unary                                                     { 
                                                                                     $$.nd = mknode($1.nd, NULL, "factor");
 
@@ -341,6 +364,8 @@ factor              : unary TK_STAR unary                                       
                                                                                     {
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
+
+                                                                                        printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
                                                                                     }
 
                                                                                     printf("%d: consumed factor %s\n", ++cstep, $1.name); 
@@ -358,6 +383,8 @@ unary               : TK_MINUS primary                                          
                                                                                             $$.presolved = -$$.presolved;
 
                                                                                         $$.is_presolved = 1;
+
+                                                                                        printf("%d: solved unary: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     printf("%d: consumed unary (%s and %s)\n", ++cstep, $1.name, $2.name); }
                     | primary                                                   { 
@@ -367,6 +394,8 @@ unary               : TK_MINUS primary                                          
                                                                                     {
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
+
+                                                                                        printf("%d: solved unary: %d\n", ++cstep, $$.presolved);
                                                                                     }
 
                                                                                     printf("%d: consumed unary %s\n", ++cstep, $1.name); 
