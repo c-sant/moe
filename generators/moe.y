@@ -73,6 +73,7 @@
         struct node *nd;
         int presolved;
         int is_presolved;
+        char expr[256];
     } nd_obj;
 }
 %start program
@@ -237,8 +238,8 @@ move_statement      : TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON      
 moved_statement     : TK_AWAIT move_statement                                   { $$.nd = mknode($1.nd, NULL, "moved"); }
                     ;
 
-two_numbers         : numeric_variable                                                      { $$.nd = $1.nd; }                                          
-                    | numeric_variable TK_COMMA numeric_variable                                        { $$.nd = mknode($1.nd, $3.nd, "two_numbers"); }
+two_numbers         : numeric_variable                                          { $$.nd = $1.nd; }                                          
+                    | numeric_variable TK_COMMA numeric_variable                { $$.nd = mknode($1.nd, $3.nd, "two_numbers"); }
                     ;
 
 delay_statement     : TK_DELAY TK_LPAREN term TK_RPAREN TK_SEMICOLON            { $$.nd = mknode($4.nd, NULL, "delay"); }
@@ -257,7 +258,7 @@ assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL
                                                                                         "Line %d: Incorrectly assigned value (expected %s, got %s).\n"
                                                                                     ); 
                                                                                     $$.nd = mknode($1.nd, $3.nd, "assignment"); 
-                                                                                    printf("%d: consumed assignment (%s into %s) %s\n", ++cstep, $4.name, $1.name);
+                                                                                    printf("%d: consumed assignment (%s into %s)\n", ++cstep, $4.name, $1.name);
                                                                                 }
                     | logic                                                     { 
                                                                                     $$.nd = mknode($1.nd, NULL, "assignment"); 
@@ -402,6 +403,14 @@ term                : term TK_PLUS factor                                       
 
                                                                                         printf("%d: solved term: %d\n", ++cstep, $$.presolved);
                                                                                     }
+                                                                                    else
+                                                                                    {
+                                                                                        if ($1.is_presolved) snprintf($1.expr, sizeof($1.expr), "%d", $1.presolved);
+                                                                                        if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
+
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s %s - %s", $$.expr, $1.expr, $3.expr);
+                                                                                        printf("%d: solved term: %s\n", ++cstep, $$.expr);
+                                                                                    }
                                                                                     
                                                                                     printf("%d: consumed term (%s - %s)\n", ++cstep, $1.name, $3.name); 
                                                                                 }
@@ -416,11 +425,23 @@ term                : term TK_PLUS factor                                       
                                                                                         printf("%d: solved term: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     
+                                                                                    
                                                                                     printf("%d: consumed term %s\n", ++cstep, $1.name); 
                                                                                 }
                     ;
 
 factor              : factor TK_STAR unary                                      { 
+                                                                                    validate_types(
+                                                                                        "int", 
+                                                                                        get_type($1.name), 
+                                                                                        "Line %d: Multiplication's left term should be %s (got %s).\n"
+                                                                                    );
+                                                                                    
+                                                                                    validate_types(
+                                                                                        "int", 
+                                                                                        get_type($3.name), 
+                                                                                        "Line %d: Multiplication's right term should be %s (got %s).\n"
+                                                                                    );
                                                                                     $$.nd = mknode($1.nd, $3.nd, "factor"); 
                                                                                     
                                                                                     if ($1.is_presolved && $3.is_presolved) 
@@ -430,10 +451,30 @@ factor              : factor TK_STAR unary                                      
 
                                                                                         printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
                                                                                     }
+                                                                                    else
+                                                                                    {
+                                                                                        if ($1.is_presolved) snprintf($1.expr, sizeof($1.expr), "%d", $1.presolved);
+                                                                                        if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
+
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s %s * %s", $$.expr, $1.expr, $3.expr);
+                                                                                        printf("%d: solved factor: %s\n", ++cstep, $$.expr);
+                                                                                    }
                                                                                     
                                                                                     printf("%d: consumed factor (%s * %s)\n", ++cstep, $1.name, $3.name); 
                                                                                 }
-                    | factor TK_SLASH unary                                     { 
+                    | factor TK_SLASH unary                                     {
+                                                                                    validate_types(
+                                                                                        "int", 
+                                                                                        get_type($1.name), 
+                                                                                        "Line %d: Division's left term should be %s (got %s).\n"
+                                                                                    );
+                                                                                    
+                                                                                    validate_types(
+                                                                                        "int", 
+                                                                                        get_type($3.name), 
+                                                                                        "Line %d: Division's right term should be %s (got %s).\n"
+                                                                                    );
+
                                                                                     $$.nd = mknode($1.nd, $3.nd, "factor"); 
                                                                                 
                                                                                     if ($1.is_presolved && $3.is_presolved) 
@@ -442,6 +483,14 @@ factor              : factor TK_STAR unary                                      
                                                                                         $$.is_presolved = 1;
 
                                                                                         printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        if ($1.is_presolved) snprintf($1.expr, sizeof($1.expr), "%d", $1.presolved);
+                                                                                        if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
+
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s %s / %s", $$.expr, $1.expr, $3.expr);
+                                                                                        printf("%d: solved factor: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 
                                                                                     printf("%d: consumed factor (%s / %s)\n", ++cstep, $1.name, $3.name); 
@@ -455,6 +504,11 @@ factor              : factor TK_STAR unary                                      
                                                                                         $$.is_presolved = 1;
 
                                                                                         printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s %s", $$.expr, $1.expr);
+                                                                                        printf("%d: solved factor: %s\n", ++cstep, $$.expr);
                                                                                     }
 
                                                                                     printf("%d: consumed factor %s\n", ++cstep, $1.name); 
@@ -475,6 +529,11 @@ unary               : TK_MINUS unary                                            
 
                                                                                         printf("%d: solved unary: %d\n", ++cstep, $$.presolved);
                                                                                     }
+                                                                                    else 
+                                                                                    {
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s %s%s", $$.expr, $1.name, $2.expr);
+                                                                                        printf("%d: solved unary: %s\n", ++cstep, $$.expr);
+                                                                                    }
                                                                                     printf("%d: consumed unary (%s and %s)\n", ++cstep, $1.name, $2.name); 
                                                                                 }
                     | primary                                                   { 
@@ -487,13 +546,29 @@ unary               : TK_MINUS unary                                            
 
                                                                                         printf("%d: solved unary: %d\n", ++cstep, $$.presolved);
                                                                                     }
+                                                                                    else
+                                                                                    {
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s %s", $$.expr, $1.name);
+                                                                                        printf("%d: solved unary: %s\n", ++cstep, $$.expr);
+                                                                                    }
 
                                                                                     printf("%d: consumed unary %s\n", ++cstep, $1.name); 
                                                                                 }
                     ;
 
-primary             : TK_TRUE                                                   { add_symbol('C', "bool"); $$.nd = mknode(NULL, NULL, $1.name); printf("%d: consumed primary %s\n", ++cstep, $1.name); }
-                    | TK_FALSE                                                  { add_symbol('C', "bool"); $$.nd = mknode(NULL, NULL, $1.name); printf("%d: consumed primary %s\n", ++cstep, $1.name); }
+primary             : TK_TRUE                                                   { 
+                                                                                    add_symbol('C', "bool"); 
+                                                                                    $$.nd = mknode(NULL, NULL, $1.name); 
+                                                                                    $$.presolved = 1;
+                                                                                    $$.is_presolved = 1;
+                                                                                    printf("%d: consumed primary %s\n", ++cstep, $1.name); }
+                    | TK_FALSE                                                  { 
+                                                                                    add_symbol('C', "bool"); 
+                                                                                    $$.nd = mknode(NULL, NULL, $1.name); 
+                                                                                    $$.presolved = 1;
+                                                                                    $$.is_presolved = 1;
+                                                                                    printf("%d: consumed primary %s\n", ++cstep, $1.name); 
+                                                                                }
                     | TK_NUMBER                                                 { 
                                                                                     add_symbol('C', "int"); 
                                                                                     $$.nd = mknode(NULL, NULL, $1.name); 
@@ -501,18 +576,24 @@ primary             : TK_TRUE                                                   
                                                                                     $$.is_presolved = 1;
                                                                                     printf("%d: consumed primary %d\n", ++cstep, $$.presolved); 
                                                                                 }
-                    | TK_STRING_LITERAL                                         { add_symbol('C', "string"); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); printf("%d: consumed primary %s\n", ++cstep, $1.name); }
+                    | TK_STRING_LITERAL                                         { 
+                                                                                    add_symbol('C', "string");
+                                                                                    $$.nd = mknode(NULL, NULL, $1.name); 
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.name);
+                                                                                    printf("%d: consumed primary %s\n", ++cstep, $1.name); 
+                                                                                }
+                    | TK_IDENTIFIER                                             { 
+                                                                                    check_declaration($1.name);
+                                                                                    $$.nd = mknode(NULL, NULL, $1.name);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.name);
+                                                                                    printf("%d: consumed primary %s\n", ++cstep, $1.name); 
+                                                                                }
                     | TK_LPAREN expression TK_RPAREN                            { printf("%d: consumed primary %s\n", ++cstep, $2.name); }
                     ;
 
 numeric_variable    : TK_NUMBER                                                 { add_symbol('C', "int"); $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
                     ;
-
-/* text_variable       : TK_STRING_LITERAL                                         { add_symbol('C'); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
-                    ; */
 
 comparison_operator : TK_GREATER                                                { $$.nd = mknode(NULL, NULL, $1.name); }
                     | TK_LESSER                                                 { $$.nd = mknode(NULL, NULL, $1.name); }

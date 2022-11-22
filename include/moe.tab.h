@@ -115,9 +115,10 @@ union YYSTYPE
         struct node *nd;
         int presolved;
         int is_presolved;
+        char expr[256];
     } nd_obj;
 
-#line 121 "./include/moe.tab.h"
+#line 122 "./include/moe.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
