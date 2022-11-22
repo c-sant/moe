@@ -16,15 +16,23 @@ INCDIR := ./include
 # Output binaries dir
 BINDIR := ./bin
 
+# GCC
+CC := gcc
+
 # Flex
-FLEX := D:/msys64/usr/bin/flex.exe
+FLEX := flex
 
 # Bison
-BISON := D:/msys64/usr/bin/bison.exe
+BISON := bison
 
 # rules
 
-all: build_flex build_bison
+prebuild: build_flex build_bison
+
+all: build
+
+build: build_flex build_bison
+	@ $(CC) -g $(SRCDIR)/$(PROJ_NAME).tab.c -I $(INCDIR) -o $(BINDIR)/$(PROJ_NAME).exe 
 
 build_flex:
 	@ $(FLEX) -o $(SRCDIR)/$(PROJ_NAME).lex.c $(GENDIR)/$(PROJ_NAME).l

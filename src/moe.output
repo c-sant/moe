@@ -82,26 +82,26 @@ Gramática
    50 assignment: TK_IDENTIFIER $@5 TK_EQUAL assignment
    51           | logic
 
-   52 logic: logic TK_OR equality
-   53      | logic TK_AND equality
+   52 logic: equality TK_OR logic
+   53      | equality TK_AND logic
    54      | equality
 
-   55 equality: comparison TK_EQUAL_EQUAL comparison
-   56         | comparison TK_BANG_EQUAL comparison
+   55 equality: comparison TK_EQUAL_EQUAL equality
+   56         | comparison TK_BANG_EQUAL equality
    57         | comparison
 
-   58 comparison: term comparison_operator term
+   58 comparison: term comparison_operator comparison
    59           | term
 
-   60 term: factor TK_PLUS factor
-   61     | factor TK_MINUS factor
+   60 term: factor TK_PLUS term
+   61     | factor TK_MINUS term
    62     | factor
 
-   63 factor: unary TK_STAR unary
-   64       | unary TK_SLASH unary
+   63 factor: unary TK_STAR factor
+   64       | unary TK_SLASH factor
    65       | unary
 
-   66 unary: TK_MINUS primary
+   66 unary: TK_MINUS unary
    67      | primary
 
    68 primary: TK_TRUE
@@ -270,22 +270,22 @@ Não terminais com as regras onde eles aparecem
         à direita: 32 51 52 53
     equality <nd_obj> (76)
         à esquerda: 55 56 57
-        à direita: 52 53 54
+        à direita: 52 53 54 55 56
     comparison <nd_obj> (77)
         à esquerda: 58 59
-        à direita: 55 56 57
+        à direita: 55 56 57 58
     term <nd_obj> (78)
         à esquerda: 60 61 62
-        à direita: 41 47 58 59
+        à direita: 41 47 58 59 60 61
     factor <nd_obj> (79)
         à esquerda: 63 64 65
-        à direita: 60 61 62
+        à direita: 60 61 62 63 64
     unary <nd_obj> (80)
         à esquerda: 66 67
-        à direita: 63 64 65
+        à direita: 63 64 65 66
     primary <nd_obj> (81)
         à esquerda: 68 69 70 71 73 74
-        à direita: 66 67
+        à direita: 67
     $@6 (82)
         à esquerda: 72
         à direita: 73
@@ -295,7 +295,7 @@ Não terminais com as regras onde eles aparecem
     $@7 (84)
         à esquerda: 76
         à direita: 77
-    comparison_operator (85)
+    comparison_operator <nd_obj> (85)
         à esquerda: 78 79 80 81
         à direita: 58
 
@@ -535,16 +535,18 @@ Estado 24
 
 Estado 25
 
-   66 unary: TK_MINUS • primary
+   66 unary: TK_MINUS • unary
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
     TK_IDENTIFIER      deslocar, e ir ao estado 61
     TK_TRUE            deslocar, e ir ao estado 20
     TK_FALSE           deslocar, e ir ao estado 21
+    TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    primary  ir ao estado 62
+    unary    ir ao estado 62
+    primary  ir ao estado 49
 
 
 Estado 26
@@ -691,26 +693,26 @@ Estado 42
 Estado 43
 
    51 assignment: logic •
-   52 logic: logic • TK_OR equality
-   53      | logic • TK_AND equality
-
-    TK_AND  deslocar, e ir ao estado 71
-    TK_OR   deslocar, e ir ao estado 72
 
     $padrão  reduzir usando a regra 51 (assignment)
 
 
 Estado 44
 
-   54 logic: equality •
+   52 logic: equality • TK_OR logic
+   53      | equality • TK_AND logic
+   54      | equality •
+
+    TK_AND  deslocar, e ir ao estado 71
+    TK_OR   deslocar, e ir ao estado 72
 
     $padrão  reduzir usando a regra 54 (logic)
 
 
 Estado 45
 
-   55 equality: comparison • TK_EQUAL_EQUAL comparison
-   56         | comparison • TK_BANG_EQUAL comparison
+   55 equality: comparison • TK_EQUAL_EQUAL equality
+   56         | comparison • TK_BANG_EQUAL equality
    57         | comparison •
 
     TK_BANG_EQUAL   deslocar, e ir ao estado 73
@@ -721,7 +723,7 @@ Estado 45
 
 Estado 46
 
-   58 comparison: term • comparison_operator term
+   58 comparison: term • comparison_operator comparison
    59           | term •
 
     TK_LESSER_EQUAL   deslocar, e ir ao estado 75
@@ -736,8 +738,8 @@ Estado 46
 
 Estado 47
 
-   60 term: factor • TK_PLUS factor
-   61     | factor • TK_MINUS factor
+   60 term: factor • TK_PLUS term
+   61     | factor • TK_MINUS term
    62     | factor •
 
     TK_PLUS   deslocar, e ir ao estado 80
@@ -748,8 +750,8 @@ Estado 47
 
 Estado 48
 
-   63 factor: unary • TK_STAR unary
-   64       | unary • TK_SLASH unary
+   63 factor: unary • TK_STAR factor
+   64       | unary • TK_SLASH factor
    65       | unary •
 
     TK_STAR   deslocar, e ir ao estado 82
@@ -914,7 +916,7 @@ Estado 61
 
 Estado 62
 
-   66 unary: TK_MINUS primary •
+   66 unary: TK_MINUS unary •
 
     $padrão  reduzir usando a regra 66 (unary)
 
@@ -977,7 +979,7 @@ Estado 70
 
 Estado 71
 
-   53 logic: logic TK_AND • equality
+   53 logic: equality TK_AND • logic
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -987,7 +989,8 @@ Estado 71
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    equality    ir ao estado 99
+    logic       ir ao estado 99
+    equality    ir ao estado 44
     comparison  ir ao estado 45
     term        ir ao estado 46
     factor      ir ao estado 47
@@ -997,7 +1000,7 @@ Estado 71
 
 Estado 72
 
-   52 logic: logic TK_OR • equality
+   52 logic: equality TK_OR • logic
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -1007,7 +1010,8 @@ Estado 72
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    equality    ir ao estado 100
+    logic       ir ao estado 100
+    equality    ir ao estado 44
     comparison  ir ao estado 45
     term        ir ao estado 46
     factor      ir ao estado 47
@@ -1017,7 +1021,7 @@ Estado 72
 
 Estado 73
 
-   56 equality: comparison TK_BANG_EQUAL • comparison
+   56 equality: comparison TK_BANG_EQUAL • equality
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -1027,7 +1031,8 @@ Estado 73
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    comparison  ir ao estado 101
+    equality    ir ao estado 101
+    comparison  ir ao estado 45
     term        ir ao estado 46
     factor      ir ao estado 47
     unary       ir ao estado 48
@@ -1036,7 +1041,7 @@ Estado 73
 
 Estado 74
 
-   55 equality: comparison TK_EQUAL_EQUAL • comparison
+   55 equality: comparison TK_EQUAL_EQUAL • equality
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -1046,7 +1051,8 @@ Estado 74
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    comparison  ir ao estado 102
+    equality    ir ao estado 102
+    comparison  ir ao estado 45
     term        ir ao estado 46
     factor      ir ao estado 47
     unary       ir ao estado 48
@@ -1083,7 +1089,7 @@ Estado 78
 
 Estado 79
 
-   58 comparison: term comparison_operator • term
+   58 comparison: term comparison_operator • comparison
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -1093,15 +1099,16 @@ Estado 79
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    term     ir ao estado 103
-    factor   ir ao estado 47
-    unary    ir ao estado 48
-    primary  ir ao estado 49
+    comparison  ir ao estado 103
+    term        ir ao estado 46
+    factor      ir ao estado 47
+    unary       ir ao estado 48
+    primary     ir ao estado 49
 
 
 Estado 80
 
-   60 term: factor TK_PLUS • factor
+   60 term: factor TK_PLUS • term
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -1111,14 +1118,15 @@ Estado 80
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    factor   ir ao estado 104
+    term     ir ao estado 104
+    factor   ir ao estado 47
     unary    ir ao estado 48
     primary  ir ao estado 49
 
 
 Estado 81
 
-   61 term: factor TK_MINUS • factor
+   61 term: factor TK_MINUS • term
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -1128,14 +1136,15 @@ Estado 81
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    factor   ir ao estado 105
+    term     ir ao estado 105
+    factor   ir ao estado 47
     unary    ir ao estado 48
     primary  ir ao estado 49
 
 
 Estado 82
 
-   63 factor: unary TK_STAR • unary
+   63 factor: unary TK_STAR • factor
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -1145,13 +1154,14 @@ Estado 82
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    unary    ir ao estado 106
+    factor   ir ao estado 106
+    unary    ir ao estado 48
     primary  ir ao estado 49
 
 
 Estado 83
 
-   64 factor: unary TK_SLASH • unary
+   64 factor: unary TK_SLASH • factor
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
     TK_NUMBER          deslocar, e ir ao estado 18
@@ -1161,7 +1171,8 @@ Estado 83
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    unary    ir ao estado 107
+    factor   ir ao estado 107
+    unary    ir ao estado 48
     primary  ir ao estado 49
 
 
@@ -1267,11 +1278,7 @@ Estado 94
 Estado 95
 
    32 if_statement: TK_IF TK_LPAREN logic • TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement
-   52 logic: logic • TK_OR equality
-   53      | logic • TK_AND equality
 
-    TK_AND     deslocar, e ir ao estado 71
-    TK_OR      deslocar, e ir ao estado 72
     TK_RPAREN  deslocar, e ir ao estado 117
 
 
@@ -1302,63 +1309,63 @@ Estado 98
 
 Estado 99
 
-   53 logic: logic TK_AND equality •
+   53 logic: equality TK_AND logic •
 
     $padrão  reduzir usando a regra 53 (logic)
 
 
 Estado 100
 
-   52 logic: logic TK_OR equality •
+   52 logic: equality TK_OR logic •
 
     $padrão  reduzir usando a regra 52 (logic)
 
 
 Estado 101
 
-   56 equality: comparison TK_BANG_EQUAL comparison •
+   56 equality: comparison TK_BANG_EQUAL equality •
 
     $padrão  reduzir usando a regra 56 (equality)
 
 
 Estado 102
 
-   55 equality: comparison TK_EQUAL_EQUAL comparison •
+   55 equality: comparison TK_EQUAL_EQUAL equality •
 
     $padrão  reduzir usando a regra 55 (equality)
 
 
 Estado 103
 
-   58 comparison: term comparison_operator term •
+   58 comparison: term comparison_operator comparison •
 
     $padrão  reduzir usando a regra 58 (comparison)
 
 
 Estado 104
 
-   60 term: factor TK_PLUS factor •
+   60 term: factor TK_PLUS term •
 
     $padrão  reduzir usando a regra 60 (term)
 
 
 Estado 105
 
-   61 term: factor TK_MINUS factor •
+   61 term: factor TK_MINUS term •
 
     $padrão  reduzir usando a regra 61 (term)
 
 
 Estado 106
 
-   63 factor: unary TK_STAR unary •
+   63 factor: unary TK_STAR factor •
 
     $padrão  reduzir usando a regra 63 (factor)
 
 
 Estado 107
 
-   64 factor: unary TK_SLASH unary •
+   64 factor: unary TK_SLASH factor •
 
     $padrão  reduzir usando a regra 64 (factor)
 
