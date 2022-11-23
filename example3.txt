@@ -1,0 +1,6 @@
+program EX3
+{
+    delay(10);
+    move(10);
+    await move(40, 20);
+}

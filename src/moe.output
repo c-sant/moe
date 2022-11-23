@@ -68,7 +68,7 @@ Gramática
 
    43 move_statement: TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON
 
-   44 moved_statement: TK_AWAIT move_statement
+   44 moved_statement: TK_AWAIT TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON
 
    45 two_numbers: numeric_variable
    46            | numeric_variable TK_COMMA numeric_variable
@@ -112,15 +112,12 @@ Gramática
    73        | TK_LPAREN logic TK_RPAREN
 
    74 numeric_variable: TK_NUMBER
+   75                 | TK_IDENTIFIER
 
-   75 $@6: ε
-
-   76 numeric_variable: TK_IDENTIFIER $@6
-
-   77 comparison_operator: TK_GREATER
-   78                    | TK_LESSER
-   79                    | TK_GREATER_EQUAL
-   80                    | TK_LESSER_EQUAL
+   76 comparison_operator: TK_GREATER
+   77                    | TK_LESSER
+   78                    | TK_GREATER_EQUAL
+   79                    | TK_LESSER_EQUAL
 
 
 Terminais, com as regras onde eles aparecem
@@ -133,11 +130,11 @@ Terminais, com as regras onde eles aparecem
     TK_CLOSE <nd_obj> (261) 39
     TK_DELAY <nd_obj> (262) 47
     TK_GLOBAL <nd_obj> (263) 17
-    TK_MOVE <nd_obj> (264) 43
+    TK_MOVE <nd_obj> (264) 43 44
     TK_AWAIT <nd_obj> (265) 44
     TK_STRING_LITERAL <nd_obj> (266) 31 71
     TK_NUMBER <nd_obj> (267) 70 74
-    TK_IDENTIFIER <nd_obj> (268) 2 9 37 50 72 76
+    TK_IDENTIFIER <nd_obj> (268) 2 9 37 50 72 75
     TK_TRUE <nd_obj> (269) 68
     TK_FALSE <nd_obj> (270) 69
     TK_STRING <nd_obj> (271) 12
@@ -155,19 +152,19 @@ Terminais, com as regras onde eles aparecem
     TK_EQUAL <nd_obj> (283) 11 50
     TK_BANG_EQUAL <nd_obj> (284) 56
     TK_EQUAL_EQUAL <nd_obj> (285) 55
-    TK_LESSER_EQUAL <nd_obj> (286) 80
-    TK_GREATER_EQUAL <nd_obj> (287) 79
-    TK_LESSER <nd_obj> (288) 78
-    TK_GREATER <nd_obj> (289) 77
+    TK_LESSER_EQUAL <nd_obj> (286) 79
+    TK_GREATER_EQUAL <nd_obj> (287) 78
+    TK_LESSER <nd_obj> (288) 77
+    TK_GREATER <nd_obj> (289) 76
     TK_PLUS <nd_obj> (290) 60
     TK_MINUS <nd_obj> (291) 61 66
     TK_STAR <nd_obj> (292) 63
     TK_SLASH <nd_obj> (293) 64
-    TK_LPAREN <nd_obj> (294) 31 32 37 38 39 42 43 47 73
-    TK_RPAREN <nd_obj> (295) 31 32 37 38 39 42 43 47 73
+    TK_LPAREN <nd_obj> (294) 31 32 37 38 39 42 43 44 47 73
+    TK_RPAREN <nd_obj> (295) 31 32 37 38 39 42 43 44 47 73
     TK_LBRACE <nd_obj> (296) 2 32 35 37
     TK_RBRACE <nd_obj> (297) 2 32 35 37
-    TK_SEMICOLON <nd_obj> (298) 10 29 31 38 39 42 43 47
+    TK_SEMICOLON <nd_obj> (298) 10 29 31 38 39 42 43 44 47
     TK_COMMA <nd_obj> (299) 37 46
 
 
@@ -243,13 +240,13 @@ Não terminais com as regras onde eles aparecem
         à direita: 24
     move_statement <nd_obj> (68)
         à esquerda: 43
-        à direita: 27 44
+        à direita: 27
     moved_statement <nd_obj> (69)
         à esquerda: 44
         à direita: 28
     two_numbers <nd_obj> (70)
         à esquerda: 45 46
-        à direita: 42 43
+        à direita: 42 43 44
     delay_statement <nd_obj> (71)
         à esquerda: 47
         à direita: 26
@@ -284,13 +281,10 @@ Não terminais com as regras onde eles aparecem
         à esquerda: 68 69 70 71 72 73
         à direita: 67
     numeric_variable <nd_obj> (82)
-        à esquerda: 74 76
+        à esquerda: 74 75
         à direita: 37 45 46
-    $@6 (83)
-        à esquerda: 75
-        à direita: 76
-    comparison_operator <nd_obj> (84)
-        à esquerda: 77 78 79 80
+    comparison_operator <nd_obj> (83)
+        à esquerda: 76 77 78 79
         à direita: 58
 
 
@@ -459,11 +453,9 @@ Estado 15
 
 Estado 16
 
-   44 moved_statement: TK_AWAIT • move_statement
+   44 moved_statement: TK_AWAIT • TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON
 
-    TK_MOVE  deslocar, e ir ao estado 15
-
-    move_statement  ir ao estado 55
+    TK_MOVE  deslocar, e ir ao estado 55
 
 
 Estado 17
@@ -842,23 +834,23 @@ Estado 54
 
 Estado 55
 
-   44 moved_statement: TK_AWAIT move_statement •
+   44 moved_statement: TK_AWAIT TK_MOVE • TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON
 
-    $padrão  reduzir usando a regra 44 (moved_statement)
+    TK_LPAREN  deslocar, e ir ao estado 92
 
 
 Estado 56
 
    50 assignment: TK_IDENTIFIER $@5 • TK_EQUAL assignment
 
-    TK_EQUAL  deslocar, e ir ao estado 92
+    TK_EQUAL  deslocar, e ir ao estado 93
 
 
 Estado 57
 
    31 print_statement: TK_PRINT TK_LPAREN • TK_STRING_LITERAL $@3 TK_RPAREN TK_SEMICOLON
 
-    TK_STRING_LITERAL  deslocar, e ir ao estado 93
+    TK_STRING_LITERAL  deslocar, e ir ao estado 94
 
 
 Estado 58
@@ -873,7 +865,7 @@ Estado 58
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    logic       ir ao estado 94
+    logic       ir ao estado 95
     equality    ir ao estado 44
     comparison  ir ao estado 45
     term        ir ao estado 46
@@ -886,7 +878,7 @@ Estado 59
 
    37 loop_statement: TK_FOR TK_LPAREN • TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE
 
-    TK_IDENTIFIER  deslocar, e ir ao estado 95
+    TK_IDENTIFIER  deslocar, e ir ao estado 96
 
 
 Estado 60
@@ -911,7 +903,7 @@ Estado 62
 
     TK_AND     deslocar, e ir ao estado 70
     TK_OR      deslocar, e ir ao estado 71
-    TK_RPAREN  deslocar, e ir ao estado 96
+    TK_RPAREN  deslocar, e ir ao estado 97
 
 
 Estado 63
@@ -953,7 +945,7 @@ Estado 68
 
     9 var_declaration: access_modifier data_type • TK_IDENTIFIER $@2 var_init
 
-    TK_IDENTIFIER  deslocar, e ir ao estado 97
+    TK_IDENTIFIER  deslocar, e ir ao estado 98
 
 
 Estado 69
@@ -975,7 +967,7 @@ Estado 70
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    equality    ir ao estado 98
+    equality    ir ao estado 99
     comparison  ir ao estado 45
     term        ir ao estado 46
     factor      ir ao estado 47
@@ -995,7 +987,7 @@ Estado 71
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    equality    ir ao estado 99
+    equality    ir ao estado 100
     comparison  ir ao estado 45
     term        ir ao estado 46
     factor      ir ao estado 47
@@ -1015,7 +1007,7 @@ Estado 72
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    comparison  ir ao estado 100
+    comparison  ir ao estado 101
     term        ir ao estado 46
     factor      ir ao estado 47
     unary       ir ao estado 48
@@ -1034,7 +1026,7 @@ Estado 73
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    comparison  ir ao estado 101
+    comparison  ir ao estado 102
     term        ir ao estado 46
     factor      ir ao estado 47
     unary       ir ao estado 48
@@ -1043,30 +1035,30 @@ Estado 73
 
 Estado 74
 
-   80 comparison_operator: TK_LESSER_EQUAL •
-
-    $padrão  reduzir usando a regra 80 (comparison_operator)
-
-
-Estado 75
-
-   79 comparison_operator: TK_GREATER_EQUAL •
+   79 comparison_operator: TK_LESSER_EQUAL •
 
     $padrão  reduzir usando a regra 79 (comparison_operator)
 
 
-Estado 76
+Estado 75
 
-   78 comparison_operator: TK_LESSER •
+   78 comparison_operator: TK_GREATER_EQUAL •
 
     $padrão  reduzir usando a regra 78 (comparison_operator)
 
 
-Estado 77
+Estado 76
 
-   77 comparison_operator: TK_GREATER •
+   77 comparison_operator: TK_LESSER •
 
     $padrão  reduzir usando a regra 77 (comparison_operator)
+
+
+Estado 77
+
+   76 comparison_operator: TK_GREATER •
+
+    $padrão  reduzir usando a regra 76 (comparison_operator)
 
 
 Estado 78
@@ -1081,7 +1073,7 @@ Estado 78
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    term     ir ao estado 102
+    term     ir ao estado 103
     factor   ir ao estado 47
     unary    ir ao estado 48
     primary  ir ao estado 49
@@ -1099,7 +1091,7 @@ Estado 79
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    factor   ir ao estado 103
+    factor   ir ao estado 104
     unary    ir ao estado 48
     primary  ir ao estado 49
 
@@ -1116,7 +1108,7 @@ Estado 80
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    factor   ir ao estado 104
+    factor   ir ao estado 105
     unary    ir ao estado 48
     primary  ir ao estado 49
 
@@ -1133,7 +1125,7 @@ Estado 81
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    unary    ir ao estado 105
+    unary    ir ao estado 106
     primary  ir ao estado 49
 
 
@@ -1149,7 +1141,7 @@ Estado 82
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    unary    ir ao estado 106
+    unary    ir ao estado 107
     primary  ir ao estado 49
 
 
@@ -1157,7 +1149,7 @@ Estado 83
 
    38 open_statement: TK_OPEN TK_LPAREN optional_argument • TK_RPAREN TK_SEMICOLON
 
-    TK_RPAREN  deslocar, e ir ao estado 107
+    TK_RPAREN  deslocar, e ir ao estado 108
 
 
 Estado 84
@@ -1181,11 +1173,9 @@ Estado 85
 
 Estado 86
 
-   76 numeric_variable: TK_IDENTIFIER • $@6
+   75 numeric_variable: TK_IDENTIFIER •
 
-    $padrão  reduzir usando a regra 75 ($@6)
-
-    $@6  ir ao estado 108
+    $padrão  reduzir usando a regra 75 (numeric_variable)
 
 
 Estado 87
@@ -1232,6 +1222,17 @@ Estado 91
 
 Estado 92
 
+   44 moved_statement: TK_AWAIT TK_MOVE TK_LPAREN • two_numbers TK_RPAREN TK_SEMICOLON
+
+    TK_NUMBER      deslocar, e ir ao estado 85
+    TK_IDENTIFIER  deslocar, e ir ao estado 86
+
+    two_numbers       ir ao estado 114
+    numeric_variable  ir ao estado 88
+
+
+Estado 93
+
    50 assignment: TK_IDENTIFIER $@5 TK_EQUAL • assignment
 
     TK_STRING_LITERAL  deslocar, e ir ao estado 17
@@ -1242,7 +1243,7 @@ Estado 92
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    assignment  ir ao estado 114
+    assignment  ir ao estado 115
     logic       ir ao estado 43
     equality    ir ao estado 44
     comparison  ir ao estado 45
@@ -1252,16 +1253,16 @@ Estado 92
     primary     ir ao estado 49
 
 
-Estado 93
+Estado 94
 
    31 print_statement: TK_PRINT TK_LPAREN TK_STRING_LITERAL • $@3 TK_RPAREN TK_SEMICOLON
 
     $padrão  reduzir usando a regra 30 ($@3)
 
-    $@3  ir ao estado 115
+    $@3  ir ao estado 116
 
 
-Estado 94
+Estado 95
 
    32 if_statement: TK_IF TK_LPAREN logic • TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement
    52 logic: logic • TK_OR equality
@@ -1269,35 +1270,35 @@ Estado 94
 
     TK_AND     deslocar, e ir ao estado 70
     TK_OR      deslocar, e ir ao estado 71
-    TK_RPAREN  deslocar, e ir ao estado 116
+    TK_RPAREN  deslocar, e ir ao estado 117
 
 
-Estado 95
+Estado 96
 
    37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER • $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE
 
     $padrão  reduzir usando a regra 36 ($@4)
 
-    $@4  ir ao estado 117
+    $@4  ir ao estado 118
 
 
-Estado 96
+Estado 97
 
    73 primary: TK_LPAREN logic TK_RPAREN •
 
     $padrão  reduzir usando a regra 73 (primary)
 
 
-Estado 97
+Estado 98
 
     9 var_declaration: access_modifier data_type TK_IDENTIFIER • $@2 var_init
 
     $padrão  reduzir usando a regra 8 ($@2)
 
-    $@2  ir ao estado 118
+    $@2  ir ao estado 119
 
 
-Estado 98
+Estado 99
 
    53 logic: logic TK_AND equality •
    55 equality: equality • TK_EQUAL_EQUAL comparison
@@ -1309,7 +1310,7 @@ Estado 98
     $padrão  reduzir usando a regra 53 (logic)
 
 
-Estado 99
+Estado 100
 
    52 logic: logic TK_OR equality •
    55 equality: equality • TK_EQUAL_EQUAL comparison
@@ -1321,7 +1322,7 @@ Estado 99
     $padrão  reduzir usando a regra 52 (logic)
 
 
-Estado 100
+Estado 101
 
    56 equality: equality TK_BANG_EQUAL comparison •
    58 comparison: comparison • comparison_operator term
@@ -1336,7 +1337,7 @@ Estado 100
     comparison_operator  ir ao estado 78
 
 
-Estado 101
+Estado 102
 
    55 equality: equality TK_EQUAL_EQUAL comparison •
    58 comparison: comparison • comparison_operator term
@@ -1351,7 +1352,7 @@ Estado 101
     comparison_operator  ir ao estado 78
 
 
-Estado 102
+Estado 103
 
    58 comparison: comparison comparison_operator term •
    60 term: term • TK_PLUS factor
@@ -1363,7 +1364,7 @@ Estado 102
     $padrão  reduzir usando a regra 58 (comparison)
 
 
-Estado 103
+Estado 104
 
    60 term: term TK_PLUS factor •
    63 factor: factor • TK_STAR unary
@@ -1375,7 +1376,7 @@ Estado 103
     $padrão  reduzir usando a regra 60 (term)
 
 
-Estado 104
+Estado 105
 
    61 term: term TK_MINUS factor •
    63 factor: factor • TK_STAR unary
@@ -1387,39 +1388,32 @@ Estado 104
     $padrão  reduzir usando a regra 61 (term)
 
 
-Estado 105
+Estado 106
 
    63 factor: factor TK_STAR unary •
 
     $padrão  reduzir usando a regra 63 (factor)
 
 
-Estado 106
+Estado 107
 
    64 factor: factor TK_SLASH unary •
 
     $padrão  reduzir usando a regra 64 (factor)
 
 
-Estado 107
+Estado 108
 
    38 open_statement: TK_OPEN TK_LPAREN optional_argument TK_RPAREN • TK_SEMICOLON
 
-    TK_SEMICOLON  deslocar, e ir ao estado 119
-
-
-Estado 108
-
-   76 numeric_variable: TK_IDENTIFIER $@6 •
-
-    $padrão  reduzir usando a regra 76 (numeric_variable)
+    TK_SEMICOLON  deslocar, e ir ao estado 120
 
 
 Estado 109
 
    42 jaw_statement: TK_JAW TK_LPAREN two_numbers TK_RPAREN • TK_SEMICOLON
 
-    TK_SEMICOLON  deslocar, e ir ao estado 120
+    TK_SEMICOLON  deslocar, e ir ao estado 121
 
 
 Estado 110
@@ -1429,137 +1423,151 @@ Estado 110
     TK_NUMBER      deslocar, e ir ao estado 85
     TK_IDENTIFIER  deslocar, e ir ao estado 86
 
-    numeric_variable  ir ao estado 121
+    numeric_variable  ir ao estado 122
 
 
 Estado 111
 
    39 close_statement: TK_CLOSE TK_LPAREN optional_argument TK_RPAREN • TK_SEMICOLON
 
-    TK_SEMICOLON  deslocar, e ir ao estado 122
+    TK_SEMICOLON  deslocar, e ir ao estado 123
 
 
 Estado 112
 
    47 delay_statement: TK_DELAY TK_LPAREN term TK_RPAREN • TK_SEMICOLON
 
-    TK_SEMICOLON  deslocar, e ir ao estado 123
+    TK_SEMICOLON  deslocar, e ir ao estado 124
 
 
 Estado 113
 
    43 move_statement: TK_MOVE TK_LPAREN two_numbers TK_RPAREN • TK_SEMICOLON
 
-    TK_SEMICOLON  deslocar, e ir ao estado 124
+    TK_SEMICOLON  deslocar, e ir ao estado 125
 
 
 Estado 114
+
+   44 moved_statement: TK_AWAIT TK_MOVE TK_LPAREN two_numbers • TK_RPAREN TK_SEMICOLON
+
+    TK_RPAREN  deslocar, e ir ao estado 126
+
+
+Estado 115
 
    50 assignment: TK_IDENTIFIER $@5 TK_EQUAL assignment •
 
     $padrão  reduzir usando a regra 50 (assignment)
 
 
-Estado 115
+Estado 116
 
    31 print_statement: TK_PRINT TK_LPAREN TK_STRING_LITERAL $@3 • TK_RPAREN TK_SEMICOLON
 
-    TK_RPAREN  deslocar, e ir ao estado 125
-
-
-Estado 116
-
-   32 if_statement: TK_IF TK_LPAREN logic TK_RPAREN • TK_LBRACE declarations TK_RBRACE else_statement
-
-    TK_LBRACE  deslocar, e ir ao estado 126
+    TK_RPAREN  deslocar, e ir ao estado 127
 
 
 Estado 117
 
-   37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 • TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE
+   32 if_statement: TK_IF TK_LPAREN logic TK_RPAREN • TK_LBRACE declarations TK_RBRACE else_statement
 
-    TK_BETWEEN  deslocar, e ir ao estado 127
+    TK_LBRACE  deslocar, e ir ao estado 128
 
 
 Estado 118
 
-    9 var_declaration: access_modifier data_type TK_IDENTIFIER $@2 • var_init
+   37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 • TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE
 
-    TK_EQUAL      deslocar, e ir ao estado 128
-    TK_SEMICOLON  deslocar, e ir ao estado 129
-
-    var_init  ir ao estado 130
+    TK_BETWEEN  deslocar, e ir ao estado 129
 
 
 Estado 119
+
+    9 var_declaration: access_modifier data_type TK_IDENTIFIER $@2 • var_init
+
+    TK_EQUAL      deslocar, e ir ao estado 130
+    TK_SEMICOLON  deslocar, e ir ao estado 131
+
+    var_init  ir ao estado 132
+
+
+Estado 120
 
    38 open_statement: TK_OPEN TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 38 (open_statement)
 
 
-Estado 120
+Estado 121
 
    42 jaw_statement: TK_JAW TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 42 (jaw_statement)
 
 
-Estado 121
+Estado 122
 
    46 two_numbers: numeric_variable TK_COMMA numeric_variable •
 
     $padrão  reduzir usando a regra 46 (two_numbers)
 
 
-Estado 122
+Estado 123
 
    39 close_statement: TK_CLOSE TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 39 (close_statement)
 
 
-Estado 123
+Estado 124
 
    47 delay_statement: TK_DELAY TK_LPAREN term TK_RPAREN TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 47 (delay_statement)
 
 
-Estado 124
+Estado 125
 
    43 move_statement: TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 43 (move_statement)
 
 
-Estado 125
+Estado 126
+
+   44 moved_statement: TK_AWAIT TK_MOVE TK_LPAREN two_numbers TK_RPAREN • TK_SEMICOLON
+
+    TK_SEMICOLON  deslocar, e ir ao estado 133
+
+
+Estado 127
 
    31 print_statement: TK_PRINT TK_LPAREN TK_STRING_LITERAL $@3 TK_RPAREN • TK_SEMICOLON
 
-    TK_SEMICOLON  deslocar, e ir ao estado 131
+    TK_SEMICOLON  deslocar, e ir ao estado 134
 
 
-Estado 126
+Estado 128
 
    32 if_statement: TK_IF TK_LPAREN logic TK_RPAREN TK_LBRACE • declarations TK_RBRACE else_statement
 
     $padrão  reduzir usando a regra 4 (declarations)
 
-    declarations  ir ao estado 132
+    declarations  ir ao estado 135
 
 
-Estado 127
+Estado 129
 
    37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN • numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE
 
     TK_NUMBER      deslocar, e ir ao estado 85
     TK_IDENTIFIER  deslocar, e ir ao estado 86
 
-    numeric_variable  ir ao estado 133
+    numeric_variable  ir ao estado 136
 
 
-Estado 128
+Estado 130
 
    11 var_init: TK_EQUAL • expression_statement
 
@@ -1571,7 +1579,7 @@ Estado 128
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
 
-    expression_statement  ir ao estado 134
+    expression_statement  ir ao estado 137
     expression            ir ao estado 41
     assignment            ir ao estado 42
     logic                 ir ao estado 43
@@ -1583,28 +1591,35 @@ Estado 128
     primary               ir ao estado 49
 
 
-Estado 129
+Estado 131
 
    10 var_init: TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 10 (var_init)
 
 
-Estado 130
+Estado 132
 
     9 var_declaration: access_modifier data_type TK_IDENTIFIER $@2 var_init •
 
     $padrão  reduzir usando a regra 9 (var_declaration)
 
 
-Estado 131
+Estado 133
+
+   44 moved_statement: TK_AWAIT TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON •
+
+    $padrão  reduzir usando a regra 44 (moved_statement)
+
+
+Estado 134
 
    31 print_statement: TK_PRINT TK_LPAREN TK_STRING_LITERAL $@3 TK_RPAREN TK_SEMICOLON •
 
     $padrão  reduzir usando a regra 31 (print_statement)
 
 
-Estado 132
+Estado 135
 
     5 declarations: declarations • declaration
    32 if_statement: TK_IF TK_LPAREN logic TK_RPAREN TK_LBRACE declarations • TK_RBRACE else_statement
@@ -1626,7 +1641,7 @@ Estado 132
     TK_FOR             deslocar, e ir ao estado 24
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
-    TK_RBRACE          deslocar, e ir ao estado 135
+    TK_RBRACE          deslocar, e ir ao estado 138
 
     $padrão  reduzir usando a regra 18 (access_modifier)
 
@@ -1655,90 +1670,90 @@ Estado 132
     primary               ir ao estado 49
 
 
-Estado 133
+Estado 136
 
    37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable • TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE
 
-    TK_COMMA  deslocar, e ir ao estado 136
+    TK_COMMA  deslocar, e ir ao estado 139
 
 
-Estado 134
+Estado 137
 
    11 var_init: TK_EQUAL expression_statement •
 
     $padrão  reduzir usando a regra 11 (var_init)
 
 
-Estado 135
+Estado 138
 
    32 if_statement: TK_IF TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE • else_statement
 
-    TK_ELSE  deslocar, e ir ao estado 137
+    TK_ELSE  deslocar, e ir ao estado 140
 
     $padrão  reduzir usando a regra 33 (else_statement)
 
-    else_statement  ir ao estado 138
+    else_statement  ir ao estado 141
 
 
-Estado 136
+Estado 139
 
    37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA • numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE
 
     TK_NUMBER      deslocar, e ir ao estado 85
     TK_IDENTIFIER  deslocar, e ir ao estado 86
 
-    numeric_variable  ir ao estado 139
+    numeric_variable  ir ao estado 142
 
 
-Estado 137
+Estado 140
 
    34 else_statement: TK_ELSE • if_statement
    35               | TK_ELSE • TK_LBRACE declarations TK_RBRACE
 
     TK_IF      deslocar, e ir ao estado 23
-    TK_LBRACE  deslocar, e ir ao estado 140
+    TK_LBRACE  deslocar, e ir ao estado 143
 
-    if_statement  ir ao estado 141
+    if_statement  ir ao estado 144
 
 
-Estado 138
+Estado 141
 
    32 if_statement: TK_IF TK_LPAREN logic TK_RPAREN TK_LBRACE declarations TK_RBRACE else_statement •
 
     $padrão  reduzir usando a regra 32 (if_statement)
 
 
-Estado 139
+Estado 142
 
    37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable • TK_RPAREN TK_LBRACE declarations TK_RBRACE
 
-    TK_RPAREN  deslocar, e ir ao estado 142
+    TK_RPAREN  deslocar, e ir ao estado 145
 
 
-Estado 140
+Estado 143
 
    35 else_statement: TK_ELSE TK_LBRACE • declarations TK_RBRACE
 
     $padrão  reduzir usando a regra 4 (declarations)
 
-    declarations  ir ao estado 143
+    declarations  ir ao estado 146
 
 
-Estado 141
+Estado 144
 
    34 else_statement: TK_ELSE if_statement •
 
     $padrão  reduzir usando a regra 34 (else_statement)
 
 
-Estado 142
+Estado 145
 
    37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN • TK_LBRACE declarations TK_RBRACE
 
-    TK_LBRACE  deslocar, e ir ao estado 144
+    TK_LBRACE  deslocar, e ir ao estado 147
 
 
-Estado 143
+Estado 146
 
     5 declarations: declarations • declaration
    35 else_statement: TK_ELSE TK_LBRACE declarations • TK_RBRACE
@@ -1760,74 +1775,7 @@ Estado 143
     TK_FOR             deslocar, e ir ao estado 24
     TK_MINUS           deslocar, e ir ao estado 25
     TK_LPAREN          deslocar, e ir ao estado 26
-    TK_RBRACE          deslocar, e ir ao estado 145
-
-    $padrão  reduzir usando a regra 18 (access_modifier)
-
-    declaration           ir ao estado 27
-    var_declaration       ir ao estado 28
-    access_modifier       ir ao estado 29
-    statement             ir ao estado 30
-    expression_statement  ir ao estado 31
-    print_statement       ir ao estado 32
-    if_statement          ir ao estado 33
-    loop_statement        ir ao estado 34
-    open_statement        ir ao estado 35
-    close_statement       ir ao estado 36
-    jaw_statement         ir ao estado 37
-    move_statement        ir ao estado 38
-    moved_statement       ir ao estado 39
-    delay_statement       ir ao estado 40
-    expression            ir ao estado 41
-    assignment            ir ao estado 42
-    logic                 ir ao estado 43
-    equality              ir ao estado 44
-    comparison            ir ao estado 45
-    term                  ir ao estado 46
-    factor                ir ao estado 47
-    unary                 ir ao estado 48
-    primary               ir ao estado 49
-
-
-Estado 144
-
-   37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE • declarations TK_RBRACE
-
-    $padrão  reduzir usando a regra 4 (declarations)
-
-    declarations  ir ao estado 146
-
-
-Estado 145
-
-   35 else_statement: TK_ELSE TK_LBRACE declarations TK_RBRACE •
-
-    $padrão  reduzir usando a regra 35 (else_statement)
-
-
-Estado 146
-
-    5 declarations: declarations • declaration
-   37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations • TK_RBRACE
-
-    TK_OPEN            deslocar, e ir ao estado 10
-    TK_JAW             deslocar, e ir ao estado 11
-    TK_CLOSE           deslocar, e ir ao estado 12
-    TK_DELAY           deslocar, e ir ao estado 13
-    TK_GLOBAL          deslocar, e ir ao estado 14
-    TK_MOVE            deslocar, e ir ao estado 15
-    TK_AWAIT           deslocar, e ir ao estado 16
-    TK_STRING_LITERAL  deslocar, e ir ao estado 17
-    TK_NUMBER          deslocar, e ir ao estado 18
-    TK_IDENTIFIER      deslocar, e ir ao estado 19
-    TK_TRUE            deslocar, e ir ao estado 20
-    TK_FALSE           deslocar, e ir ao estado 21
-    TK_PRINT           deslocar, e ir ao estado 22
-    TK_IF              deslocar, e ir ao estado 23
-    TK_FOR             deslocar, e ir ao estado 24
-    TK_MINUS           deslocar, e ir ao estado 25
-    TK_LPAREN          deslocar, e ir ao estado 26
-    TK_RBRACE          deslocar, e ir ao estado 147
+    TK_RBRACE          deslocar, e ir ao estado 148
 
     $padrão  reduzir usando a regra 18 (access_modifier)
 
@@ -1857,6 +1805,73 @@ Estado 146
 
 
 Estado 147
+
+   37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE • declarations TK_RBRACE
+
+    $padrão  reduzir usando a regra 4 (declarations)
+
+    declarations  ir ao estado 149
+
+
+Estado 148
+
+   35 else_statement: TK_ELSE TK_LBRACE declarations TK_RBRACE •
+
+    $padrão  reduzir usando a regra 35 (else_statement)
+
+
+Estado 149
+
+    5 declarations: declarations • declaration
+   37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations • TK_RBRACE
+
+    TK_OPEN            deslocar, e ir ao estado 10
+    TK_JAW             deslocar, e ir ao estado 11
+    TK_CLOSE           deslocar, e ir ao estado 12
+    TK_DELAY           deslocar, e ir ao estado 13
+    TK_GLOBAL          deslocar, e ir ao estado 14
+    TK_MOVE            deslocar, e ir ao estado 15
+    TK_AWAIT           deslocar, e ir ao estado 16
+    TK_STRING_LITERAL  deslocar, e ir ao estado 17
+    TK_NUMBER          deslocar, e ir ao estado 18
+    TK_IDENTIFIER      deslocar, e ir ao estado 19
+    TK_TRUE            deslocar, e ir ao estado 20
+    TK_FALSE           deslocar, e ir ao estado 21
+    TK_PRINT           deslocar, e ir ao estado 22
+    TK_IF              deslocar, e ir ao estado 23
+    TK_FOR             deslocar, e ir ao estado 24
+    TK_MINUS           deslocar, e ir ao estado 25
+    TK_LPAREN          deslocar, e ir ao estado 26
+    TK_RBRACE          deslocar, e ir ao estado 150
+
+    $padrão  reduzir usando a regra 18 (access_modifier)
+
+    declaration           ir ao estado 27
+    var_declaration       ir ao estado 28
+    access_modifier       ir ao estado 29
+    statement             ir ao estado 30
+    expression_statement  ir ao estado 31
+    print_statement       ir ao estado 32
+    if_statement          ir ao estado 33
+    loop_statement        ir ao estado 34
+    open_statement        ir ao estado 35
+    close_statement       ir ao estado 36
+    jaw_statement         ir ao estado 37
+    move_statement        ir ao estado 38
+    moved_statement       ir ao estado 39
+    delay_statement       ir ao estado 40
+    expression            ir ao estado 41
+    assignment            ir ao estado 42
+    logic                 ir ao estado 43
+    equality              ir ao estado 44
+    comparison            ir ao estado 45
+    term                  ir ao estado 46
+    factor                ir ao estado 47
+    unary                 ir ao estado 48
+    primary               ir ao estado 49
+
+
+Estado 150
 
    37 loop_statement: TK_FOR TK_LPAREN TK_IDENTIFIER $@4 TK_BETWEEN numeric_variable TK_COMMA numeric_variable TK_RPAREN TK_LBRACE declarations TK_RBRACE •
 

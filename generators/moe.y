@@ -226,31 +226,81 @@ loop_statement      : TK_FOR TK_LPAREN TK_IDENTIFIER
                                                                                 }
                     ;
 
-open_statement      : TK_OPEN TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON{ $$.nd = mknode($4.nd, NULL, "open"); }
+open_statement      : TK_OPEN TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON{ 
+                                                                                    $$.nd = mknode($4.nd, NULL, "open"); 
+                                                                                    
+                                                                                    printf("OPEN %s\n", $3.expr);
+                                                                                }
                     ;
 
 close_statement     : TK_CLOSE TK_LPAREN optional_argument TK_RPAREN 
-                      TK_SEMICOLON                                              { $$.nd = mknode($4.nd, NULL, "close"); }
+                      TK_SEMICOLON                                              { 
+                                                                                    $$.nd = mknode($4.nd, NULL, "close"); 
+                                                                                    
+                                                                                    printf("CLOSE %s\n", $3.expr);
+                                                                                }
                     ;
 
-optional_argument   :                                                           { $$.nd = NULL; }
-                    | term                                                      { $$.nd = $1.nd; }
+optional_argument   :                                                           { 
+                                                                                    $$.nd = NULL; 
+                                                                                
+                                                                                    snprintf($$.expr, sizeof($$.expr), "");
+                                                                                }
+                    | term                                                      { 
+                                                                                    $$.nd = $1.nd; 
+                                                                                
+                                                                                    if ($1.is_presolved) snprintf($1.expr, sizeof($1.expr), "%d", $1.presolved);    
+                                                                                
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
+                                                                                }
                     ;
 
-jaw_statement       : TK_JAW TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON       { $$.nd = mknode($4.nd, NULL, "jaw"); }
+jaw_statement       : TK_JAW TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON       { 
+                                                                                    $$.nd = mknode($3.nd, NULL, "jaw"); 
+                                                                                
+                                                                                    printf("JAW %s\n", $3.expr);
+                                                                                }
                     ;
 
-move_statement      : TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON      { $$.nd = mknode($4.nd, NULL, "move"); }
+move_statement      : TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON      { 
+                                                                                    $$.nd = mknode($3.nd, NULL, "move"); 
+                                                                                
+                                                                                    printf("MOVE %s\n", $3.expr);
+                                                                                }
                     ;
 
-moved_statement     : TK_AWAIT move_statement                                   { $$.nd = mknode($1.nd, NULL, "moved"); }
+moved_statement     : TK_AWAIT TK_MOVE TK_LPAREN two_numbers TK_RPAREN 
+                      TK_SEMICOLON                                              { 
+                                                                                    $$.nd = mknode($4.nd, NULL, "moved"); 
+
+                                                                                    printf("MOVED %s\n", $4.expr);
+                                                                                }
                     ;
 
-two_numbers         : numeric_variable                                          { $$.nd = $1.nd; }                                          
-                    | numeric_variable TK_COMMA numeric_variable                { $$.nd = mknode($1.nd, $3.nd, "two_numbers"); }
+two_numbers         : numeric_variable                                          { 
+                                                                                    $$.nd = $1.nd; 
+
+                                                                                    if ($1.is_presolved) snprintf($1.expr, sizeof($1.expr), "%d", $1.presolved);    
+                                                                                    
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
+                                                                                }                                          
+                    | numeric_variable TK_COMMA numeric_variable                { 
+                                                                                    $$.nd = mknode($1.nd, $3.nd, "two_numbers"); 
+
+                                                                                    if ($1.is_presolved) snprintf($1.expr, sizeof($1.expr), "%d", $1.presolved);    
+                                                                                    if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);    
+
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s %s", $1.expr, $3.expr);
+                                                                                }
                     ;
 
-delay_statement     : TK_DELAY TK_LPAREN term TK_RPAREN TK_SEMICOLON            { $$.nd = mknode($4.nd, NULL, "delay"); }
+delay_statement     : TK_DELAY TK_LPAREN term TK_RPAREN TK_SEMICOLON            { 
+                                                                                    $$.nd = mknode($4.nd, NULL, "delay");
+
+                                                                                    if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
+
+                                                                                    printf("DELAY %s\n", $3.expr); 
+                                                                                }
                     ;
 
 // expressions
@@ -707,8 +757,19 @@ primary             : TK_TRUE                                                   
                                                                                 }
                     ;
 
-numeric_variable    : TK_NUMBER                                                 { add_symbol('C', "int"); $$.nd = mknode(NULL, NULL, $1.name); }
-                    | TK_IDENTIFIER { check_declaration($1.name); }             { $$.nd = mknode(NULL, NULL, $1.name); }
+numeric_variable    : TK_NUMBER                                                 { 
+                                                                                    add_symbol('C', "int"); 
+                                                                                    $$.nd = mknode(NULL, NULL, $1.name);
+                                                                                    $$.presolved = atoi($1.name);
+                                                                                    $$.is_presolved = 1;
+                                                                                }
+                    | TK_IDENTIFIER                                             { 
+                                                                                    check_declaration($1.name);
+                                                                                    $$.nd = mknode(NULL, NULL, $1.name); 
+                                                                                    
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.name);
+                                                                                    $$.is_presolved = 0;
+                                                                                }
                     ;
 
 comparison_operator : TK_GREATER                                                { $$.nd = mknode(NULL, NULL, $1.name); }
