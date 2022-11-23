@@ -1,0 +1,31 @@
+
+IF 9 > 10
+
+PRINT "this doesn't make any sense"
+
+ELSE
+IF 10 < 3
+
+PRINT "this is also wrong"
+
+ELSE
+
+PRINT "right choice"
+
+ENDIF
+ENDIF
+
+IF 1 > 2 ORIF 2 < 3
+
+
+PRINT "this works"
+
+ELSE
+IF 2 < 2 ANDIF 4 < 5
+
+
+PRINT "this would also be correct"
+
+
+ENDIF
+ENDIF

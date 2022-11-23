@@ -36,7 +36,6 @@
 "parameter"                 { strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
 "param"                     { strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
 "par"                       { strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
-"bool"                      { strcpy(yylval.nd_obj.name, (yytext)); return TK_BOOL; }
 "program"                   { strcpy(yylval.nd_obj.name, (yytext)); return TK_PROGRAM; }
 "if"                        { strcpy(yylval.nd_obj.name, (yytext)); return TK_IF; }
 "else"                      { strcpy(yylval.nd_obj.name, (yytext)); return TK_ELSE; }

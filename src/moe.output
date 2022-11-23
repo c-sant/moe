@@ -1,8 +1,3 @@
-Terminais sem uso na gramática
-
-    TK_BOOL
-
-
 Gramática
 
     0 $accept: program $end
@@ -154,155 +149,154 @@ Terminais, com as regras onde eles aparecem
     TK_INT <nd_obj> (272) 13
     TK_POSITION <nd_obj> (273) 14
     TK_PARAMETER <nd_obj> (274) 15
-    TK_BOOL <nd_obj> (275)
-    TK_PRINT <nd_obj> (276) 30
-    TK_IF <nd_obj> (277) 31
-    TK_ELSE <nd_obj> (278) 33 34
-    TK_FOR <nd_obj> (279) 43
-    TK_BETWEEN <nd_obj> (280) 43
-    TK_AND <nd_obj> (281) 37 59
-    TK_OR <nd_obj> (282) 36 58
-    TK_EQUAL <nd_obj> (283) 11 56
-    TK_BANG_EQUAL <nd_obj> (284) 41 62
-    TK_EQUAL_EQUAL <nd_obj> (285) 40 61
-    TK_LESSER_EQUAL <nd_obj> (286) 85
-    TK_GREATER_EQUAL <nd_obj> (287) 84
-    TK_LESSER <nd_obj> (288) 83
-    TK_GREATER <nd_obj> (289) 82
-    TK_PLUS <nd_obj> (290) 66
-    TK_MINUS <nd_obj> (291) 67 72
-    TK_STAR <nd_obj> (292) 69
-    TK_SLASH <nd_obj> (293) 70
-    TK_LPAREN <nd_obj> (294) 30 31 43 44 45 48 49 50 53 79
-    TK_RPAREN <nd_obj> (295) 30 31 43 44 45 48 49 50 53 79
-    TK_LBRACE <nd_obj> (296) 2 31 34 43
-    TK_RBRACE <nd_obj> (297) 2 31 34 43
-    TK_SEMICOLON <nd_obj> (298) 10 28 30 44 45 48 49 50 53
-    TK_COMMA <nd_obj> (299) 43 52
+    TK_PRINT <nd_obj> (275) 30
+    TK_IF <nd_obj> (276) 31
+    TK_ELSE <nd_obj> (277) 33 34
+    TK_FOR <nd_obj> (278) 43
+    TK_BETWEEN <nd_obj> (279) 43
+    TK_AND <nd_obj> (280) 37 59
+    TK_OR <nd_obj> (281) 36 58
+    TK_EQUAL <nd_obj> (282) 11 56
+    TK_BANG_EQUAL <nd_obj> (283) 41 62
+    TK_EQUAL_EQUAL <nd_obj> (284) 40 61
+    TK_LESSER_EQUAL <nd_obj> (285) 85
+    TK_GREATER_EQUAL <nd_obj> (286) 84
+    TK_LESSER <nd_obj> (287) 83
+    TK_GREATER <nd_obj> (288) 82
+    TK_PLUS <nd_obj> (289) 66
+    TK_MINUS <nd_obj> (290) 67 72
+    TK_STAR <nd_obj> (291) 69
+    TK_SLASH <nd_obj> (292) 70
+    TK_LPAREN <nd_obj> (293) 30 31 43 44 45 48 49 50 53 79
+    TK_RPAREN <nd_obj> (294) 30 31 43 44 45 48 49 50 53 79
+    TK_LBRACE <nd_obj> (295) 2 31 34 43
+    TK_RBRACE <nd_obj> (296) 2 31 34 43
+    TK_SEMICOLON <nd_obj> (297) 10 28 30 44 45 48 49 50 53
+    TK_COMMA <nd_obj> (298) 43 52
 
 
 Não terminais com as regras onde eles aparecem
 
-    $accept (45)
+    $accept (44)
         à esquerda: 0
-    program <nd_obj> (46)
+    program <nd_obj> (45)
         à esquerda: 2
         à direita: 0
-    $@1 (47)
+    $@1 (46)
         à esquerda: 1
         à direita: 2
-    body <nd_obj> (48)
+    body <nd_obj> (47)
         à esquerda: 3
         à direita: 2
-    declarations <nd_obj> (49)
+    declarations <nd_obj> (48)
         à esquerda: 4 5
         à direita: 3 5 31 34 43
-    declaration <nd_obj> (50)
+    declaration <nd_obj> (49)
         à esquerda: 6 7
         à direita: 5
-    var_declaration <nd_obj> (51)
+    var_declaration <nd_obj> (50)
         à esquerda: 9
         à direita: 6
-    $@2 (52)
+    $@2 (51)
         à esquerda: 8
         à direita: 9
-    var_init <nd_obj> (53)
+    var_init <nd_obj> (52)
         à esquerda: 10 11
         à direita: 9
-    data_type (54)
+    data_type (53)
         à esquerda: 12 13 14 15
         à direita: 9
-    access_modifier <nd_obj> (55)
+    access_modifier <nd_obj> (54)
         à esquerda: 16 17
         à direita: 9
-    statement <nd_obj> (56)
+    statement <nd_obj> (55)
         à esquerda: 18 19 20 21 22 23 24 25 26 27
         à direita: 7
-    expression_statement <nd_obj> (57)
+    expression_statement <nd_obj> (56)
         à esquerda: 28
         à direita: 11 18
-    print_statement <nd_obj> (58)
+    print_statement <nd_obj> (57)
         à esquerda: 30
         à direita: 19
-    $@3 (59)
+    $@3 (58)
         à esquerda: 29
         à direita: 30
-    if_statement <nd_obj> (60)
+    if_statement <nd_obj> (59)
         à esquerda: 31
         à direita: 20 33
-    else_statement <nd_obj> (61)
+    else_statement <nd_obj> (60)
         à esquerda: 32 33 34
         à direita: 31
-    if_condition <nd_obj> (62)
+    if_condition <nd_obj> (61)
         à esquerda: 35 36 37 38
         à direita: 31 35 36 37
-    if_valid_operator <nd_obj> (63)
+    if_valid_operator <nd_obj> (62)
         à esquerda: 39 40 41
         à direita: 35
-    loop_statement <nd_obj> (64)
+    loop_statement <nd_obj> (63)
         à esquerda: 43
         à direita: 21
-    $@4 (65)
+    $@4 (64)
         à esquerda: 42
         à direita: 43
-    open_statement <nd_obj> (66)
+    open_statement <nd_obj> (65)
         à esquerda: 44
         à direita: 22
-    close_statement <nd_obj> (67)
+    close_statement <nd_obj> (66)
         à esquerda: 45
         à direita: 24
-    optional_argument <nd_obj> (68)
+    optional_argument <nd_obj> (67)
         à esquerda: 46 47
         à direita: 44 45
-    jaw_statement <nd_obj> (69)
+    jaw_statement <nd_obj> (68)
         à esquerda: 48
         à direita: 23
-    move_statement <nd_obj> (70)
+    move_statement <nd_obj> (69)
         à esquerda: 49
         à direita: 26
-    moved_statement <nd_obj> (71)
+    moved_statement <nd_obj> (70)
         à esquerda: 50
         à direita: 27
-    two_numbers <nd_obj> (72)
+    two_numbers <nd_obj> (71)
         à esquerda: 51 52
         à direita: 48 49 50
-    delay_statement <nd_obj> (73)
+    delay_statement <nd_obj> (72)
         à esquerda: 53
         à direita: 25
-    expression <nd_obj> (74)
+    expression <nd_obj> (73)
         à esquerda: 54
         à direita: 28
-    assignment <nd_obj> (75)
+    assignment <nd_obj> (74)
         à esquerda: 56 57
         à direita: 54 56
-    $@5 (76)
+    $@5 (75)
         à esquerda: 55
         à direita: 56
-    logic <nd_obj> (77)
+    logic <nd_obj> (76)
         à esquerda: 58 59 60
         à direita: 57 58 59 79
-    equality <nd_obj> (78)
+    equality <nd_obj> (77)
         à esquerda: 61 62 63
         à direita: 58 59 60 61 62
-    comparison <nd_obj> (79)
+    comparison <nd_obj> (78)
         à esquerda: 64 65
         à direita: 61 62 63 64
-    term <nd_obj> (80)
+    term <nd_obj> (79)
         à esquerda: 66 67 68
         à direita: 35 38 47 53 64 65 66 67
-    factor <nd_obj> (81)
+    factor <nd_obj> (80)
         à esquerda: 69 70 71
         à direita: 66 67 68 69 70
-    unary <nd_obj> (82)
+    unary <nd_obj> (81)
         à esquerda: 72 73
         à direita: 69 70 71 72
-    primary <nd_obj> (83)
+    primary <nd_obj> (82)
         à esquerda: 74 75 76 77 78 79
         à direita: 73
-    numeric_variable <nd_obj> (84)
+    numeric_variable <nd_obj> (83)
         à esquerda: 80 81
         à direita: 43 51 52
-    comparison_operator <nd_obj> (85)
+    comparison_operator <nd_obj> (84)
         à esquerda: 82 83 84 85
         à direita: 39 64
 

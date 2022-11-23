@@ -87,7 +87,7 @@
 %token <nd_obj> TK_OPEN TK_JAW TK_CLOSE TK_DELAY TK_GLOBAL
 %token <nd_obj> TK_MOVE TK_AWAIT
 %token <nd_obj> TK_STRING_LITERAL TK_NUMBER TK_IDENTIFIER TK_TRUE TK_FALSE 
-%token <nd_obj> TK_STRING TK_INT TK_POSITION TK_PARAMETER TK_BOOL
+%token <nd_obj> TK_STRING TK_INT TK_POSITION TK_PARAMETER
 %token <nd_obj> TK_PRINT
 %token <nd_obj> TK_IF TK_ELSE TK_FOR TK_BETWEEN
 %left <nd_obj> TK_AND TK_OR
@@ -259,7 +259,7 @@ statement           : expression_statement                                      
 expression_statement: expression TK_SEMICOLON                                   { 
                                                                                     $$.nd = mknode($1.nd, NULL, $1.name); 
 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "%s\n", $1.expr);    
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);    
                                                                                 }
                     ;
 
@@ -267,7 +267,7 @@ print_statement     : TK_PRINT TK_LPAREN TK_STRING_LITERAL
                       { add_symbol('C', "string"); } TK_RPAREN TK_SEMICOLON     { 
                                                                                     $$.nd = mknode(NULL, NULL, "print"); 
 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "PRINT %s\n", $3.name);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "PRINT %s", $3.name);
                                                                                 }
                     ;
 
@@ -280,7 +280,7 @@ if_statement        : TK_IF TK_LPAREN if_condition TK_RPAREN TK_LBRACE
                                                                                     if ($6.is_presolved) presolved_to_expr(&$6);
                                                                                     if ($8.is_presolved) presolved_to_expr(&$8);
                                                                                     
-                                                                                    snprintf($$.expr, sizeof($$.expr), "IF %s\t%s\n%s\nENDIF", $3.expr, $6.expr, $8.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "IF %s\n%s\n%s\nENDIF", $3.expr, $6.expr, $8.expr);
                                                                                 }
                     ;
 
@@ -294,14 +294,14 @@ else_statement      :                                                           
 
                                                                                     if ($2.is_presolved) presolved_to_expr(&$2);
                                                                                     
-                                                                                    snprintf($$.expr, sizeof($$.expr), "ELSE\n\t%s", $2.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "ELSE\n%s", $2.expr);
                                                                                 }
                     | TK_ELSE TK_LBRACE declarations TK_RBRACE                  { 
                                                                                     $$.nd = mknode($3.nd, NULL, "else"); 
                                                                                     
                                                                                     if ($3.is_presolved) presolved_to_expr(&$3);
 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "ELSE\n\t%s\n", $3.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "ELSE\n%s", $3.expr);
                                                                                 }
                     ;
 
@@ -310,8 +310,10 @@ if_condition        : if_condition if_valid_operator term                       
 
                                                                                     if ($1.is_presolved) presolved_to_expr(&$1);
                                                                                     if ($3.is_presolved) presolved_to_expr(&$3);
+
                                                                                     
                                                                                     snprintf($$.expr, sizeof($$.expr), "%s %s %s", $1.expr, $2.expr, $3.expr);
+                                                                                    $$.is_presolved = 0;
                                                                                 }
                     | if_condition TK_OR if_condition                           {
                                                                                     $$.nd = mknode($1.nd, $3.nd, "if_condition");
@@ -319,7 +321,8 @@ if_condition        : if_condition if_valid_operator term                       
                                                                                     if ($1.is_presolved) presolved_to_expr(&$1);
                                                                                     if ($3.is_presolved) presolved_to_expr(&$3);
 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "%s\n\tORIF %s\n\t", $1.expr, $3.expr);                                                                                    
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s ORIF %s\n", $1.expr, $3.expr);                                                                                    
+                                                                                    $$.is_presolved = 0;
                                                                                 }
                     | if_condition TK_AND if_condition                          {
                                                                                     $$.nd = mknode($1.nd, $3.nd, "if_condition");
@@ -327,14 +330,16 @@ if_condition        : if_condition if_valid_operator term                       
                                                                                     if ($1.is_presolved) presolved_to_expr(&$1);
                                                                                     if ($3.is_presolved) presolved_to_expr(&$3);
 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "%s\n\tANDIF %s\n\t", $1.expr, $3.expr);                                                                                    
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s ANDIF %s\n", $1.expr, $3.expr);                                                                                    
+                                                                                    $$.is_presolved = 0;
                                                                                 }
                     | term                                                      {
                                                                                     $$.nd = mknode($1.nd, NULL, "if-condition");
 
                                                                                     if ($1.is_presolved) presolved_to_expr(&$1);
 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "%s\n", $1.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
+                                                                                    $$.is_presolved = 0;
                                                                                 }
                     ;
 
@@ -364,7 +369,7 @@ loop_statement      : TK_FOR TK_LPAREN TK_IDENTIFIER
 open_statement      : TK_OPEN TK_LPAREN optional_argument TK_RPAREN TK_SEMICOLON{ 
                                                                                     $$.nd = mknode($4.nd, NULL, "open"); 
                                                                                     
-                                                                                    snprintf($$.expr, sizeof($$.expr), "OPEN %s\n", $3.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "OPEN %s", $3.expr);
                                                                                 }
                     ;
 
@@ -372,7 +377,7 @@ close_statement     : TK_CLOSE TK_LPAREN optional_argument TK_RPAREN
                       TK_SEMICOLON                                              { 
                                                                                     $$.nd = mknode($4.nd, NULL, "close"); 
                                                                                     
-                                                                                    snprintf($$.expr, sizeof($$.expr), "CLOSE %s\n", $3.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "CLOSE %s", $3.expr);
                                                                                 }
                     ;
 
@@ -393,14 +398,14 @@ optional_argument   :                                                           
 jaw_statement       : TK_JAW TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON       { 
                                                                                     $$.nd = mknode($3.nd, NULL, "jaw"); 
                                                                                 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "JAW %s\n", $3.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "JAW %s", $3.expr);
                                                                                 }
                     ;
 
 move_statement      : TK_MOVE TK_LPAREN two_numbers TK_RPAREN TK_SEMICOLON      { 
                                                                                     $$.nd = mknode($3.nd, NULL, "move"); 
                                                                                 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "MOVE %s\n", $3.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "MOVE %s", $3.expr);
                                                                                 }
                     ;
 
@@ -408,7 +413,7 @@ moved_statement     : TK_AWAIT TK_MOVE TK_LPAREN two_numbers TK_RPAREN
                       TK_SEMICOLON                                              { 
                                                                                     $$.nd = mknode($4.nd, NULL, "moved"); 
 
-                                                                                    snprintf($$.expr, sizeof($$.expr), "MOVED %s\n", $4.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "MOVED %s", $4.expr);
                                                                                 }
                     ;
 
@@ -433,8 +438,7 @@ delay_statement     : TK_DELAY TK_LPAREN term TK_RPAREN TK_SEMICOLON            
                                                                                     $$.nd = mknode($4.nd, NULL, "delay");
 
                                                                                     if ($3.is_presolved) presolved_to_expr(&$3);
-
-                                                                                    printf("DELAY %s\n", $3.expr); 
+                                                                                    snprintf($$.expr, sizeof($$.expr), "DELAY %s", $3.expr); 
                                                                                 }
                     ;
 
@@ -445,7 +449,7 @@ expression          : assignment                                                
                                                                                     
                                                                                     if ($1.is_presolved) presolved_to_expr(&$1);
                                                                                     
-                                                                                    snprintf($$.expr, sizeof($$.expr), "%s\n", $1.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
                                                                                 }
                     ;
 
@@ -461,7 +465,7 @@ assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL
                                                                                     
                                                                                     if ($4.is_presolved) presolved_to_expr(&$4);
                                                                                     
-                                                                                    snprintf($$.expr, sizeof($$.expr), "SET %s = %s\n", $1.name, $4.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "SET %s = %s", $1.name, $4.expr);
                                                                                     $$.is_presolved = 0;
                                                                                     
                                                                                     if (stepdebug) printf("%d: solved assignment at line %d: %s\n", ++cstep, lineno + 1, $$.expr);
@@ -1095,29 +1099,25 @@ char *get_type(char *id_name) {
 
 void presolved_to_expr(struct var_name *obj)
 {
+    if(obj->is_presolved != 0 && obj->is_presolved != 1)
+    {
+        printf("IS_PRESOLVED AT LINE %d IS NEITHER 0 NOR 1, BUT %d\n", lineno + 1, obj->is_presolved);
+        return;
+    }
     snprintf(obj->expr, sizeof(obj->expr), "%d", obj->presolved);
     obj->is_presolved = 0;
 }
 
 void write_to_file(char *src)
 {
-    /* int j = 0;
-    while (src[j] != '\0')
-    {
-        if (src[j] == '\n')
-        {
-            printf("%c", src[j]);
-            while (src[j] == '\n')
-                j++;
-        }
-        else
-        {
-            printf("%c", src[j]);
-            j++;
-        }
-    } */
+    output_file = fopen(OUTPUT_FILE_PATH, "w");
 
-    printf("%s", src);
+    if (output_file == NULL)
+    {
+        printf("WARNING: couldn't write output program.");
+    }
+
+    fprintf(output_file, "%s", src);
 }
 
 void yyerror(const char *msg) {

@@ -71,31 +71,30 @@ extern int yydebug;
     TK_INT = 272,                  /* TK_INT  */
     TK_POSITION = 273,             /* TK_POSITION  */
     TK_PARAMETER = 274,            /* TK_PARAMETER  */
-    TK_BOOL = 275,                 /* TK_BOOL  */
-    TK_PRINT = 276,                /* TK_PRINT  */
-    TK_IF = 277,                   /* TK_IF  */
-    TK_ELSE = 278,                 /* TK_ELSE  */
-    TK_FOR = 279,                  /* TK_FOR  */
-    TK_BETWEEN = 280,              /* TK_BETWEEN  */
-    TK_AND = 281,                  /* TK_AND  */
-    TK_OR = 282,                   /* TK_OR  */
-    TK_EQUAL = 283,                /* TK_EQUAL  */
-    TK_BANG_EQUAL = 284,           /* TK_BANG_EQUAL  */
-    TK_EQUAL_EQUAL = 285,          /* TK_EQUAL_EQUAL  */
-    TK_LESSER_EQUAL = 286,         /* TK_LESSER_EQUAL  */
-    TK_GREATER_EQUAL = 287,        /* TK_GREATER_EQUAL  */
-    TK_LESSER = 288,               /* TK_LESSER  */
-    TK_GREATER = 289,              /* TK_GREATER  */
-    TK_PLUS = 290,                 /* TK_PLUS  */
-    TK_MINUS = 291,                /* TK_MINUS  */
-    TK_STAR = 292,                 /* TK_STAR  */
-    TK_SLASH = 293,                /* TK_SLASH  */
-    TK_LPAREN = 294,               /* TK_LPAREN  */
-    TK_RPAREN = 295,               /* TK_RPAREN  */
-    TK_LBRACE = 296,               /* TK_LBRACE  */
-    TK_RBRACE = 297,               /* TK_RBRACE  */
-    TK_SEMICOLON = 298,            /* TK_SEMICOLON  */
-    TK_COMMA = 299                 /* TK_COMMA  */
+    TK_PRINT = 275,                /* TK_PRINT  */
+    TK_IF = 276,                   /* TK_IF  */
+    TK_ELSE = 277,                 /* TK_ELSE  */
+    TK_FOR = 278,                  /* TK_FOR  */
+    TK_BETWEEN = 279,              /* TK_BETWEEN  */
+    TK_AND = 280,                  /* TK_AND  */
+    TK_OR = 281,                   /* TK_OR  */
+    TK_EQUAL = 282,                /* TK_EQUAL  */
+    TK_BANG_EQUAL = 283,           /* TK_BANG_EQUAL  */
+    TK_EQUAL_EQUAL = 284,          /* TK_EQUAL_EQUAL  */
+    TK_LESSER_EQUAL = 285,         /* TK_LESSER_EQUAL  */
+    TK_GREATER_EQUAL = 286,        /* TK_GREATER_EQUAL  */
+    TK_LESSER = 287,               /* TK_LESSER  */
+    TK_GREATER = 288,              /* TK_GREATER  */
+    TK_PLUS = 289,                 /* TK_PLUS  */
+    TK_MINUS = 290,                /* TK_MINUS  */
+    TK_STAR = 291,                 /* TK_STAR  */
+    TK_SLASH = 292,                /* TK_SLASH  */
+    TK_LPAREN = 293,               /* TK_LPAREN  */
+    TK_RPAREN = 294,               /* TK_RPAREN  */
+    TK_LBRACE = 295,               /* TK_LBRACE  */
+    TK_RBRACE = 296,               /* TK_RBRACE  */
+    TK_SEMICOLON = 297,            /* TK_SEMICOLON  */
+    TK_COMMA = 298                 /* TK_COMMA  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -118,7 +117,7 @@ union YYSTYPE
         char expr[256];
     } nd_obj;
 
-#line 122 "./include/moe.tab.h"
+#line 121 "./include/moe.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
