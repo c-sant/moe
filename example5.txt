@@ -1,0 +1,17 @@
+program EX5
+{
+    int x = 0;
+    for(i between 0, 10)
+    {
+        x = x + 1;
+    }
+
+    int y = 1;
+
+    for(j between x, 60)
+    {
+        y = y * j;
+    }
+
+    print("done");
+}

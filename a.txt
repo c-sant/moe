@@ -1,31 +1,20 @@
 
-IF 9 > 10
+DEFINE x
+SET x = 0
 
-PRINT "this doesn't make any sense"
+FOR i=0 TO 10
 
-ELSE
-IF 10 < 3
+SET x = x + 1
 
-PRINT "this is also wrong"
+ENDFOR
 
-ELSE
+DEFINE y
+SET y = 1
 
-PRINT "right choice"
+FOR j=x TO 60
 
-ENDIF
-ENDIF
+SET y = y * j
 
-IF 1 > 2 ORIF 2 < 3
+ENDFOR
 
-
-PRINT "this works"
-
-ELSE
-IF 2 < 2 ANDIF 4 < 5
-
-
-PRINT "this would also be correct"
-
-
-ENDIF
-ENDIF
+PRINT "done"

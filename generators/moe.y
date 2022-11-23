@@ -363,6 +363,12 @@ loop_statement      : TK_FOR TK_LPAREN TK_IDENTIFIER
                                                                                         "Line %d: upper bound of loop must be %s (got %s)."
                                                                                     ); 
                                                                                     $$.nd = mknode($11.nd, NULL, "for-loop");
+
+                                                                                    if ($6.is_presolved) presolved_to_expr(&$6);
+                                                                                    if ($8.is_presolved) presolved_to_expr(&$8);
+                                                                                    if ($11.is_presolved) presolved_to_expr(&$11);
+
+                                                                                    snprintf($$.expr, sizeof($$.expr), "FOR %s=%s TO %s\n%s\nENDFOR", $3.name, $6.expr, $8.expr, $11.expr);
                                                                                 }
                     ;
 
