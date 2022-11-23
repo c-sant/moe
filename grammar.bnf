@@ -1,0 +1,56 @@
+# GRAMÁTICA DA LINGUAGEM MOE EM BNF
+
+program         ::= "program" IDENTIFIER '{' body '}' ;
+body            ::= declaration* ;
+
+
+declaration     ::= ( var_declaration | par_declaration | statement ) ;
+
+var_declaration ::= "global"* ( "int" | ( "position" '[' ( 'A' | 'B' | 'C' ) ']') ) 
+                    IDENTIFIER ( "=" expression_stmt )? ';' ;
+par_declaration ::= "parameter" NUMBER '=' NUMBER ';' ;
+
+statement       ::= expression_stmt
+                |   print_stmt
+                |   if_stmt
+                |   loop_stmt
+                |   open_stmt
+                |   close_stmt
+                |   jaw_stmt
+                |   delay_stmt
+                |   move_stmt
+                |   moved_stmt ;   
+
+
+expression_stmt ::= expression ';'
+print_stmt      ::= "print" '(' STRING ')' ';' ;
+if_stmt         ::= "if" '(' condition ')' '{' declaration* '}'
+                    ( "else" ( if_stmt | '{' declarations* '}' )? );
+loop_stmt       ::= "for" '(' IDENTIFIER "between" NUMBER ',' NUMBER 
+                    '{' declaration* '}' ;
+open_stmt       ::= "open" '(' NUMBER* ')' ';' ;
+close_stmt      ::= "close" '(' NUMBER* ')' ';' ;
+jaw_stmt        ::= "jaw" '(' NUMBER ( ',' NUMBER )? ')' ';' ;
+delay_stmt      ::= "delay" '(' NUMBER ')' ';' ;
+move_stmt       ::= "move" '(' NUMBER ( ',' NUMBER )? ')' ';' ;
+moved_stmt      ::= "await" "move" '(' NUMBER ( ',' NUMBER )? ')' ';' ;
+
+condition       ::= ( term | ( condition ( ">" | ">=" | "<" | "<=" | "==" | "!=" condition ) ) 
+                    | condition ( "&&" | "||" ) term ) ;
+
+
+expression  ::= assignment ;
+assignment  ::= ( logic | ( IDENTIFIER '=' assignment ) ) ;
+logic       ::= ( logic ( "&&" | "||" ) )? equality ;
+equality    ::= ( equality  ( '!=' | '==' ) )? comparison ;
+comparison  ::= ( comparison ( '>' | '<' | '>=' | '<=' ) )? term ;
+term        ::= ( term ( '-' | '+' ) )? factor ;
+factor      ::= ( factor ( '*' | '/' ) )? unary ;
+unary       ::= ( '-' )? ( unary | primary ) ; 
+primary     ::= "true" | "false " NUMBER | STRING | IDENTIFIER | '(' logic ')' ;
+
+NUMBER      ::= DIGIT+ ;
+STRING      ::= "\"" <any character except "\"">* "\"" ;
+IDENTIFIER  ::= ( LETTER | '_' ) ( LETTER | '_' | DIGIT )* ;
+LETTER      ::= "a" ... "z" | "A" ... "Z" ;
+DIGIT       ::= "0" ... "9" ;

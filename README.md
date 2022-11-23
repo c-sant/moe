@@ -13,6 +13,8 @@ Com seu compilador, é possível escrever programas ACL com uma sintaxe semelhan
 A sintaxe se assemelha muito à linguagem C. Dentre as semelhanças, pode-se listar:
 
 - os símbolos de comparação (>=, <=, <, >, !=, ==);
+- símbolos dos operadores aritméticos (+, -, *, /);
+- símbolos dos operadores lógicos (&&, ||, !);
 - o uso de ponto e vírgula para delimitar uma declaração;
 - termos dados aos tipos de variáveis (int e string);
 - estruturas de controle de fluxo (if, else, for).
@@ -283,3 +285,34 @@ Também é possível passar programas como argumento:
 .\bin\moe.exe .\examples\example1.moe
 ```
 
+# Bonus
+
+Na pasta bonus, há um esboço do que seria o mesmo compilador refeito em C#. 
+
+Algumas estruturas principais, como o Lexer e o Parser, estão disponíveis, mas análise semântica e o reconhecimento de erros ainda estavam começando a ser construídas.
+
+Infelizmente, não foi possível concluído dentro do prazo.
+
+# Grupo
+
+[081200016] Carlos Eduardo Vieira Santos  
+[081200007] Guilherme Dias Lima Turtera  
+[081200011] Caio Rodrigues Fernandes Santos  
+[081200028] Nathan Vilela de Souza  
+[081200037] Gabriel Mendes Rodrigues Oliveira  
+
+# Referências
+
+O projeto contou com apoio das seguintes referências:  
+
+- Manual do ACL  
+
+Moe:  
+- [Building a C Compiler using Lex and Yacc, por Anjaneya Tripathi](https://medium.com/codex/building-a-c-compiler-using-lex-and-yacc-446262056aaa)  
+- [Lex and YACC primer/HOWTO](https://tldp.org/HOWTO/Lex-YACC-HOWTO.html)  
+- [Exemplo de analisador léxico utilizando Lex, por westes](https://github.com/westes/flex/blob/master/examples/manual/pascal.lex)  
+- [Série em duas partes sobre Lex e YACC](https://youtube.com/playlist?list=PLkB3phqR3X43IRqPT0t1iBfmT5bvn198Z)   
+- [Lex and YACC program information, IBM](https://www.ibm.com/docs/en/aix/7.2?topic=concepts-lex-yacc-program-information)  
+  
+CLACL: C-Like ACL (Moe em C#):  
+- [Crafting Interpreters, por Robert Nystrom](https://craftinginterpreters.com)  
