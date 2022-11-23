@@ -67,9 +67,9 @@ extern int yydebug;
     TK_IDENTIFIER = 268,           /* TK_IDENTIFIER  */
     TK_TRUE = 269,                 /* TK_TRUE  */
     TK_FALSE = 270,                /* TK_FALSE  */
-    TK_STRING = 271,               /* TK_STRING  */
-    TK_INT = 272,                  /* TK_INT  */
-    TK_POSITION = 273,             /* TK_POSITION  */
+    TK_INT = 271,                  /* TK_INT  */
+    TK_POSITION = 272,             /* TK_POSITION  */
+    TK_POSITION_GROUP = 273,       /* TK_POSITION_GROUP  */
     TK_PARAMETER = 274,            /* TK_PARAMETER  */
     TK_PRINT = 275,                /* TK_PRINT  */
     TK_IF = 276,                   /* TK_IF  */
@@ -103,7 +103,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 72 "./generators/moe.y"
+#line 75 "./generators/moe.y"
 
     // name: name of the symbol
     // node: node structure of the symbol (links to other symbols)

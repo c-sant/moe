@@ -371,8 +371,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 49
-#define YY_END_OF_BUFFER 50
+#define YY_NUM_RULES 46
+#define YY_END_OF_BUFFER 47
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -380,22 +380,22 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[131] =
+static const flex_int16_t yy_accept[128] =
     {   0,
-        0,    0,   50,   48,   47,   46,   48,   48,   48,   48,
-        3,    4,   18,   16,    2,   17,   19,   42,    1,    9,
-       13,   10,   43,   43,   43,   43,   43,   43,   43,   43,
-       43,   43,   43,   43,   43,   43,   43,    5,   48,    6,
-       11,    0,   44,    0,   14,    0,   45,    0,   42,    7,
-       12,    8,   43,   43,   43,   43,   43,   43,   43,   43,
-       43,   31,   43,   43,   43,   43,   43,   43,   43,   43,
-       43,   15,   43,   43,   43,   43,   43,   43,   33,   43,
-       23,   37,   43,   43,   29,   26,   43,   43,   43,   43,
-       43,   43,   43,   43,   32,   43,   43,   39,   35,   43,
+        0,    0,   47,   45,   44,   43,   45,   45,   45,   45,
+        3,    4,   18,   16,    2,   17,   19,   38,    1,    9,
+       13,   10,   39,   45,   39,   39,   39,   39,   39,   39,
+       39,   39,   39,   39,   39,   39,   39,    5,   45,    6,
+       11,    0,   41,    0,   14,    0,   42,    0,   38,    7,
+       12,    8,   39,    0,   39,   39,   39,   39,   39,   39,
+       39,   39,   27,   39,   39,   39,   39,   39,   39,   39,
+       39,   15,   40,   39,   39,   39,   39,   39,   39,   29,
+       39,   23,   33,   39,   39,   39,   39,   39,   39,   39,
+       39,   39,   39,   39,   28,   39,   39,   35,   31,   39,
 
-       43,   43,   43,   43,   20,   40,   43,   36,   38,   21,
-       43,   28,   43,   22,   43,   43,   43,   41,   43,   43,
-       43,   24,   34,   43,   43,   30,   43,   25,   27,    0
+       39,   39,   39,   20,   36,   39,   32,   34,   21,   39,
+       39,   39,   22,   39,   39,   37,   39,   39,   39,   30,
+       39,   39,   26,   39,   24,   25,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -406,14 +406,14 @@ static const YY_CHAR yy_ec[256] =
         1,    2,    4,    5,    1,    1,    1,    6,    7,    8,
         9,   10,   11,   12,   13,    1,   14,   15,   15,   15,
        15,   15,   15,   15,   15,   15,   15,    1,   16,   17,
-       18,   19,    1,    1,   20,   20,   20,   20,   20,   20,
-       20,   20,   20,   20,   20,   20,   20,   20,   20,   20,
-       20,   20,   20,   20,   20,   20,   20,   20,   20,   20,
-        1,   21,    1,    1,   20,    1,   22,   23,   24,   25,
+       18,   19,    1,    1,   20,   20,   20,   21,   21,   21,
+       21,   21,   21,   21,   21,   21,   21,   21,   21,   21,
+       21,   21,   21,   21,   21,   21,   21,   21,   21,   21,
+       22,   23,   24,    1,   21,    1,   25,   26,   27,   28,
 
-       26,   27,   28,   20,   29,   30,   20,   31,   32,   33,
-       34,   35,   20,   36,   37,   38,   39,   40,   41,   20,
-       42,   20,   43,   44,   45,    1,    1,    1,    1,    1,
+       29,   30,   31,   21,   32,   33,   21,   34,   35,   36,
+       37,   38,   21,   39,   40,   41,   42,   43,   44,   21,
+       45,   21,   46,   47,   48,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -430,111 +430,109 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[46] =
+static const YY_CHAR yy_meta[49] =
     {   0,
         1,    1,    1,    1,    2,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    3,    1,    1,    1,    1,    3,
-        1,    3,    3,    3,    3,    3,    3,    3,    3,    3,
+        3,    1,    1,    1,    3,    3,    3,    3,    3,    3,
         3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        3,    3,    1,    1,    1
+        3,    3,    3,    3,    3,    1,    1,    1
     } ;
 
-static const flex_int16_t yy_base[134] =
+static const flex_int16_t yy_base[131] =
     {   0,
-        0,    0,  148,  149,  149,  149,  129,   41,  140,   40,
+        0,    0,  148,  149,  149,  149,  129,   44,  140,   43,
       149,  149,  149,  149,  149,  149,  149,  130,  149,  126,
-      125,  124,    0,  100,  114,  108,  112,  106,   26,  105,
-       22,  113,  100,   98,   29,   94,   95,  149,   86,  149,
-      149,   45,  149,  126,  149,   46,   47,   53,  113,  149,
-      149,  149,    0,  105,   88,   91,   93,   86,   91,   85,
-       86,    0,   81,   77,   77,   90,   79,   77,   23,   77,
-       73,  149,   82,   69,   72,   86,   81,   69,    0,   82,
-        0,    0,   78,   70,   80,   72,   67,   71,   69,   71,
-       58,   69,   68,   51,    0,   66,   69,    0,    0,   58,
+      125,  124,    0,  121,   96,  110,  104,  108,  102,   26,
+      101,   22,  109,   96,   94,   31,   92,  149,   83,  149,
+      149,   48,  149,  126,  149,   50,   52,   57,  113,  149,
+      149,  149,    0,  103,  101,   84,   87,   89,   82,   87,
+       81,   82,    0,   77,   73,   73,   86,   75,   73,   32,
+       70,  149,  149,   79,   66,   69,   83,   78,   66,    0,
+       79,    0,    0,   75,   67,   77,   69,   64,   68,   69,
+       56,   67,   66,   49,    0,   64,   67,    0,    0,   56,
 
-       51,   50,   51,   53,    0,    0,   59,    0,    0,    0,
-       53,   57,   53,    0,   59,   52,   46,    0,   40,   43,
-       44,    0,    0,   49,   40,    0,   28,    0,    0,  149,
-       68,   71,   56
+       49,   48,   49,    0,    0,   58,    0,    0,    0,   52,
+       56,   52,    0,   58,   46,    0,   39,   37,   37,    0,
+       36,   25,    0,   16,    0,    0,  149,   75,   78,   51
     } ;
 
-static const flex_int16_t yy_def[134] =
+static const flex_int16_t yy_def[131] =
     {   0,
-      130,    1,  130,  130,  130,  130,  130,  131,  130,  132,
+      127,    1,  127,  127,  127,  127,  127,  128,  127,  129,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  130,  127,  130,  130,  130,  130,  130,  130,
+      130,  130,  130,  130,  130,  130,  130,  127,  127,  127,
+      127,  128,  127,  128,  127,  129,  129,  129,  127,  127,
+      127,  127,  130,  127,  130,  130,  130,  130,  130,  130,
       130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  133,  133,  133,  133,  133,  133,  133,  133,
-      133,  133,  133,  133,  133,  133,  133,  130,  130,  130,
-      130,  131,  130,  131,  130,  132,  132,  132,  130,  130,
-      130,  130,  133,  133,  133,  133,  133,  133,  133,  133,
-      133,  133,  133,  133,  133,  133,  133,  133,  133,  133,
-      133,  130,  133,  133,  133,  133,  133,  133,  133,  133,
-      133,  133,  133,  133,  133,  133,  133,  133,  133,  133,
-      133,  133,  133,  133,  133,  133,  133,  133,  133,  133,
+      130,  127,  127,  130,  130,  130,  130,  130,  130,  130,
+      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
+      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
 
-      133,  133,  133,  133,  133,  133,  133,  133,  133,  133,
-      133,  133,  133,  133,  133,  133,  133,  133,  133,  133,
-      133,  133,  133,  133,  133,  133,  133,  133,  133,    0,
-      130,  130,  130
+      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
+      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
+      130,  130,  130,  130,  130,  130,    0,  127,  127,  127
     } ;
 
-static const flex_int16_t yy_nxt[195] =
+static const flex_int16_t yy_nxt[198] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
        14,   15,   16,   17,   18,   19,   20,   21,   22,   23,
-        4,   24,   25,   26,   27,   28,   29,   30,   31,   32,
-       23,   33,   23,   34,   35,   23,   36,   37,   23,   23,
-       23,   23,   38,   39,   40,   43,   47,   59,   62,   43,
-       67,   87,   47,   47,   63,  130,   88,   46,   53,   60,
-       48,   44,   68,  129,   69,   44,   48,   48,   42,   42,
-       42,   46,  128,   46,  127,  126,  125,  124,  123,  122,
-      121,  120,  119,  118,  117,  116,  115,  114,  113,  112,
+       23,   24,    4,    4,   25,   26,   27,   28,   29,   30,
+       31,   32,   33,   23,   34,   23,   35,   36,   23,   23,
+       37,   23,   23,   23,   23,   38,   39,   40,   43,   47,
+       60,   63,   43,   53,  126,   68,   47,   64,   47,  127,
+      125,   46,   61,   88,  124,   48,   44,   69,   89,   70,
+       44,  123,   48,  122,   48,   42,   42,   42,   46,  121,
+       46,  120,  119,  118,  117,  116,  115,  114,  113,  112,
       111,  110,  109,  108,  107,  106,  105,  104,  103,  102,
 
       101,  100,   99,   98,   97,   96,   95,   94,   93,   92,
-       91,   90,   89,   86,   85,   84,   83,   82,   81,   80,
-       79,   78,   77,   76,   75,   74,   73,   49,  130,   72,
-       71,   70,   66,   65,   64,   61,   58,   57,   56,   55,
-       54,   52,   51,   50,   49,   45,   41,  130,    3,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130
+       91,   90,   87,   86,   85,   84,   83,   82,   81,   80,
+       79,   78,   77,   76,   75,   74,   73,   49,  127,   72,
+       71,   67,   66,   65,   62,   59,   58,   57,   56,   55,
+       54,   52,   51,   50,   49,   45,   41,  127,    3,  127,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  127,  127,  127,  127,  127
 
     } ;
 
-static const flex_int16_t yy_chk[195] =
+static const flex_int16_t yy_chk[198] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    8,   10,   29,   31,   42,
-       35,   69,   46,   47,   31,   48,   69,   48,  133,   29,
-       10,    8,   35,  127,   35,   42,   46,   47,  131,  131,
-      131,  132,  125,  132,  124,  121,  120,  119,  117,  116,
-      115,  113,  112,  111,  107,  104,  103,  102,  101,  100,
-       97,   96,   94,   93,   92,   91,   90,   89,   88,   87,
+        1,    1,    1,    1,    1,    1,    1,    1,    8,   10,
+       30,   32,   42,  130,  124,   36,   46,   32,   47,   48,
+      122,   48,   30,   70,  121,   10,    8,   36,   70,   36,
+       42,  119,   46,  118,   47,  128,  128,  128,  129,  117,
+      129,  115,  114,  112,  111,  110,  106,  103,  102,  101,
+      100,   97,   96,   94,   93,   92,   91,   90,   89,   88,
 
-       86,   85,   84,   83,   80,   78,   77,   76,   75,   74,
-       73,   71,   70,   68,   67,   66,   65,   64,   63,   61,
+       87,   86,   85,   84,   81,   79,   78,   77,   76,   75,
+       74,   71,   69,   68,   67,   66,   65,   64,   62,   61,
        60,   59,   58,   57,   56,   55,   54,   49,   44,   39,
-       37,   36,   34,   33,   32,   30,   28,   27,   26,   25,
-       24,   22,   21,   20,   18,    9,    7,    3,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130
+       37,   35,   34,   33,   31,   29,   28,   27,   26,   25,
+       24,   22,   21,   20,   18,    9,    7,    3,  127,  127,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  127,  127,  127,  127,  127,  127,  127,  127,
+      127,  127,  127,  127,  127,  127,  127
 
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[50] =
+static const flex_int32_t yy_rule_can_match_eol[47] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 1, 1, 1, 0, 0, 0,     };
+    0, 1, 1, 1, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -554,8 +552,8 @@ char *yytext;
 #line 2 "./generators/moe.l"
     #include "moe.tab.h"
     int lineno = 0;    
-#line 557 "./src/moe.lex.c"
-#line 558 "./src/moe.lex.c"
+#line 555 "./src/moe.lex.c"
+#line 556 "./src/moe.lex.c"
 
 #define INITIAL 0
 
@@ -775,7 +773,7 @@ YY_DECL
 #line 8 "./generators/moe.l"
 
 
-#line 778 "./src/moe.lex.c"
+#line 776 "./src/moe.lex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -802,7 +800,7 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 131 )
+				if ( yy_current_state >= 128 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -845,252 +843,237 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 10 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_SEMICOLON; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_SEMICOLON; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 11 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_COMMA; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_COMMA; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 12 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_LPAREN; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_LPAREN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 13 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_RPAREN; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_RPAREN; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 14 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_LBRACE; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_LBRACE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 15 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_RBRACE; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_RBRACE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 16 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_LESSER_EQUAL; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_LESSER_EQUAL; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 17 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_GREATER_EQUAL; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_GREATER_EQUAL; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 18 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_LESSER; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_LESSER; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 19 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_GREATER; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_GREATER; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 20 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_BANG_EQUAL; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_BANG_EQUAL; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 21 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_EQUAL_EQUAL; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_EQUAL_EQUAL; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 22 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_EQUAL; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_EQUAL; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 23 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_AND; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_AND; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 24 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_OR; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_OR; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 25 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_PLUS; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_PLUS; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 26 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_MINUS; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_MINUS; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 27 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_STAR; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_STAR; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 28 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_SLASH; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_SLASH; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 29 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_TRUE; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_TRUE; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 30 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_FALSE; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_FALSE; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 31 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_PRINT; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_PRINT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 32 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_INT; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_INT; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 33 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_STRING; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_POSITION; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 34 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_POSITION; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_PARAMETER; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 35 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_POSITION; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_PROGRAM; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 36 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_IF; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 37 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_ELSE; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 38 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_FOR; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 39 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_PROGRAM; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_BETWEEN; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 40 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_IF; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_OPEN; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 41 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_ELSE; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_CLOSE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 42 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_FOR; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_JAW; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 43 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_BETWEEN; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_DELAY; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 44 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_OPEN; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_MOVE; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 45 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_CLOSE; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_AWAIT; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 46 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_JAW; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_GLOBAL; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 47 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_DELAY; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_NUMBER; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 48 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_MOVE; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_IDENTIFIER; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 49 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_AWAIT; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_POSITION_GROUP; }
 	YY_BREAK
 case 41:
+/* rule 41 can match eol */
 YY_RULE_SETUP
 #line 50 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_GLOBAL; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_STRING_LITERAL; }
 	YY_BREAK
 case 42:
+/* rule 42 can match eol */
 YY_RULE_SETUP
 #line 51 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_NUMBER; }
+{ snprintf(yylval.nd_obj.name, sizeof(yylval.nd_obj.name), (yytext)); return TK_STRING_LITERAL; }
 	YY_BREAK
 case 43:
+/* rule 43 can match eol */
 YY_RULE_SETUP
 #line 52 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_IDENTIFIER; }
-	YY_BREAK
-case 44:
-/* rule 44 can match eol */
-YY_RULE_SETUP
-#line 53 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_STRING_LITERAL; }
-	YY_BREAK
-case 45:
-/* rule 45 can match eol */
-YY_RULE_SETUP
-#line 54 "./generators/moe.l"
-{ strcpy(yylval.nd_obj.name, (yytext)); return TK_STRING_LITERAL; }
-	YY_BREAK
-case 46:
-/* rule 46 can match eol */
-YY_RULE_SETUP
-#line 55 "./generators/moe.l"
 { lineno++; }
 	YY_BREAK
-case 47:
+case 44:
 YY_RULE_SETUP
-#line 56 "./generators/moe.l"
+#line 53 "./generators/moe.l"
 { ; }
 	YY_BREAK
-case 48:
+case 45:
 YY_RULE_SETUP
-#line 57 "./generators/moe.l"
+#line 54 "./generators/moe.l"
 { printf("unexpected token: %s\n", yytext); }
 	YY_BREAK
-case 49:
+case 46:
 YY_RULE_SETUP
-#line 59 "./generators/moe.l"
+#line 56 "./generators/moe.l"
 ECHO;
 	YY_BREAK
-#line 1093 "./src/moe.lex.c"
+#line 1076 "./src/moe.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1387,7 +1370,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 131 )
+			if ( yy_current_state >= 128 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1415,11 +1398,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 131 )
+		if ( yy_current_state >= 128 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 130);
+	yy_is_jam = (yy_current_state == 127);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2107,7 +2090,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 59 "./generators/moe.l"
+#line 56 "./generators/moe.l"
 
 
 int yywrap() {

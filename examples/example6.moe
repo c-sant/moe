@@ -1,0 +1,11 @@
+program EX6
+{
+    position[A] posA;
+    position[B] posB;
+    position[C] posC = 0;
+
+    posA = posC;
+    posB = posA;
+
+    parameter 10 = 10;
+}

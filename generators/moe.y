@@ -8,7 +8,7 @@
     #include <stdbool.h>
     #include "moe.lex.c"
     
-    #define TOTAL_KEYWORDS 22
+    #define TOTAL_KEYWORDS 18
     #define OUTPUT_FILE_PATH "a.txt"
 
     void yyerror(const char *s);
@@ -51,9 +51,9 @@
     char errors[10][100];
 
     char reserved[TOTAL_KEYWORDS][10] = {
-        "var", "program", "print", "if", "else", "int", "position", "string",
-        "pos", "parameter", "param", "par", "open", "close", "jaw", "delay",
-        "global", "move", "await", "for", "between", "bool"
+        "print", "move", "delay", "jaw", "open", "close", "await", "int", 
+        "position", "parameter", "program", "global", "true", "false", "for", 
+        "between", "if", "else"
     };
 
     void check_declaration(char *c);
@@ -67,6 +67,9 @@
 
     void presolved_to_expr(struct var_name *obj);
     void write_to_file(char *src);
+
+    void get_define_command(char *data_type, char *defcmd, char *complement);
+    void get_set_command(char *data_type, char *setcmd);
 %}
 
 %union {
@@ -87,7 +90,7 @@
 %token <nd_obj> TK_OPEN TK_JAW TK_CLOSE TK_DELAY TK_GLOBAL
 %token <nd_obj> TK_MOVE TK_AWAIT
 %token <nd_obj> TK_STRING_LITERAL TK_NUMBER TK_IDENTIFIER TK_TRUE TK_FALSE 
-%token <nd_obj> TK_STRING TK_INT TK_POSITION TK_PARAMETER
+%token <nd_obj> TK_INT TK_POSITION TK_POSITION_GROUP TK_PARAMETER
 %token <nd_obj> TK_PRINT
 %token <nd_obj> TK_IF TK_ELSE TK_FOR TK_BETWEEN
 %left <nd_obj> TK_AND TK_OR
@@ -106,6 +109,7 @@
 %type <nd_obj> expression assignment logic equality comparison term factor unary  
 %type <nd_obj> primary var_init access_modifier numeric_variable if_condition
 %type <nd_obj> expression_statement comparison_operator if_valid_operator
+%type <nd_obj> data_type par_declaration
 
 %%
 
@@ -151,6 +155,11 @@ declaration         : var_declaration                                           
 
                                                                                     snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
                                                                                 }
+                    | par_declaration                                           {
+                                                                                    $$.nd = mknode($1.nd, NULL, "declaration");
+
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
+                                                                                }
                     | statement                                                 { 
                                                                                     $$.nd = mknode($1.nd, NULL, "declaration"); 
                                                                                     
@@ -163,15 +172,9 @@ declaration         : var_declaration                                           
 var_declaration     : access_modifier data_type TK_IDENTIFIER
                       { add_symbol('V', type); } var_init                       {
                                                                                     char defstr[10];
-                                                                                    printf("%s\n", type);
-                                                                                    if (!strcmp(type, "int"))
-                                                                                    {
-                                                                                        snprintf(defstr, sizeof(defstr), is_global ? "GLOBAL" : "DEFINE");
-                                                                                    }
-                                                                                    else if (!strcmp(type, "position"))
-                                                                                    {
+                                                                                    char setstr[10];
 
-                                                                                    }
+                                                                                    get_define_command(type, defstr, $2.expr);
                                                                                     
                                                                                     snprintf($$.expr, sizeof($$.expr), "%s %s\n", defstr, $3.name);
 
@@ -183,7 +186,10 @@ var_declaration     : access_modifier data_type TK_IDENTIFIER
                                                                                         //     get_type($5.name),
                                                                                         //     "Line %d: Incorrectly initialized value (expected %s, got %s).\n"
                                                                                         // );
-                                                                                        snprintf($$.expr, sizeof($$.expr), "%sSET %s = %s\n", $$.expr, $3.name, $5.name);
+
+                                                                                        get_set_command(type, setstr);
+                                                                                        
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s%s %s = %s\n", $$.expr, setstr, $3.name, $5.name);
                                                                                     }
 
                                                                                     $3.nd = mknode(NULL, NULL, $3.name); 
@@ -201,15 +207,21 @@ var_init            : TK_SEMICOLON                                              
                                                                                 }
                     ;
 
-data_type           : TK_STRING                                                 { insert_type(); }
-                    | TK_INT                                                    { insert_type(); }
-                    | TK_POSITION                                               { insert_type(); }
-                    | TK_PARAMETER                                              { insert_type(); }
+data_type           : TK_INT                                                    { insert_type(); }
+                    | TK_POSITION TK_POSITION_GROUP                             { 
+                                                                                    snprintf(type, sizeof(type), "%s", $1.name); 
+
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s", $2.name);    
+                                                                                }
                     ;
 
 access_modifier     : TK_GLOBAL                                                 { set_global(); $$.nd = NULL; }
                     |                                                           { unset_global(); $$.nd = NULL; }
                     ;
+
+par_declaration     : TK_PARAMETER TK_NUMBER TK_EQUAL TK_NUMBER TK_SEMICOLON    {
+                                                                                    snprintf($$.expr, sizeof($$.expr), "LET PAR %s %s", $2.name, $4.name);
+                                                                                }
 
 // statements
 
@@ -952,47 +964,19 @@ comparison_operator : TK_GREATER                                                
 
 int main() {
     yydebug = 0;
-    stepdebug = 1;
+    stepdebug = 0;
     cstep = 0;
 
     /* output_file = fopen(OUTPUT_FILE_PATH, "w"); */
 
     yyparse();
-
-    printf("\n\n");
-	/* printf("\t\t\t\t\t\t PHASE 1: LEXICAL ANALYSIS \n\n"); */
-	printf("\nSYMBOL   DATATYPE   TYPE   LINE NUMBER    GLOBAL \n");
-	printf("_______________________________________\n\n");
-	int i=0;
-	for(i=0; i<count; i++) {
-		printf("%s\t%s\t%s\t%d\t%d\n", 
-                symbol_table[i].id_name, 
-                symbol_table[i].data_type, 
-                symbol_table[i].symbol_type, 
-                symbol_table[i].line_no, 
-                symbol_table[i].is_global
-        );
-	}
-	for(i=0;i<count;i++) {
-		free(symbol_table[i].id_name);
-		free(symbol_table[i].data_type);
-	}
-	printf("\n\n");
-/* 
-	printf("\t\t\t\t\t\t PHASE 2: SYNTAX ANALYSIS \n\n");
-	print_tree(head); 
-	printf("\n\n");
-
-    printf("\t\t\t\t\t\t\t\t PHASE 3: SEMANTIC ANALYSIS \n\n"); */
+    
 	if(sem_errors > 0) {
 		printf("Semantic analysis completed with %d errors\n", sem_errors);
 		for(int i=0; i<sem_errors; i++){
 			printf("\t - %s", errors[i]);
 		}
-	} else {
-		printf("Semantic analysis completed with no errors");
-	}
-	printf("\n\n");
+    }
 }
 
 void insert_type() {
@@ -1121,6 +1105,36 @@ void presolved_to_expr(struct var_name *obj)
     }
     snprintf(obj->expr, sizeof(obj->expr), "%d", obj->presolved);
     obj->is_presolved = 0;
+}
+
+void get_define_command(char *data_type, char *defcmd, char *complement)
+{
+    if (!strcmp(data_type, "int"))
+    {
+        snprintf(defcmd, sizeof(defcmd), is_global ? "GLOBAL" : "DEFINE");
+    }
+    else if (!strcmp(data_type, "position"))
+    {
+        if(!strcmp(complement, "[A]")) 
+            snprintf(defcmd, sizeof(defcmd), "DEFP");
+        else if(!strcmp(complement, "[B]")) 
+            snprintf(defcmd, sizeof(defcmd), "DEFPB");
+        else if(!strcmp(complement, "[C]")) 
+            snprintf(defcmd, sizeof(defcmd), "DEFPC");
+        
+    }
+}
+
+void get_set_command(char *data_type, char *setcmd)
+{
+    if (!strcmp(data_type, "int"))
+    {
+        snprintf(setcmd, sizeof(setcmd), "SET");
+    }
+    else if (!strcmp(data_type, "position"))
+    {
+        snprintf(setcmd, sizeof(setcmd), "SETP");
+    }
 }
 
 void write_to_file(char *src)
