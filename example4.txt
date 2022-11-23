@@ -1,0 +1,24 @@
+program EX4
+{
+    if (9 > 10)
+    {
+        print("this doesn't make any sense");
+    }
+    else if (10 < 3)
+    {
+        print("this is also wrong");
+    }
+    else
+    {
+        print("right choice");
+    }
+
+    if (1 > 2 || 2 < 3)
+    {
+        print("this works");
+    }
+    else if (1 < 2 && 4 < 5)
+    {
+        print("this would also be correct");
+    }
+}

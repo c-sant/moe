@@ -104,7 +104,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 67 "./generators/moe.y"
+#line 72 "./generators/moe.y"
 
     // name: name of the symbol
     // node: node structure of the symbol (links to other symbols)
