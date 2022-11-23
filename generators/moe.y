@@ -162,9 +162,18 @@ declaration         : var_declaration                                           
 
 var_declaration     : access_modifier data_type TK_IDENTIFIER
                       { add_symbol('V', type); } var_init                       {
-                                                                                    char *globality = is_global ? "GLOBAL" : "DEFINE";
+                                                                                    char defstr[10];
+                                                                                    printf("%s\n", type);
+                                                                                    if (!strcmp(type, "int"))
+                                                                                    {
+                                                                                        snprintf(defstr, sizeof(defstr), is_global ? "GLOBAL" : "DEFINE");
+                                                                                    }
+                                                                                    else if (!strcmp(type, "position"))
+                                                                                    {
+
+                                                                                    }
                                                                                     
-                                                                                    snprintf($$.expr, sizeof($$.expr), "%s %s\n", globality, $3.name);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "%s %s\n", defstr, $3.name);
 
                                                                                     if ($5.nd != NULL)
                                                                                     {
@@ -459,19 +468,19 @@ expression          : assignment                                                
                                                                                 }
                     ;
 
-assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL 
-                      assignment                                                {
+assignment          : TK_IDENTIFIER TK_EQUAL assignment                         {
+                                                                                    check_declaration($1.name);
                                                                                     validate_types(
                                                                                         get_type($1.name), 
-                                                                                        get_type($4.name), 
+                                                                                        get_type($3.name), 
                                                                                         "Line %d: Incorrectly assigned value (expected %s, got %s).\n"
                                                                                     ); 
                                                                                     
-                                                                                    $$.nd = mknode($1.nd, $3.nd, "assignment");
+                                                                                    $$.nd = mknode($1.nd, $2.nd, "assignment");
                                                                                     
-                                                                                    if ($4.is_presolved) presolved_to_expr(&$4);
+                                                                                    if ($3.is_presolved) presolved_to_expr(&$3);
                                                                                     
-                                                                                    snprintf($$.expr, sizeof($$.expr), "SET %s = %s", $1.name, $4.expr);
+                                                                                    snprintf($$.expr, sizeof($$.expr), "SET %s = %s", $1.name, $3.expr);
                                                                                     $$.is_presolved = 0;
                                                                                     
                                                                                     if (stepdebug) printf("%d: solved assignment at line %d: %s\n", ++cstep, lineno + 1, $$.expr);

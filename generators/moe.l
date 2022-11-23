@@ -32,10 +32,7 @@
 "int"                       { strcpy(yylval.nd_obj.name, (yytext)); return TK_INT; }
 "string"                    { strcpy(yylval.nd_obj.name, (yytext)); return TK_STRING; }
 "position"                  { strcpy(yylval.nd_obj.name, (yytext)); return TK_POSITION; }
-"pos"                       { strcpy(yylval.nd_obj.name, (yytext)); return TK_POSITION; }
 "parameter"                 { strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
-"param"                     { strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
-"par"                       { strcpy(yylval.nd_obj.name, (yytext)); return TK_PARAMETER; }
 "program"                   { strcpy(yylval.nd_obj.name, (yytext)); return TK_PROGRAM; }
 "if"                        { strcpy(yylval.nd_obj.name, (yytext)); return TK_IF; }
 "else"                      { strcpy(yylval.nd_obj.name, (yytext)); return TK_ELSE; }
@@ -50,7 +47,8 @@
 "global"                    { strcpy(yylval.nd_obj.name, (yytext)); return TK_GLOBAL; }
 [0-9]+                      { strcpy(yylval.nd_obj.name, (yytext)); return TK_NUMBER; }
 [a-zA-Z_]([a-zA-Z0-9_])*    { strcpy(yylval.nd_obj.name, (yytext)); return TK_IDENTIFIER; }
-["'].*["']                  { strcpy(yylval.nd_obj.name, (yytext)); return TK_STRING_LITERAL; }
+\"([^\\\"]|\\.)*\"          { strcpy(yylval.nd_obj.name, (yytext)); return TK_STRING_LITERAL; }
+\'([^\\\"]|\\.)*\'          { strcpy(yylval.nd_obj.name, (yytext)); return TK_STRING_LITERAL; }
 \n                          { lineno++; }
 [ \t\r]                     { ; }
 .                           { printf("unexpected token: %s\n", yytext); }

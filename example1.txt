@@ -1,5 +1,6 @@
 program EX1
 {
+    global int y;
     int x = 1;
     
     x = -5;
