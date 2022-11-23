@@ -61,6 +61,7 @@
     FILE *output_file;
 
     int cstep;
+    int stepdebug;
 %}
 
 %union {
@@ -136,14 +137,15 @@ var_declaration     : access_modifier data_type TK_IDENTIFIER
                                                                                     {
                                                                                         printf("DEFINE %s\n", $3.name);
                                                                                     }
+
                                                                                     if ($5.nd != NULL)
                                                                                     {
-                                                                                        validate_types(
-                                                                                            get_type($3.name),
-                                                                                            get_type($5.name),
-                                                                                            "Line %d: Incorrectly initialized value (expected %s, got %s).\n"
-                                                                                        );
 
+                                                                                        // validate_types(
+                                                                                        //     get_type($3.name),
+                                                                                        //     get_type($5.name),
+                                                                                        //     "Line %d: Incorrectly initialized value (expected %s, got %s).\n"
+                                                                                        // );
                                                                                         printf("SET %s = %s\n", $3.name, $5.name);
                                                                                     }
 
@@ -153,7 +155,13 @@ var_declaration     : access_modifier data_type TK_IDENTIFIER
                     ;
 
 var_init            : TK_SEMICOLON                                              { $$.nd = NULL; }
-                    | TK_EQUAL statement                                        { strcpy($$.name, $2.name); $$.nd = mknode($2.nd, NULL, "var_init"); }
+                    | TK_EQUAL expression_statement                             {
+                                                                                    if ($2.is_presolved) snprintf($2.expr, sizeof($2.expr), "%d", $2.presolved);
+                                                                                    
+                                                                                    snprintf($$.name, sizeof($$.name), "%s", $2.expr);
+                                                                                    
+                                                                                    $$.nd = mknode($2.nd, NULL, "var_init"); 
+                                                                                }
                     ;
 
 data_type           : TK_STRING                                                 { insert_type(); }
@@ -266,26 +274,28 @@ assignment          : TK_IDENTIFIER { check_declaration($1.name); } TK_EQUAL
                                                                                     
                                                                                     $$.nd = mknode($1.nd, $3.nd, "assignment");
                                                                                     
-
                                                                                     if ($4.is_presolved) snprintf($4.expr, sizeof($4.expr), "%d", $4.presolved);
-             
+                                                                                    
                                                                                     snprintf($$.expr, sizeof($$.expr), "SET %s = %s\n", $1.name, $4.expr);
-                                                                                    printf("%d: solved assignment: %s\n", ++cstep, $$.expr);
+                                                                                    $$.is_presolved = 0;
+                                                                                    
+                                                                                    if (stepdebug) printf("%d: solved assignment: %s\n", ++cstep, $$.expr);
                                                                                 }
                     | logic                                                     { 
                                                                                     $$.nd = mknode($1.nd, NULL, "assignment"); 
-
                                                                                     if ($1.is_presolved)
                                                                                     {
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved assignment: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved assignment: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
-                                                                                        printf("%d: solved assignment: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved assignment: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     ;
@@ -298,7 +308,7 @@ logic               : logic TK_OR equality                                      
                                                                                         $$.presolved = $1.presolved || $3.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved OR logic: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved OR logic: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -306,7 +316,9 @@ logic               : logic TK_OR equality                                      
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s || %s", $1.expr, $3.expr);
-                                                                                        printf("%d: solved OR logic: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved OR logic: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | logic TK_AND equality                                     { 
@@ -317,7 +329,7 @@ logic               : logic TK_OR equality                                      
                                                                                         $$.presolved = $1.presolved && $3.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved AND logic: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved AND logic: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -325,7 +337,9 @@ logic               : logic TK_OR equality                                      
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s && %s", $1.expr, $3.expr);
-                                                                                        printf("%d: solved AND logic: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved AND logic: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | equality                                                  { 
@@ -336,12 +350,14 @@ logic               : logic TK_OR equality                                      
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved logic: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved logic: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
-                                                                                        printf("%d: solved logic: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved logic: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     ;
@@ -355,7 +371,7 @@ equality            : equality TK_EQUAL_EQUAL comparison                        
                                                                                         $$.presolved = $1.presolved == $3.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved equality: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved equality: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -363,7 +379,9 @@ equality            : equality TK_EQUAL_EQUAL comparison                        
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s = %s", $1.expr, $3.expr);
-                                                                                        printf("%d: solved equality: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved equality: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | equality TK_BANG_EQUAL comparison                         { 
@@ -374,15 +392,17 @@ equality            : equality TK_EQUAL_EQUAL comparison                        
                                                                                         $$.presolved = $1.presolved != $3.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved inequality: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved inequality: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         if ($1.is_presolved) snprintf($1.expr, sizeof($1.expr), "%d", $1.presolved);
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
-                                                                                        snprintf($$.expr, sizeof($$.expr), "%s != %s", $1.expr, $3.expr);
-                                                                                        printf("%d: solved inequality: %s\n", ++cstep, $$.expr);
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s <> %s", $1.expr, $3.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved inequality: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | comparison                                                { 
@@ -393,12 +413,14 @@ equality            : equality TK_EQUAL_EQUAL comparison                        
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved equality: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved equality: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
-                                                                                        printf("%d: solved equality: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved equality: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     ;
@@ -415,7 +437,7 @@ comparison          : comparison comparison_operator term                       
                                                                                     
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved comparison: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved comparison: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -423,7 +445,9 @@ comparison          : comparison comparison_operator term                       
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s %s %s", $1.expr, $2.name, $3.expr);
-                                                                                        printf("%d: solved comparison: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved comparison: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | term                                                      { 
@@ -434,12 +458,14 @@ comparison          : comparison comparison_operator term                       
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved comparison: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved comparison: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
-                                                                                        printf("%d: solved comparison: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+
+                                                                                        if (stepdebug) printf("%d: solved comparison: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     ;
@@ -452,7 +478,7 @@ term                : term TK_PLUS factor                                       
                                                                                         $$.presolved = $1.presolved + $3.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved term: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved term: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -460,7 +486,9 @@ term                : term TK_PLUS factor                                       
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s + %s", $1.expr, $3.expr);
-                                                                                        printf("%d: solved term: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved term: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | term TK_MINUS factor                                      { 
@@ -471,7 +499,7 @@ term                : term TK_PLUS factor                                       
                                                                                         $$.presolved = $1.presolved - $3.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved term: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved term: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -479,7 +507,9 @@ term                : term TK_PLUS factor                                       
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s - %s", $1.expr, $3.expr);
-                                                                                        printf("%d: solved term: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+
+                                                                                        if (stepdebug) printf("%d: solved term: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | factor                                                    { 
@@ -490,12 +520,14 @@ term                : term TK_PLUS factor                                       
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved term: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved term: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
-                                                                                        printf("%d: solved term: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved term: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     ;
@@ -519,7 +551,7 @@ factor              : factor TK_STAR unary                                      
                                                                                         $$.presolved = $1.presolved * $3.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -527,7 +559,9 @@ factor              : factor TK_STAR unary                                      
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s * %s", $1.expr, $3.expr);
-                                                                                        printf("%d: solved factor: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved factor: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | factor TK_SLASH unary                                     {
@@ -550,7 +584,7 @@ factor              : factor TK_STAR unary                                      
                                                                                         $$.presolved = $1.presolved / $3.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -558,7 +592,9 @@ factor              : factor TK_STAR unary                                      
                                                                                         if ($3.is_presolved) snprintf($3.expr, sizeof($3.expr), "%d", $3.presolved);
 
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s / %s", $1.expr, $3.expr);
-                                                                                        printf("%d: solved factor: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved factor: %s\n", ++cstep, $$.expr);
                                                                                     }
                                                                                 }
                     | unary                                                     { 
@@ -569,12 +605,14 @@ factor              : factor TK_STAR unary                                      
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved factor: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s", $1.expr);
-                                                                                        printf("%d: solved factor: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved factor: %s\n", ++cstep, $$.expr);
                                                                                     } 
                                                                                 }
                     ;
@@ -592,12 +630,14 @@ unary               : TK_MINUS unary                                            
 
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved unary: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved unary: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else 
                                                                                     {
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s%s", $1.name, $2.expr);
-                                                                                        printf("%d: solved unary: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved unary: %s\n", ++cstep, $$.expr);
                                                                                     } 
                                                                                 }
                     | primary                                                   { 
@@ -608,12 +648,14 @@ unary               : TK_MINUS unary                                            
                                                                                         $$.presolved = $1.presolved;
                                                                                         $$.is_presolved = 1;
 
-                                                                                        printf("%d: solved unary: %d\n", ++cstep, $$.presolved);
+                                                                                        if (stepdebug) printf("%d: solved unary: %d\n", ++cstep, $$.presolved);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         snprintf($$.expr, sizeof($$.expr), "%s", $1.name);
-                                                                                        printf("%d: solved unary: %s\n", ++cstep, $$.expr);
+                                                                                        $$.is_presolved = 0;
+                                                                                        
+                                                                                        if (stepdebug) printf("%d: solved unary: %s\n", ++cstep, $$.expr);
                                                                                     } 
                                                                                 }
                     ;
@@ -646,7 +688,23 @@ primary             : TK_TRUE                                                   
                                                                                     $$.nd = mknode(NULL, NULL, $1.name);
                                                                                     snprintf($$.expr, sizeof($$.expr), "%s", $1.name);
                                                                                 }
-                    | TK_LPAREN expression TK_RPAREN                            
+                    | TK_LPAREN logic TK_RPAREN                                 {
+                                                                                    snprintf($$.name, sizeof($$.name), "%s", $2.name);
+                                                                                    if ($2.is_presolved)
+                                                                                    {
+                                                                                        $$.presolved = $2.presolved;
+                                                                                        $$.is_presolved = 1;
+
+                                                                                        if (stepdebug) printf("%d: solved grouped primary: %d\n", ++cstep, $$.presolved);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        snprintf($$.expr, sizeof($$.expr), "%s", $2.expr);
+                                                                                        $$.is_presolved = 0;
+
+                                                                                        if (stepdebug) printf("%d: solved grouped primary: %s\n", ++cstep, $$.expr);
+                                                                                    }
+                                                                                }
                     ;
 
 numeric_variable    : TK_NUMBER                                                 { add_symbol('C', "int"); $$.nd = mknode(NULL, NULL, $1.name); }
@@ -663,6 +721,7 @@ comparison_operator : TK_GREATER                                                
 
 int main() {
     yydebug = 0;
+    stepdebug = 0;
     cstep = 0;
 
     /* output_file = fopen(OUTPUT_FILE_PATH, "w"); */
@@ -706,7 +765,7 @@ int main() {
 }
 
 void insert_type() {
-    strcpy(type, yytext);
+    snprintf(type, sizeof(type), "%s", yytext);
 }
 
 void set_global() {
@@ -769,7 +828,7 @@ void add_symbol(char symbol_type, char *data_type) {
 struct node *mknode(struct node *left, struct node *right, char *token) {
     struct node *newnode = (struct node*)malloc(sizeof(struct node));
     char *newstr = (char *)malloc(strlen(token) + 1);
-    strcpy(newstr, token);
+    snprintf(newstr, sizeof(newstr), "%s", token);
     newnode->left = left;
     newnode->right = right;
     newnode->token = newstr;

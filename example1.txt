@@ -1,4 +1,4 @@
-program T 
+program EX1
 {
     int x = 1;
     
